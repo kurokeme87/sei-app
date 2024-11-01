@@ -1,6 +1,9 @@
 import type { Metadata } from "next";
 import localFont from "next/font/local";
 import "./globals.css";
+import { Button } from "@/components/ui/button";
+import SideBar from "./components/Sidebar";
+// import localFont from "next/font/local";
 
 const geistSans = localFont({
   src: "./fonts/GeistVF.woff",
@@ -24,10 +27,29 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
+    // <html lang="en">
+    //   <body
+    //     className={`${geistSans.variable} ${geistMono.variable} antialiased`}
+    //   >
+    //     <div className="flex h-screen bg-background">
+    //       <SideBar />
+    //       <main className="flex-1 pb-8 relative  pt-4 overflow-auto">
+    //         <div className=" mx-auto">
+    //           <div className="absolute top-0 right-5 mt-4 mb-4">
+    //             <Button variant="destructive">Connect Wallet</Button>
+    //           </div>
+    //           {children}
+    //         </div>
+    //       </main>
+    //     </div>
+    //   </body>
+    // </html>
+
     <html lang="en">
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
+        {/* Global styling and providers (e.g., font styles) */}
         {children}
       </body>
     </html>
