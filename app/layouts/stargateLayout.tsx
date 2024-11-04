@@ -2,6 +2,7 @@
 
 "use client";
 
+import SeiConnectButton from "@/components/global/SeiConnectButton";
 import { Menu, Wallet } from "lucide-react";
 import localFont from "next/font/local";
 import Link from "next/link";
@@ -68,11 +69,14 @@ export default function StargateLayout({
                   </Link>
                 ))}
               </nav>
-              <button className="bg-white text-black px-4 py-2 rounded-full flex items-center space-x-2">
-                <span className="text-sm">Connect Wallet</span>
-                <Wallet className="w-5 h-5" />
-                {/* <span className="border border-black rounded p-1">□</span> */}
-              </button>
+              <SeiConnectButton
+                connect={
+                  <button className="bg-white text-black px-4 py-2 rounded-full flex items-center space-x-2">
+                    <span className="text-sm">Connect Wallet</span>
+                    <Wallet className="w-5 h-5" />
+                  </button>
+                }
+              />
               <button
                 className="md:hidden"
                 onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}

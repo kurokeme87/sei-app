@@ -3,6 +3,7 @@ import React, { useState } from "react";
 
 import StargateLayout from "../layouts/stargateLayout";
 import { ArrowUpDown, ChevronDown, Search, X } from "lucide-react";
+import SeiConnectButton from "@/components/global/SeiConnectButton";
 
 const tokens = [
   {
@@ -344,10 +345,14 @@ export default function Transfer() {
               </div>
             )}
           </div>
-
-          <button className="w-full bg-white text-black px-6 py-4 rounded-xl">
-            Connect Wallet
-          </button>
+          {/* 
+          <SeiConnectButton
+            connect={
+              <button className="w-full bg-white text-black px-6 py-4 rounded-xl">
+                Connect Wallet
+              </button>
+            }
+          /> */}
         </div>
       </div>
     </>

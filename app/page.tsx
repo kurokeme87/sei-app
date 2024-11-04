@@ -6,9 +6,12 @@ import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Clipboard, TriangleAlert } from "lucide-react";
 import SeiLayout from "./layouts/seiLayout";
+import { useAccount } from "wagmi";
+import SeiConnectButton from "@/components/global/SeiConnectButton";
 
 export default function Home() {
   const [isWalletConnected, setIsWalletConnected] = useState(false);
+  const { isConnected } = useAccount();
 
   return (
     <SeiLayout>
@@ -73,18 +76,22 @@ export default function Home() {
           <div>
             <h2 className="text-4xl py-4 font-semibold">Overview</h2>
 
-            {!isWalletConnected ? (
+            {!isConnected ? (
               <div className="flex flex-col w-full p-2 border border-lg rounded-lg items-center justify-center h-32">
                 <p className="mb-4 text-muted-foreground">
                   Connect wallet to view overview
                 </p>
-                <Button
-                  variant="destructive"
-                  size="lg"
-                  onClick={() => setIsWalletConnected(true)}
-                >
-                  Connect Wallet
-                </Button>
+                <SeiConnectButton
+                  connect={
+                    <Button
+                      variant="destructive"
+                      size="lg"
+                      onClick={() => setIsWalletConnected(true)}
+                    >
+                      Connect Wallet
+                    </Button>
+                  }
+                />
               </div>
             ) : (
               <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">

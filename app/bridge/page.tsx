@@ -69,6 +69,12 @@ export default function Bridge() {
     //   imageUrl: "/sei-images/gasdotzip-icon.png",
     // },
     {
+      url: "https://www.en-squidrouter.com/swap",
+      link: "https://www.en-squidrouter.com/swap",
+      name: "Squid",
+      imageUrl: "/sei-images/squid-icon.png",
+    },
+    {
       url: "https://jumper.exchange/",
       link: "/jumper/",
       name: "Jumper",
