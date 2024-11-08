@@ -2,6 +2,11 @@
 
 "use client";
 
+import SeiConnectButton from "@/components/global/SeiConnectButton";
+import {
+  AccountButton,
+  BalanceButton,
+} from "@/components/jumper/AccountButton";
 // import { DiscordLogoIcon, TwitterLogoIcon } from "@radix-ui/react-icons";
 import {
   ArrowLeft,
@@ -22,17 +27,7 @@ import Link from "next/link";
 // import { usePathname } from "next/navigation";
 import React, { useState } from "react";
 import { FaDiscord, FaFolder, FaGithub, FaXTwitter } from "react-icons/fa6";
-
-const geistSans = localFont({
-  src: "../fonts/GeistVF.woff",
-  variable: "--font-geist-sans",
-  weight: "100 900",
-});
-const geistMono = localFont({
-  src: "../fonts/GeistMonoVF.woff",
-  variable: "--font-geist-mono",
-  weight: "100 900",
-});
+import { useAccount } from "wagmi";
 
 const languages = [
   { name: "English", symbol: "EN" },
@@ -73,13 +68,14 @@ export default function JumperLayout({
   const [mode, setMode] = useState("moon");
   const [view, setView] = useState("main");
   const [language, setLanguage] = useState("EN");
+  const { isConnected } = useAccount();
 
   //   console.log(pathname);
 
   return (
     <html lang="en">
       <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
+        className={`font-inter`}
         style={{
           background: "linear-gradient(135deg, #1A0F38 0%, #2C0F4A 100%)",
         }}
@@ -137,9 +133,15 @@ export default function JumperLayout({
           </svg>
 
           <div className="flex items-center gap-4">
-            <button className="px-6 py-3 font-semibold rounded-full bg-[#543188] text-white">
-              Connect
-            </button>
+            <SeiConnectButton
+              connect={
+                <button className="px-6 py-3 font-semibold rounded-full bg-[#543188] text-white">
+                  Connect
+                </button>
+              }
+            />
+            {isConnected ? <BalanceButton /> : null}
+            {isConnected ? <AccountButton /> : null}
             <button id="menu-button" onClick={() => setShowMenu(!showMenu)}>
               <Menu className="text-[#BEA0EB] w-8 h-8" />
             </button>

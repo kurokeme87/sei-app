@@ -1,6 +1,7 @@
 {
   "extends": ["next/core-web-vitals"],
   "rules": {
+    "all": "off",
     // Disable import-related errors
     "import/no-unresolved": "off",
     "import/extensions": "off",

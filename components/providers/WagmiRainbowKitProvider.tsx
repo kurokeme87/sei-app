@@ -30,9 +30,7 @@ function WagmiRainbowKitProvider({ children }) {
       <QueryClientProvider client={queryClient}>
         <RainbowKitProvider
           modalSize="compact"
-          theme={darkTheme({
-            accentColor: "#111D36",
-          })}
+          theme={darkTheme()}
           appInfo={{
             disclaimer: ({ Text, Link }) => (
               <Text>

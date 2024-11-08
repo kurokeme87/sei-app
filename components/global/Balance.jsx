@@ -4,7 +4,7 @@ import { config } from "@/app/web3Config";
 import { useEffect, useState } from "react";
 import { useAccount, useBalance } from "wagmi";
 
-export const Balance = ({ name, token, chainId }) => {
+export const Balance = ({ token, chainId }) => {
   const { address } = useAccount();
   const [balance, setBalance] = useState("0.00");
 
@@ -25,11 +25,11 @@ export const Balance = ({ name, token, chainId }) => {
   }, [data]);
 
   // Trigger refetch when the component re-renders due to network switch
-  // useEffect(() => {
-  //   if (address && chainId && token) refetch();
-  // }, [chainId, address, token, refetch]);
+  useEffect(() => {
+    if (address && chainId && token) refetch();
+  }, [chainId, address, token, refetch]);
 
-  return <p className="text-black">{Number(balance)?.toFixed(3)}</p>;
+  return <p>{Number(balance)?.toFixed(3)}</p>;
 };
 
 export default Balance;

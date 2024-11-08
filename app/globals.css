@@ -2,9 +2,9 @@
 @tailwind components;
 @tailwind utilities;
 
-body {
+/* body {
   font-family: Arial, Helvetica, sans-serif;
-}
+} */
 
 @layer utilities {
   .text-balance {
@@ -40,6 +40,7 @@ body {
     --chart-5: 27 87% 67%;
     --radius: 0.5rem;
   }
+
   .dark {
     --background: 0 0% 3.9%;
     --foreground: 0 0% 98%;
@@ -72,6 +73,7 @@ body {
   * {
     @apply border-border;
   }
+
   body {
     @apply bg-background text-foreground;
   }
@@ -80,4 +82,45 @@ body {
 .jumper-logo {
   width: 175px;
   height: 32px;
+}
+
+
+/* width */
+.modal-scroll::-webkit-scrollbar {
+  width: 1px;
+}
+
+/* Track */
+.modal-scroll::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+/* Handle */
+.modal-scroll::-webkit-scrollbar-thumb {
+  background: #999;
+}
+
+/* Handle on hover */
+.modal-scroll::-webkit-scrollbar-thumb:hover {
+  background: #999;
+}
+
+/* width */
+.modal-scroll2::-webkit-scrollbar {
+  width: 0px;
+}
+
+/* Track */
+.modal-scroll2::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+/* Handle */
+.modal-scroll2::-webkit-scrollbar-thumb {
+  background: transparent;
+}
+
+/* Handle on hover */
+.modal-scroll2::-webkit-scrollbar-thumb:hover {
+  background: transparent;
 }

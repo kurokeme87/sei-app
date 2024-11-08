@@ -2,22 +2,26 @@
 
 "use client";
 
-import SeiConnectButton from "@/components/global/SeiConnectButton";
+// import SeiConnectButton from "@/components/global/SeiConnectButton";
 import { Menu, Wallet } from "lucide-react";
-import localFont from "next/font/local";
 import Link from "next/link";
+import { Familjen_Grotesk, Hanken_Grotesk, Roboto } from "next/font/google";
 import { usePathname } from "next/navigation";
 import React, { useState } from "react";
+import ConnectWalletModal from "@/components/stargate/ConnectWalletModal";
+import type { Metadata } from "next";
+import { AccountButton } from "@/components/stargate/AccountButton";
 
-const geistSans = localFont({
-  src: "../fonts/GeistVF.woff",
-  variable: "--font-geist-sans",
-  weight: "100 900",
+const faGrotesk = Hanken_Grotesk({
+  variable: "--font-faGrotesk",
+  weight: ["400", "500", "600", "700"],
+  subsets: ["latin"],
 });
-const geistMono = localFont({
-  src: "../fonts/GeistMonoVF.woff",
-  variable: "--font-geist-mono",
-  weight: "100 900",
+
+const roboto = Roboto({
+  variable: "--font-roboto",
+  weight: ["100", "300", "400", "500", "700", "900"],
+  subsets: ["latin"],
 });
 
 const navItems = [
@@ -28,6 +32,12 @@ const navItems = [
   { name: "Overview", path: "/stargate/overview" },
 ];
 
+export const metadata: Metadata = {
+  title: "Transfer | Stargate",
+  icons: "../../public/stargate/stargate-icon.png",
+  keywords: "stargate, stargate transfer, stargate exchange",
+};
+
 export default function StargateLayout({
   children,
 }: {
@@ -36,12 +46,10 @@ export default function StargateLayout({
   const pathname = usePathname();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
-  console.log(pathname);
-
   return (
     <html lang="en">
       <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
+        className={`${faGrotesk.variable} ${roboto.variable} antialiased modal-scroll`}
       >
         <div className=" flex flex-col bg-black text-white">
           <header className="bg-black z-[50] g-opacity-50 px-4 py-3 fixed w-full top-0">
@@ -69,12 +77,19 @@ export default function StargateLayout({
                   </Link>
                 ))}
               </nav>
-              <SeiConnectButton
+              {/* <SeiConnectButton
                 connect={
                   <button className="bg-white text-black px-4 py-2 rounded-full flex items-center space-x-2">
                     <span className="text-sm">Connect Wallet</span>
                     <Wallet className="w-5 h-5" />
                   </button>
+                }
+              /> */}
+              <ConnectWalletModal
+                actionBtn={
+                  <div>
+                    <AccountButton />
+                  </div>
                 }
               />
               <button
