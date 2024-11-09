@@ -95,7 +95,7 @@ export default function Transfer() {
   });
 
   const handleMax = () => {
-    if (data?.formatted > 0) {
+    if (Number(data?.formatted) > 0) {
       setAmount(Number(data?.formatted)?.toFixed(4));
     }
   };

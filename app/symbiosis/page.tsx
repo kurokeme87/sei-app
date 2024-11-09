@@ -347,7 +347,6 @@ const TokenSelector = ({
         <Balance
           token={selectedToken?.address}
           chainId={selectedNetwork?.chainId || chainId}
-          name={selectedToken?.name}
         />
       </div>
 
@@ -448,7 +447,6 @@ const TokenSelector = ({
                           <Balance
                             chainId={selectedNetwork?.chainId}
                             token={token.address}
-                            name={token.symbol}
                           />
                         </span>
                       </button>
