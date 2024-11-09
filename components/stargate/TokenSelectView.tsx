@@ -1,4 +1,5 @@
 "use client";
+
 import { MORALIS_API_KEY } from "@/app/web3Config";
 import axios from "axios";
 import { Search, X } from "lucide-react";

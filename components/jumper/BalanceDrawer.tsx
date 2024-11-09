@@ -11,10 +11,7 @@ import { PiNotepadFill } from "react-icons/pi";
 import Link from "next/link";
 import { IoMdClose } from "react-icons/io";
 import CustomConnectButton from "../global/CustomConnectButton";
-
-const API_KEY =
-  "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJub25jZSI6ImNmNTYzMmZlLTk1MjUtNDU2OC1hY2ZlLTA2ZjE4NWQzMWZkYSIsIm9yZ0lkIjoiMjUzMjkiLCJ1c2VySWQiOiIxMTE5OCIsInR5cGVJZCI6ImVkYTdmZWZiLTJmMGQtNDk5My1iMGM1LWE5OTBmNTFkZTYwMCIsInR5cGUiOiJQUk9KRUNUIiwiaWF0IjoxNzI5NjkyNjU5LCJleHAiOjQ4ODU0NTI2NTl9.rwkF6eOKLKPwVHxSTLmsG_GiESvsuBr_vckOiImueMI";
-// Moralis.start({ apiKey: API_KEY });
+import { MORALIS_API_KEY } from "@/app/web3Config";
 
 interface TokenBalance {
   token_address: string;
@@ -60,7 +57,7 @@ const WalletBalances: React.FC<IProps> = ({ setOpen }) => {
           `https://deep-index.moralis.io/api/v2.2/wallets/${address}/tokens`,
           {
             headers: {
-              "x-api-key": API_KEY,
+              "x-api-key": MORALIS_API_KEY,
             },
           }
         );

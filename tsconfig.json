@@ -33,7 +33,7 @@
     "**/*.ts",
     "**/*.tsx",
     ".next/types/**/*.ts"
-, "components/providers/AppKitProvider.jsx", "data/connectors.js"  ],
+, "components/providers/AppKitProvider.tsx", "data/connectors.js"  ],
   "exclude": [
     "node_modules"
   ]

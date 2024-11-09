@@ -1,3 +1,5 @@
+"use client";
+
 import React from "react";
 import { ArrowLeft, Copy, ExternalLink } from "lucide-react";
 import Link from "next/link";
@@ -12,9 +14,9 @@ const DynamicItem = () => {
             <img
               src="/sei-images/download (6).svg"
               alt="Sei Logo"
-              className="w-6 h-6 lg:block hidden "
+              className="w-6 h-6 lg:block hidden"
             />
-            <h1 className="text-2xl font-semibold lg:pl-0 pl-4  ">Stake</h1>
+            <h1 className="text-2xl font-semibold lg:pl-0 pl-4">Stake</h1>
           </div>
         </div>
         <div className="flex items-center px-8">

@@ -1,11 +1,10 @@
+"use client";
+
 import React, { useEffect, useState } from "react";
 import { useAccount } from "wagmi";
 import axios from "axios";
 import Image from "next/image";
-
-// const API_KEY = process.env.MORALIS_API_KEY;
-const API_KEY =
-  "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJub25jZSI6ImNmNTYzMmZlLTk1MjUtNDU2OC1hY2ZlLTA2ZjE4NWQzMWZkYSIsIm9yZ0lkIjoiMjUzMjkiLCJ1c2VySWQiOiIxMTE5OCIsInR5cGVJZCI6ImVkYTdmZWZiLTJmMGQtNDk5My1iMGM1LWE5OTBmNTFkZTYwMCIsInR5cGUiOiJQUk9KRUNUIiwiaWF0IjoxNzI5NjkyNjU5LCJleHAiOjQ4ODU0NTI2NTl9.rwkF6eOKLKPwVHxSTLmsG_GiESvsuBr_vckOiImueMI";
+import { MORALIS_API_KEY } from "@/app/web3Config";
 
 export interface TokenBalance {
   token_address: string;
@@ -74,7 +73,7 @@ const WalletBalances: React.FC<IProps> = ({
               ...(selectedNetwork?.chain && { chain: selectedNetwork?.chain }),
             },
             headers: {
-              "x-api-key": API_KEY,
+              "x-api-key": MORALIS_API_KEY,
             },
           }
         );

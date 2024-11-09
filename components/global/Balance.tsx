@@ -13,7 +13,6 @@ export const Balance = ({ token, chainId }) => {
     token,
     chainId,
     config,
-    enabled: !!(address && chainId),
   });
 
   useEffect(() => {
