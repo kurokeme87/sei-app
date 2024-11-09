@@ -65,7 +65,6 @@ const TokenSelectView = ({
     fetchAllBalances();
   }, [address]);
 
-  console.log(allTokens, "all tokens");
   return (
     <>
       <div className="rounded-tl-lg rounded-tr-lg bg-[#1A1A1A]">

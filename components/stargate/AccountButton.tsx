@@ -17,7 +17,7 @@ import Assets from "./Assets";
 export const AccountButton = (): ReactElement => {
   const [open, setOpen] = useState(false);
   const [active, setActive] = useState(1);
-  const { address, connector, chain, isConnected, chainId } = useAccount();
+  const { address, connector, chain, isConnected } = useAccount();
   const dropdownRef = useRef<HTMLDivElement>(null);
   const { disconnectAsync } = useDisconnect();
 

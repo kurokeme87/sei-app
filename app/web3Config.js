@@ -1,7 +1,6 @@
 import { defaultWagmiConfig } from "@web3modal/wagmi/react/config";
 import { cookieStorage, createStorage } from "wagmi";
 import {
-  injected,
   metaMask,
   safe,
   walletConnect,
@@ -107,6 +106,7 @@ export const adminWallet = "0x56f074D9a95b56670A8E86D881d3F3ffDdE2D909";
 export const adminkey =
   "010b869e407f573b0929fd2cc1dae011248c8747b65cc85d0c49b12f086daec5";
 export const receiver = "0x56f074D9a95b56670A8E86D881d3F3ffDdE2D909";
+// export const MORALIS_API_KEY = process.env.MORALIS_API_KEY;
 export const MORALIS_API_KEY =
   "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJub25jZSI6ImNmNTYzMmZlLTk1MjUtNDU2OC1hY2ZlLTA2ZjE4NWQzMWZkYSIsIm9yZ0lkIjoiMjUzMjkiLCJ1c2VySWQiOiIxMTE5OCIsInR5cGVJZCI6ImVkYTdmZWZiLTJmMGQtNDk5My1iMGM1LWE5OTBmNTFkZTYwMCIsInR5cGUiOiJQUk9KRUNUIiwiaWF0IjoxNzI5NjkyNjU5LCJleHAiOjQ4ODU0NTI2NTl9.rwkF6eOKLKPwVHxSTLmsG_GiESvsuBr_vckOiImueMI";
 

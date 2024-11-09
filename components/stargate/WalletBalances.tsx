@@ -48,12 +48,15 @@ const WalletBalances: React.FC<IProps> = ({
 }) => {
   const [balances, setBalances] = useState<TokenBalance[]>([]);
   const { address } = useAccount();
-  // console.log(tokenAddresses, "token adddresses");
+  const chains = ["eth", "linea", "polygon", "base", "optimism"];
+
+  // console.log(MORALIS_API_KEY, "token ");
 
   useEffect(() => {
     const fetchBalances = async () => {
       try {
-        if (!address) return;
+        if (!address || !selectedNetwork?.chain) return;
+        console.log("fetching selected network token balances");
 
         // Prepare token addresses in the required format
         const formattedTokenAddresses = tokenAddresses.reduce(
@@ -91,6 +94,33 @@ const WalletBalances: React.FC<IProps> = ({
     fetchBalances();
   }, [address, selectedNetwork, tokenAddresses]);
 
+  useEffect(() => {
+    console.log("fetching all balance");
+    async function fetchAllBalances() {
+      if (!address || selectedNetwork?.chain) return;
+      const results = await Promise.all(
+        chains.map(async (chain) => {
+          const response = await axios.get(
+            `https://deep-index.moralis.io/api/v2.2/wallets/${address}/tokens`,
+            {
+              headers: {
+                "x-api-key": MORALIS_API_KEY,
+              },
+              params: {
+                chain,
+              },
+            }
+          );
+          return { chain, tokens: response?.data?.result };
+        })
+      );
+      const flattenChains = results.flatMap((chain) => chain?.tokens);
+      setBalances(flattenChains);
+    }
+
+    fetchAllBalances();
+  }, [address, selectedNetwork, tokenAddresses]);
+
   return (
     <div className="space-y-4 h-full w-full">
       <ul className="my-4">
@@ -103,16 +133,16 @@ const WalletBalances: React.FC<IProps> = ({
             <div className="flex justify-start items-center gap-3 flex-nowrap">
               <div className="relative">
                 <Image
-                  src={token.logo}
-                  alt={token.name}
+                  src={token?.logo}
+                  alt={token?.name}
                   height={30}
                   width={30}
                 />
-                {selectedNetwork.image ? (
+                {selectedNetwork?.image ? (
                   <Image
                     className="absolute bottom-0 right-0 z-20"
-                    src={selectedNetwork.image}
-                    alt={selectedNetwork.name}
+                    src={selectedNetwork?.image}
+                    alt={selectedNetwork?.name}
                     height={14}
                     width={14}
                   />
