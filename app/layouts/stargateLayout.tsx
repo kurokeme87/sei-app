@@ -112,7 +112,7 @@ export default function StargateLayout({
               backgroundRepeat: "repeat",
               opacity: 1,
             }}
-            className="flex-grow overflow-auto container mx-auto mt-[65px] mb-[100px] "
+            className="flex-grow overflow-auto container mx-auto mt-[75px] mb-[100px"
           >
             {children}
           </main>
