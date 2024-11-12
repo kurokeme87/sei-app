@@ -105,7 +105,7 @@ export const NetworkDropdown: React.FC<IProps> = ({
               chainId: "",
               image: "",
               name: "",
-              chain: null,
+              chain: "",
             });
             setTokenAddresses([]);
           }}

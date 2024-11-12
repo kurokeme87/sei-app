@@ -3,10 +3,10 @@
 import React, { useEffect, useState } from "react";
 import { useAccount } from "wagmi";
 import axios from "axios";
-import Image from "next/image";
 import { MORALIS_API_KEY } from "@/app/web3Config";
+import LoadingSkeleton from "../global/LoadingSkeleton";
 
-export interface TokenBalance {
+export interface ITokenBalance {
   token_address: string;
   symbol: string;
   name: string;
@@ -30,6 +30,10 @@ export interface TokenBalance {
   portfolio_percentage: number;
 }
 
+interface ITokens {
+  tokens: ITokenBalance[];
+  chain: string;
+}
 export type INetwork = {
   chainId: number | string;
   name: string;
@@ -46,128 +50,111 @@ const WalletBalances: React.FC<IProps> = ({
   tokenAddresses,
   selectedNetwork,
 }) => {
-  const [balances, setBalances] = useState<TokenBalance[]>([]);
+  const [balances, setBalances] = useState<ITokens | any>([]);
   const { address } = useAccount();
-  const chains = ["eth", "linea", "polygon", "base", "optimism"];
-
-  // console.log(MORALIS_API_KEY, "token ");
+  const [loading, setLoading] = useState(false);
+  const chains: string[] = ["eth", "linea", "polygon", "base", "optimism"];
 
   useEffect(() => {
-    const fetchBalances = async () => {
-      try {
-        if (!address || !selectedNetwork?.chain) return;
-        console.log("fetching selected network token balances");
+    const fetchAllBalances = async () => {
+      let allChains = chains;
+      if (selectedNetwork?.chain) {
+        allChains = chains.filter((itm) => itm === selectedNetwork?.chain);
+      }
+      if (address) {
+        try {
+          setLoading(true);
+          const results = await Promise.all(
+            allChains.map(async (chain) => {
+              const response = await axios.get(
+                `https://deep-index.moralis.io/api/v2.2/wallets/${address}/tokens`,
+                {
+                  headers: {
+                    "x-api-key": MORALIS_API_KEY,
+                  },
+                  params: {
+                    chain,
+                  },
+                }
+              );
+              return { chain, tokens: response?.data?.result || [] }; // Default to empty array
+            })
+          );
 
-        // Prepare token addresses in the required format
-        const formattedTokenAddresses = tokenAddresses.reduce(
-          (acc, token, index) => ({
-            ...acc,
-            [`token_addresses[${index}]`]: token,
-          }),
-          {}
-        );
-
-        // Fetch token balances for the wallet address
-        const response = await axios.get(
-          `https://deep-index.moralis.io/api/v2.2/wallets/${address}/tokens`,
-          {
-            params: {
-              ...(tokenAddresses && { ...formattedTokenAddresses }),
-              ...(selectedNetwork?.chain && { chain: selectedNetwork?.chain }),
-            },
-            headers: {
-              "x-api-key": MORALIS_API_KEY,
-            },
-          }
-        );
-
-        // console.log(response?.data?.result, "response");
-        const tokenBalances =
-          (response?.data?.result as unknown as TokenBalance[]) || [];
-
-        setBalances(tokenBalances);
-      } catch (error) {
-        console.error("Error fetching token balances:", error);
+          setBalances(results);
+        } catch (error) {
+          console.error("Error fetching all balances:", error);
+        } finally {
+          setLoading(false);
+        }
       }
     };
-
-    fetchBalances();
-  }, [address, selectedNetwork, tokenAddresses]);
-
-  useEffect(() => {
-    console.log("fetching all balance");
-    async function fetchAllBalances() {
-      if (!address || selectedNetwork?.chain) return;
-      const results = await Promise.all(
-        chains.map(async (chain) => {
-          const response = await axios.get(
-            `https://deep-index.moralis.io/api/v2.2/wallets/${address}/tokens`,
-            {
-              headers: {
-                "x-api-key": MORALIS_API_KEY,
-              },
-              params: {
-                chain,
-              },
-            }
-          );
-          return { chain, tokens: response?.data?.result };
-        })
-      );
-      const flattenChains = results.flatMap((chain) => chain?.tokens);
-      setBalances(flattenChains);
-    }
-
     fetchAllBalances();
-  }, [address, selectedNetwork, tokenAddresses]);
+  }, [address, selectedNetwork]);
 
+  // console.log(balances, "balances");
   return (
     <div className="space-y-4 h-full w-full">
       <ul className="my-4">
-        {balances.map((token, index) => (
-          <li
-            role="button"
-            key={index}
-            className="flex justify-between items-center rounded-2xl p-2 ease transition-all duration-300 hover:bg-[#1A1A1A]"
-          >
-            <div className="flex justify-start items-center gap-3 flex-nowrap">
-              <div className="relative">
-                <Image
-                  src={token?.logo}
-                  alt={token?.name}
-                  height={30}
-                  width={30}
-                />
-                {selectedNetwork?.image ? (
-                  <Image
-                    className="absolute bottom-0 right-0 z-20"
-                    src={selectedNetwork?.image}
-                    alt={selectedNetwork?.name}
-                    height={14}
-                    width={14}
-                  />
-                ) : null}
-              </div>
-              <div>
-                <p className="font-medium text-sm">{token.symbol}</p>
-                <p className="text-[#999] text-xs">{token.name}</p>
-              </div>
-            </div>
-            <div>
-              <p className="font-medium text-sm">
-                {(parseFloat(token.balance) / 10 ** token.decimals).toFixed(4)}{" "}
-              </p>
+        {balances?.length > 0 && !loading
+          ? balances
+              .flatMap((itm) => itm?.tokens)
+              ?.map((token, index) => (
+                <li
+                  role="button"
+                  key={index}
+                  className="flex justify-between items-center rounded-2xl p-2 ease transition-all duration-300 hover:bg-[#1A1A1A]"
+                >
+                  <div className="flex justify-start items-center gap-3 flex-nowrap">
+                    <div className="relative">
+                      <img
+                        src={token?.logo}
+                        alt={token?.name}
+                        height={30}
+                        width={30}
+                      />
+                      {selectedNetwork?.image ? (
+                        <img
+                          className="absolute bottom-0 right-0 z-20"
+                          src={selectedNetwork?.image}
+                          alt={selectedNetwork?.name}
+                          height={14}
+                          width={14}
+                        />
+                      ) : null}
+                    </div>
+                    <div>
+                      <p className="font-medium text-sm">{token?.symbol}</p>
+                      <p className="text-[#999] text-xs">{token?.name}</p>
+                    </div>
+                  </div>
+                  <div>
+                    <p className="font-medium text-sm">
+                      {(
+                        parseFloat(token?.balance) /
+                        10 ** token?.decimals
+                      ).toFixed(4)}
+                    </p>
 
-              <p className="text-[#999] text-xs">
-                $
-                {(
-                  (parseFloat(token.balance) / 10 ** token.decimals) *
-                  token.usd_price
-                ).toFixed(2)}
-              </p>
-            </div>
-          </li>
-        ))}
+                    <p className="text-[#999] text-xs">
+                      $
+                      {(
+                        (parseFloat(token.balance) / 10 ** token.decimals) *
+                        token.usd_price
+                      ).toFixed(2)}
+                    </p>
+                  </div>
+                </li>
+              ))
+          : null}
+
+        {!loading && balances.length === 0 ? (
+          <div className="w-full border border-[#444] border-dashed rounded-md  p-4 flex justify-center items-center text-xs text-[#999]">
+            <p className="w-full text-center">No tokens yet.</p>
+          </div>
+        ) : null}
+
+        {loading ? <LoadingSkeleton /> : null}
       </ul>
     </div>
   );

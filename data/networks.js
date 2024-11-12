@@ -176,7 +176,7 @@ export const network = [
   {
     groupID: "linea",
     chainId: 59144,
-    address: "0x4F959C9968c54170b43CC0Ec09DEce5B66E12da6",
+    address: "",
     symbol: "LAB",
     name: "Linea",
     decimals: 18,

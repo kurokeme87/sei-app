@@ -5,6 +5,7 @@ import axios from "axios";
 import { Search, X } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useAccount } from "wagmi";
+import LoadingSkeleton from "../global/LoadingSkeleton";
 
 const TokenSelectView = ({
   setCurrentView,
@@ -14,14 +15,16 @@ const TokenSelectView = ({
   selectedNetwork,
 }) => {
   const chains = ["eth", "linea", "polygon", "base", "optimism"];
-  const { chainId, connector, address, chain, isConnected } = useAccount();
+  const { chainId, address, isConnected } = useAccount();
   const [allTokens, setAllTokens] = useState([]);
   const [tokens, setTokens] = useState([]);
+  const [loading, setLoading] = useState<boolean>(false);
 
   useEffect(() => {
     if (!address || !selectedNetwork?.groupID) return;
 
     async function fetchNetworkBalance() {
+      setLoading(true);
       const response = await axios.get(
         `https://deep-index.moralis.io/api/v2.2/wallets/${address}/tokens`,
         {
@@ -35,6 +38,7 @@ const TokenSelectView = ({
       );
 
       setTokens(response?.data?.result);
+      setLoading(false);
     }
 
     fetchNetworkBalance();
@@ -183,6 +187,7 @@ const TokenSelectView = ({
               </div>
             </div>
           ))}
+        {loading ? <LoadingSkeleton /> : null}
       </div>
     </>
   );

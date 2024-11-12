@@ -13,8 +13,6 @@ import { ethers } from "ethers";
 import { config } from "../web3Config";
 import Image from "next/image";
 import { shortenAddressSmall } from "../utils";
-// import axios from "axios";
-// import { TokenBalance } from "@/components/stargate/WalletBalances";
 import TokenSelectView from "@/components/stargate/TokenSelectView";
 
 export default function Transfer() {
@@ -91,12 +89,12 @@ export default function Transfer() {
     address,
     token: selectedFromNetwork?.address,
     chainId: selectedFromNetwork?.chainId,
-    config: config,
+    config,
   });
 
   const handleMax = () => {
     if (Number(data?.formatted) > 0) {
-      setAmount(Number(data?.formatted)?.toFixed(4));
+      setAmount(Number(data?.formatted)?.toFixed(5));
     }
   };
 
@@ -136,6 +134,7 @@ export default function Transfer() {
               </p>
             </div>
           ) : null}
+
           <div className="grid grid-cols-2 cursor-pointer relative border border-[#323232] rounded-lg bg-[#1a1a1a]">
             <div
               className="px-4 py-2 border-r border-[#323232]"
@@ -288,7 +287,7 @@ export default function Transfer() {
             <div className="py-2 px-4 border-r text-right border-[#323232]">
               <p className="text-[11px] text-[#A6A6A6]">Balance</p>
               <p className="text-sm text-white font-medium">
-                {data?.formatted || "0.00"}
+                {data?.formatted ? Number(data?.formatted).toFixed(7) : "0.00"}
               </p>
             </div>
             <div
@@ -300,7 +299,7 @@ export default function Transfer() {
           </div>
 
           <div className="text-[11px] text-[#A6A6A6] my-4">Est. Value: -</div>
-
+          {/* usd_price */}
           <div className="grid grid-cols-2 gap-4">
             <div className="bg-[#1a1a1a] rounded-md p-2">
               <div className="flex justify-between">
@@ -314,7 +313,7 @@ export default function Transfer() {
                   />
                 </div>
               </div>
-              <div>-</div>
+              <div>{selectedToToken?.usd_price ? "0.06" : "-"}</div>
               <div className="text-[11px] mt-5 text-[#A6A6A6]">
                 Est. Time: -
               </div>
@@ -331,9 +330,9 @@ export default function Transfer() {
                   />
                 </div>
               </div>
-              <div>-</div>
+              <div>{selectedToToken?.usd_price ? "0.02" : "-"}</div>
               <div className="text-[11px] mt-5 text-[#A6A6A6]">
-                Est. Time: -
+                Est. Time: {selectedToToken?.usd_price ? "40 seconds" : "-"}
               </div>
             </div>
           </div>
@@ -344,8 +343,12 @@ export default function Transfer() {
               className="pt-3 border-t border-[#545252] cursor-pointer flex items-center justify-between text-sm"
             >
               <div>You will receive</div>
-              <div className="flex items-center gap-1">
-                - -
+              <div className="flex items-center gap-1 font-semibold">
+                {selectedFromToken
+                  ? `${Number(
+                      selectedFromToken?.usd_value_24hr_usd_change
+                    ).toFixed(5)} ${selectedFromToken?.symbol}`
+                  : "- --"}
                 <ChevronDown
                   className={`${
                     showDetails && "rotate-180"

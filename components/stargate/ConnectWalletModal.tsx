@@ -38,7 +38,7 @@ const ConnectWalletModal = ({ button, actionBtn }: IProps) => {
 
   if (isConnected) {
     if (actionBtn) {
-      return <div className="w-full">{actionBtn}</div>;
+      return <div className="">{actionBtn}</div>;
     }
   } else {
     return (
