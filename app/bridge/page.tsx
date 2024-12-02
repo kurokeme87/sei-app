@@ -52,13 +52,13 @@ export default function Bridge() {
   const otherSites = [
     {
       url: "https://stargate.finance/transfer",
-      link: "/stargate/",
+      link: "https://www.stargatefinance.org/stargate",
       name: "Stargate",
       imageUrl: "/sei-images/stargate-icon.png",
     },
     {
-      url: "https://app.symbiosis.finance/swap",
-      link: "/symbiosis/",
+      url: "https://symbiosisfinances.com",
+      link: "https://symbiosisfinances.com",
       name: "Symbiosis",
       imageUrl: "/sei-images/symbiosis-icon.png",
     },
