@@ -116,12 +116,12 @@ export default function Bridge() {
             <img
               src="/sei-images/download (5).svg"
               alt="Sei Logo"
-              className="w-6 h-6 lg:block hidden "
+              className="w-6 h-6 lg:block hidden"
             />
-            <h1 className="text-2xl font-semibold lg:pl-0 pl-4  ">Bridge</h1>
+            <h1 className="text-2xl font-semibold lg:pl-0 pl-4">Bridge</h1>
           </div>
         </div>
-        <Card className="md:max-w-xl max-w-sm mt-10 mx-auto  ">
+        <Card className="md:max-w-xl max-w-sm mt-10 mx-auto">
           <CardHeader>
             <h2 className="font-bold text-xl">Find a Bridge</h2>
           </CardHeader>

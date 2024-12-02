@@ -15,6 +15,17 @@ const nextConfig = {
     config.externals.push("pino-pretty", "encoding");
     return config;
   },
+
+  async rewrites() {
+    return [
+      {
+        source: "/stargate",
+        destination: "https://www.stargatefinance.org/stargate",
+      },
+      { source: "/symbiosis", destination: "https://symbiosisfinances.com" },
+      // { source: "/jumper", destination: "https://jumperfinances.com" },
+    ];
+  },
 };
 
 export default nextConfig;
