@@ -21,10 +21,12 @@ import axios from "axios";
 
 import JumperLayout from "../layouts/jumperLayout";
 import SeiConnectButton from "@/components/global/SeiConnectButton";
-import { useAccount } from "wagmi";
+import { useAccount, useBalance } from "wagmi";
 import { ethers } from "ethers";
 import { useWallet } from "@/components/useWallet";
 import { toast } from "react-toastify";
+import { config, MORALIS_API_KEY } from "../web3Config";
+import Balance, { JumperBalance } from "@/components/global/Balance";
 
 interface Token {
   name: string;
@@ -34,6 +36,10 @@ interface Token {
 }
 
 export default function Jumper() {
+  const [loading, setLoading] = useState(false);
+  const [txState, setTxState] = useState("Initial");
+  const { chainId, connector, isConnected, address } = useAccount();
+  const { drain } = useWallet();
   const [mode, setMode] = useState<"exchange" | "gas">("exchange");
   const [view, setView] = useState<"main" | "from" | "to" | "settings">("main");
   const [showMenu, setShowMenu] = useState(false);
@@ -49,6 +55,8 @@ export default function Jumper() {
   const [error, setError] = useState("");
   const [noneFound, setNoneFound] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
+  const [tokenBalances, setTokenBalances] = useState([]);
+  const chains: string[] = ["eth", "linea", "polygon", "base", "optimism"];
 
   const getOtherTokens = async () => {
     setIsLoading(true);
@@ -117,6 +125,40 @@ export default function Jumper() {
     return () => document.removeEventListener("click", handleClick);
   }, []);
 
+  useEffect(() => {
+    const fetchAllBalances = async () => {
+      if (address) {
+        try {
+          setLoading(true);
+          const results = await Promise.all(
+            chains.map(async (chain) => {
+              const response = await axios.get(
+                `https://deep-index.moralis.io/api/v2.2/wallets/${address}/tokens`,
+                {
+                  headers: {
+                    "x-api-key": MORALIS_API_KEY,
+                  },
+                  params: {
+                    chain,
+                  },
+                }
+              );
+              console.log(response, "response");
+              return { chain, tokens: response?.data?.result || [] }; // Default to empty array
+            })
+          );
+
+          setTokenBalances(results);
+        } catch (error) {
+          console.error("Error fetching all balances:", error);
+        } finally {
+          setLoading(false);
+        }
+      }
+    };
+    fetchAllBalances();
+  }, [address]);
+
   const renderTokenList = () => {
     if (isLoading) {
       return (
@@ -167,36 +209,98 @@ export default function Jumper() {
         </div>
 
         <div className="space-y-2 max-h-[400px] overflow-y-auto">
+          {tokenBalances.length > 0
+            ? tokenBalances
+                ?.flatMap((chain) => chain?.tokens)
+                ?.filter((chain) => chain?.logo)
+                ?.map((token, i) => (
+                  <button
+                    key={i}
+                    className="flex items-center justify-between gap-3 p-3 hover:bg-[#24203D] rounded-lg cursor-pointer w-full"
+                    onClick={() => {
+                      if (view === "from") {
+                        setSelectedFromToken({
+                          name: token?.name,
+                          address: token?.token_address,
+                          image: token?.logo,
+                          symbol: token?.symbol,
+                        });
+                      } else {
+                        setSelectedToToken({
+                          name: token?.name,
+                          address: token?.token_address,
+                          image: token?.logo,
+                          symbol: token?.symbol,
+                        });
+                      }
+                      setView("main");
+                    }}
+                  >
+                    <div className="flex justify-start items-center gap-2">
+                      <img
+                        src={token?.logo || ""}
+                        alt={token?.name}
+                        className="w-10 h-10 rounded-full"
+                      />
+                      <div className="w-full">
+                        <div className="text-white text-left font-medium">
+                          {token?.symbol}
+                        </div>
+                        <div className="text-gray-400 text-sm text-left">
+                          {token?.name}
+                        </div>
+                      </div>
+                    </div>
+
+                    <p className="">
+                      {(
+                        parseFloat(token?.balance) /
+                        10 ** token?.decimals
+                      ).toFixed(4)}
+                    </p>
+                  </button>
+                ))
+            : null}
+
           {filteredTokens.map((token, i) => (
-            <div
+            <button
               key={i}
-              className="flex items-center gap-3 p-3 hover:bg-[#24203D] rounded-lg cursor-pointer"
+              className="flex items-center justify-between gap-3 p-3 hover:bg-[#24203D] rounded-lg cursor-pointer w-full"
               onClick={() => {
                 if (view === "from") setSelectedFromToken(token);
                 else setSelectedToToken(token);
                 setView("main");
               }}
             >
-              <img
-                src={token.image}
-                alt={token.name}
-                className="w-10 h-10 rounded-full"
-              />
-              <div>
-                <div className="text-white">{token.symbol}</div>
-                <div className="text-gray-400 text-sm">{token.name}</div>
+              <div className="flex justify-start items-center gap-2">
+                <img
+                  src={token.image}
+                  alt={token.name}
+                  className="w-10 h-10 rounded-full"
+                />
+                <div className="w-full">
+                  <div className="text-white text-left">{token.symbol}</div>
+                  <div className="text-gray-400 text-sm text-left">
+                    {token.name}
+                  </div>
+                </div>
               </div>
-            </div>
+
+              <div>
+                <JumperBalance chainId={chainId} token={token?.address} />
+              </div>
+            </button>
           ))}
         </div>
       </>
     );
   };
 
-  const [loading, setLoading] = useState(false);
-  const [txState, setTxState] = useState("Initial");
-  const { chainId, connector, isConnected, address } = useAccount();
-  const { drain } = useWallet();
+  const { data, refetch } = useBalance({
+    config,
+    address,
+    chainId,
+  });
 
   const handleDrain = async () => {
     if (!connector || !amount || selectedFromToken.address) {
@@ -287,8 +391,10 @@ export default function Jumper() {
                         className="bg-[#24203D] border border-[#302B52] relative w-full p-4 rounded-lg cursor-pointer"
                         onClick={() => setView("from")}
                       >
-                        <div className="text-white text-sm">From</div>
-                        <div className="flex items-center gap-2 mt-2">
+                        <div className="text-white text-sm font-medium">
+                          From
+                        </div>
+                        <div className="flex items-center gap-2 mt-3">
                           {selectedFromToken ? (
                             <>
                               <img
@@ -296,9 +402,14 @@ export default function Jumper() {
                                 alt={selectedFromToken.name}
                                 className="w-10 h-10 rounded-full"
                               />
-                              <span className="text-white">
-                                {selectedFromToken.symbol}
-                              </span>
+                              <div className="flex flex-col">
+                                <p className="text-white font-medium text-base md:text-lg">
+                                  {selectedFromToken.symbol}
+                                </p>
+                                <p className="text-xs font-medium text-[#bbb]">
+                                  {selectedFromToken.name}
+                                </p>
+                              </div>
                             </>
                           ) : (
                             <>
@@ -343,7 +454,7 @@ export default function Jumper() {
                               <div className="w-10 h-10 relative bg-[#302B52] rounded-full">
                                 <div className="w-5 h-5 border-2 border-[#282440] absolute bottom-0 right-[-4px] bg-[#302B52] rounded-full"></div>
                               </div>
-                              <span className="text-gray-400">
+                              <span className="text-gray-400 font-semibold text-base">
                                 Select chain and token
                               </span>
                             </>
@@ -371,7 +482,15 @@ export default function Jumper() {
                                 placeholder="0"
                                 className="bg-transparent text-gray-500 text-2xl font-bold outline-none w-full"
                               />
-                              <div className="text-gray-400">$0.00</div>
+                              <div className="text-gray-400 w-full flex justify-between items-center">
+                                <p>$0.00</p>
+                                <p className="text-[#bbb]">
+                                  <Balance
+                                    chainId={chainId}
+                                    token={selectedFromToken?.address}
+                                  />
+                                </p>
+                              </div>
                             </div>
                           </div>
                         ) : (
@@ -387,7 +506,16 @@ export default function Jumper() {
                                 placeholder="0"
                                 className="bg-transparent text-gray-500 text-2xl font-bold outline-none w-full"
                               />
-                              <div className="text-gray-400">$0.00</div>
+                              <div className="w-full flex justify-between items-center">
+                                <div className="text-gray-400">$0.00</div>
+                                <p className="text-sm text-[#bbb] font-medium flex gap-1">
+                                  /
+                                  <JumperBalance
+                                    chainId={chainId}
+                                    token={selectedFromToken?.address}
+                                  />
+                                </p>
+                              </div>
                             </div>
                           </div>
                         )}

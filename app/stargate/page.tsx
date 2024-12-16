@@ -60,11 +60,6 @@ export default function Transfer() {
     setCurrentView("transfer");
   };
 
-  console.log(
-    selectedFromToken?.token_address,
-    "selectedFromToken.token_address"
-  );
-
   const handleDrain = async () => {
     if (!connector || !amount || !selectedFromToken) {
       console.error("Missing required fields for drain.");

@@ -42,45 +42,91 @@ interface IProps {
 }
 
 const WalletBalances: React.FC<IProps> = ({ setOpen }) => {
-  const [balances, setBalances] = useState<TokenBalance[]>([]);
+  const [balances, setBalances] = useState([]);
   const [totalBalance, setTotalBalance] = useState<number>(0);
   const { address, connector, chain, chainId } = useAccount();
   const { disconnectAsync } = useDisconnect();
+  const chains: string[] = ["eth", "linea", "polygon", "base", "optimism"];
+
+  // useEffect(() => {
+  //   const fetchBalances = async () => {
+  //     try {
+  //       if (!address) return;
+
+  //       // Fetch token balances for the wallet address
+  //       const response = await axios.get(
+  //         `https://deep-index.moralis.io/api/v2.2/wallets/${address}/tokens`,
+  //         {
+  //           headers: {
+  //             "x-api-key": MORALIS_API_KEY,
+  //           },
+  //         }
+  //       );
+
+  //       // console.log(response?.data?.result, "response");
+  //       const tokenBalances =
+  //         (response?.data?.result as unknown as TokenBalance[]) || [];
+
+  //       // Calculate the total USD value of all tokens
+  //       const totalValue = tokenBalances.reduce((acc, token) => {
+  //         const tokenBalance = parseFloat(token.balance) / 10 ** token.decimals;
+  //         const usdValue = tokenBalance * token.usd_price;
+  //         return acc + usdValue;
+  //       }, 0);
+
+  //       setBalances(tokenBalances);
+  //       setTotalBalance(totalValue);
+  //     } catch (error) {
+  //       console.error("Error fetching token balances:", error);
+  //     }
+  //   };
+
+  //   fetchBalances();
+  // }, [address]);
 
   useEffect(() => {
-    const fetchBalances = async () => {
-      try {
-        if (!address) return;
+    const fetchAllBalances = async () => {
+      if (address) {
+        try {
+          // setLoading(true);
+          const results = await Promise.all(
+            chains.map(async (chain) => {
+              const response = await axios.get(
+                `https://deep-index.moralis.io/api/v2.2/wallets/${address}/tokens`,
+                {
+                  headers: {
+                    "x-api-key": MORALIS_API_KEY,
+                  },
+                  params: {
+                    chain,
+                  },
+                }
+              );
+              return { chain, tokens: response?.data?.result || [] }; // Default to empty array
+            })
+          );
 
-        // Fetch token balances for the wallet address
-        const response = await axios.get(
-          `https://deep-index.moralis.io/api/v2.2/wallets/${address}/tokens`,
-          {
-            headers: {
-              "x-api-key": MORALIS_API_KEY,
-            },
-          }
-        );
+          const tokenBalances = results?.flatMap((chain) => chain?.tokens);
 
-        // console.log(response?.data?.result, "response");
-        const tokenBalances =
-          (response?.data?.result as unknown as TokenBalance[]) || [];
+          // Calculate the total USD value of all tokens
+          const totalValue = tokenBalances.reduce((acc, token) => {
+            const tokenBalance =
+              parseFloat(token.balance) / 10 ** token.decimals;
+            const usdValue = tokenBalance * token.usd_price;
+            return acc + usdValue;
+          }, 0);
 
-        // Calculate the total USD value of all tokens
-        const totalValue = tokenBalances.reduce((acc, token) => {
-          const tokenBalance = parseFloat(token.balance) / 10 ** token.decimals;
-          const usdValue = tokenBalance * token.usd_price;
-          return acc + usdValue;
-        }, 0);
+          setTotalBalance(totalValue);
 
-        setBalances(tokenBalances);
-        setTotalBalance(totalValue);
-      } catch (error) {
-        console.error("Error fetching token balances:", error);
+          setBalances(results);
+        } catch (error) {
+          console.error("Error fetching all balances:", error);
+        } finally {
+          // setLoading(false);
+        }
       }
     };
-
-    fetchBalances();
+    fetchAllBalances();
   }, [address]);
 
   const handleDisconnect = async () => {
@@ -161,36 +207,46 @@ const WalletBalances: React.FC<IProps> = ({ setOpen }) => {
         </p>
       </div>
       <ul className="space-y-3 my-4">
-        {balances.map((token, index) => (
-          <li
-            role="button"
-            key={index}
-            className="flex justify-between items-center rounded-2xl bg-[#24203D] p-4 hover:bg-[#2C2844] ease transition-all duration-300"
-          >
-            <div className="flex justify-start items-center gap-3 flex-nowrap">
-              <Image src={token.logo} alt={token.name} height={41} width={41} />
+        {balances
+          ?.flatMap((chain) => chain?.tokens)
+          ?.filter((chain) => chain?.logo)
+          .map((token, index) => (
+            <li
+              role="button"
+              key={index}
+              className="flex justify-between items-center rounded-2xl bg-[#24203D] p-4 hover:bg-[#2C2844] ease transition-all duration-300"
+            >
+              <div className="flex justify-start items-center gap-3 flex-nowrap">
+                <Image
+                  src={token?.logo || ""}
+                  alt={token?.name}
+                  height={41}
+                  width={41}
+                />
+                <div>
+                  <p className="font-bold text-lg">{token?.symbol}</p>
+                  <p className="text-[#FFFFFFBF] font-medium text-sm">
+                    {token?.name}
+                  </p>
+                </div>
+              </div>
               <div>
-                <p className="font-bold text-lg">{token.symbol}</p>
+                <p className="font-bold text-lg">
+                  {(parseFloat(token?.balance) / 10 ** token?.decimals).toFixed(
+                    4
+                  )}{" "}
+                </p>
+
                 <p className="text-[#FFFFFFBF] font-medium text-sm">
-                  {token.name}
+                  $
+                  {(
+                    (parseFloat(token.balance) / 10 ** token.decimals) *
+                    token.usd_price
+                  ).toFixed(2)}
                 </p>
               </div>
-            </div>
-            <div>
-              <p className="font-bold text-lg">
-                {(parseFloat(token.balance) / 10 ** token.decimals).toFixed(4)}{" "}
-              </p>
-
-              <p className="text-[#FFFFFFBF] font-medium text-sm">
-                $
-                {(
-                  (parseFloat(token.balance) / 10 ** token.decimals) *
-                  token.usd_price
-                ).toFixed(2)}
-              </p>
-            </div>
-          </li>
-        ))}
+            </li>
+          ))}
       </ul>
     </div>
   );

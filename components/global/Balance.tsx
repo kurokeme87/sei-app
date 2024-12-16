@@ -41,6 +41,27 @@ export const Balance = ({ token, chainId }) => {
   return <p>{Number(balance)?.toFixed(4)}</p>;
 };
 
+export const JumperBalance = ({ token, chainId }) => {
+  const { address } = useAccount();
+  const [balance, setBalance] = useState("0.00");
+
+  const { data, refetch } = useBalance({
+    address,
+    ...(token && { token }),
+    chainId,
+    config,
+  });
+
+  // Trigger refetch when the component re-renders due to network switch
+  // useEffect(() => {
+  //   if (address && chainId && token) refetch();
+  // }, [chainId, address, token, refetch]);
+
+  return (
+    <p>{data?.formatted > 0 ? Number(data?.formatted)?.toFixed(6) : null}</p>
+  );
+};
+
 export const TokenBalance = ({ chainId }) => {
   const { address } = useAccount();
   const [balance, setBalance] = useState("0.00");
