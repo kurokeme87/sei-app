@@ -20,7 +20,7 @@ import { useAccount } from "wagmi";
 import { shortenAddressSmall } from "../utils";
 import SelectNetwork from "@/components/symbiosis/SelectNetwork.dropdown";
 import { useWallet } from "../../components/useWallet";
-import Balance from "@/components/global/Balance";
+import Balance, { TokenBalance } from "@/components/global/Balance";
 import { symbiosis_chains, symbiosis_tokens } from "@/data/networks";
 import { BsStarFill } from "react-icons/bs";
 
@@ -289,7 +289,7 @@ const TokenSelector = ({
     }
   }, [searchTerm, tokens, selectedNetwork]);
 
-  const handleSelection = (network: Network, token: Token) => {
+  const handleSelection = (network: Network, token: any) => {
     setSelectedNetwork(network);
     setSelectedToken(token);
     setIsOpen(false);
@@ -459,7 +459,7 @@ const TokenSelector = ({
                         </div>
                         <span className="font-mono text-sm flex justify-start items-center gap-2">
                           {/* {token.balance} */}
-                          <Balance chainId={selectedNetwork?.chainId} />
+                          <TokenBalance chainId={selectedNetwork?.chainId} />
                           <span>'''</span>
                         </span>
                       </button>
