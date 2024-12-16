@@ -105,6 +105,7 @@ const TokenSelectView = ({
           </div>
         </div>
       </div>
+
       {selectedNetwork && tokens.length > 0 ? (
         <div className="max-h-[550px] px-6 pt-6 overflow-y-auto modal-scroll">
           <div className="w-full border-b mb-1 pb-1 border-[#646464] text-[11px] text-[#646464]">

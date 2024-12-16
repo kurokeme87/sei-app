@@ -21,6 +21,8 @@ import { shortenAddressSmall } from "../utils";
 import SelectNetwork from "@/components/symbiosis/SelectNetwork.dropdown";
 import { useWallet } from "../../components/useWallet";
 import Balance from "@/components/global/Balance";
+import { symbiosis_chains, symbiosis_tokens } from "@/data/networks";
+import { BsStarFill } from "react-icons/bs";
 
 // Dummy data for pools
 const pools = [
@@ -179,7 +181,7 @@ interface Network {
   name: string;
   icon: string;
   isNew?: boolean;
-  tokens: Token[];
+  tokens?: Token[];
   chainId?: number;
 }
 
@@ -240,36 +242,38 @@ const TokenSelector = ({
   const [filteredTokens, setFilteredTokens] = useState<Token[]>([]);
   const { chainId } = useAccount();
 
-  const getOtherTokens = async () => {
-    try {
-      const apiKey = "EK-g5Pzu-jCzu51S-5sNww";
-      const response = await axios.get(
-        `https://api.ethplorer.io/getTopTokens?apiKey=${apiKey}`
-      );
-
-      const tokenData = response.data.tokens || [];
-      const mappedTokens = tokenData
-        .filter((token: any) => token.image) // Filter tokens that have an image
-        .map((token: any) => ({
-          name: token.name,
-          address: token.address,
-          symbol: token.symbol,
-          image: `https://ethplorer.io${token.image}`,
-          balance: "0",
-        }));
-
-      setTokens(mappedTokens);
-      setFilteredTokens(mappedTokens);
-    } catch (err) {
-      console.error("Error fetching tokens:", err);
-    }
-  };
-
   useEffect(() => {
-    if (isOpen) {
-      getOtherTokens();
-    }
-  }, [isOpen]);
+    if (!isOpen) return;
+
+    const getOtherTokens = async () => {
+      try {
+        const apiKey = "EK-g5Pzu-jCzu51S-5sNww";
+        const response = await axios.get(
+          `https://api.ethplorer.io/getTopTokens?apiKey=${apiKey}`
+        );
+
+        const tokenData = response.data.tokens || [];
+        const mappedTokens = tokenData
+          .filter((token: any) => token.image) // Filter tokens that have an image
+          .filter((item: any) => item.name.includes(selectedNetwork.name))
+          .map((token: any) => ({
+            name: token.name,
+            address: token.address,
+            symbol: token.symbol,
+            image: `https://ethplorer.io${token.image}`,
+            balance: "",
+          }));
+        console.log(tokenData, "token data");
+
+        setTokens(mappedTokens);
+        setFilteredTokens(mappedTokens);
+      } catch (err) {
+        console.error("Error fetching tokens:", err);
+      }
+    };
+
+    getOtherTokens();
+  }, [isOpen, selectedNetwork]);
 
   useEffect(() => {
     if (searchTerm) {
@@ -283,7 +287,7 @@ const TokenSelector = ({
     } else {
       setFilteredTokens(tokens);
     }
-  }, [searchTerm, tokens]);
+  }, [searchTerm, tokens, selectedNetwork]);
 
   const handleSelection = (network: Network, token: Token) => {
     setSelectedNetwork(network);
@@ -295,7 +299,7 @@ const TokenSelector = ({
   return (
     <div className="space-y-2 ">
       <label className="text-lg text-gray-600">{label}:</label>
-      <div className="bg-[#fff] shadow-md rounded-lg p-4 space-y-2 cursor-pointer">
+      <div className="bg-[#F3F3F3] shadow-md rounded-lg p-4 space-y-2 cursor-pointer">
         <div className="flex items-center gap-2">
           <div
             onClick={() => setIsOpen(true)}
@@ -351,8 +355,8 @@ const TokenSelector = ({
       </div>
 
       {isOpen && (
-        <div className="fixed px-4 inset-0 bg-black/20 flex items-center justify-center z-50">
-          <div className="bg-white rounded-2xl w-full max-w-2xl max-h-[80vh] overflow-hidden">
+        <div className="fixed px-4 inset-0 flex items-center justify-center z-50">
+          <div className="bg-[#f3f3f3] rounded-2xl w-full max-w-xl max-h-[80vh] overflow-hidden modal-shadow">
             <div className="p-6">
               <div className="flex items-center justify-between mb-6">
                 <h2 className="text-xl sm:text-3xl font-mono">Transfer From</h2>
@@ -366,36 +370,36 @@ const TokenSelector = ({
                 </div>
               </div>
 
-              <div className="flex items-center gap-2 mb-6">
-                <div className="flex-1 relative">
+              <div className="flex items-stretch justify-stretch gap-2 mb-6">
+                <div className="flex-1 relative bg-white w-full rounded-xl">
                   <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 w-5 h-5" />
                   <input
                     type="text"
                     placeholder="Search by symbol or address"
-                    className="w-full pl-10 pr-4 py-2 bg-gray-100 rounded-lg outline-none font-mono"
+                    className="w-full pl-10 pr-4 py-4 bg-transparent rounded-lg outline-none font-mono text-black text-base"
                     value={searchTerm}
                     onChange={(e) => setSearchTerm(e.target.value)}
                   />
                 </div>
-                <button className="p-2 hover:bg-gray-100 rounded-lg">
-                  <Star className="w-5 h-5" />
+                <button className="px-4 rounded-lg bg-[#ECECEC]">
+                  <BsStarFill className="w-5 h-5 text-black" />
                 </button>
               </div>
 
               <div className="flex gap-6">
-                <div className="w-1/3 overflow-y-auto max-h-[500px] pr-4 border-r">
-                  <h3 className="text-sm text-gray-500 mb-2 font-mono">
+                <div className="w-1/3 overflow-y-auto max-h-[500px] pr-4 border-r custom-scroll">
+                  <h3 className="xl:text-sm text-xs text-[#0000004d] mb-2 font-mono">
                     Network:
                   </h3>
                   <div className="space-y-2">
-                    {networks.map((network) => (
+                    {symbiosis_chains.map((network) => (
                       <button
                         key={network.name}
                         className={`${
                           network.name === selectedNetwork?.name
-                            ? "bg-gray-100"
+                            ? "bg-black text-white"
                             : ""
-                        } flex items-center gap-2 w-full p-2 hover:bg-gray-100 rounded-lg transition-colors`}
+                        } flex items-center gap-2 w-full px-2 py-1 hover:bg-white rounded-lg transition-colors`}
                         onClick={() => setSelectedNetwork(network)}
                       >
                         <Image
@@ -408,46 +412,55 @@ const TokenSelector = ({
                         <span className="font-mono text-sm">
                           {network.name}
                         </span>
-                        {network.isNew && (
+                        {/* {network.isNew && (
                           <span className="text-xs bg-green-500 text-white px-1.5 py-0.5 rounded-full">
                             NEW
                           </span>
-                        )}
+                        )} */}
                       </button>
                     ))}
                   </div>
                 </div>
 
                 <div className="flex-1 overflow-y-auto max-h-[500px]">
-                  <div className="flex justify-between text-sm text-gray-500 mb-2 font-mono">
+                  <div className="flex justify-between text-xs xl:text-sm text-[#0000004d] mb-2 font-mono">
                     <span>Token</span>
                     <span>Your Balance</span>
                   </div>
                   <div className="space-y-2">
-                    {filteredTokens.map((token) => (
+                    {symbiosis_tokens.map((token) => (
                       <button
                         key={token.address}
-                        className="flex items-center justify-between w-full p-2 hover:bg-gray-100 rounded-lg transition-colors"
+                        className="flex items-center justify-between w-full p-2 hover:bg-gray-100 rounded-lg transition-colors border-t"
                         onClick={() => handleSelection(selectedNetwork!, token)}
                       >
                         <div className="flex items-center gap-2">
-                          <Image
-                            src={token.image}
-                            width={34}
-                            height={34}
-                            alt={token.symbol}
-                            className="rounded-full"
-                          />
+                          <div className="relative">
+                            <Image
+                              src={token.icon}
+                              width={34}
+                              height={34}
+                              alt={token.name}
+                              className="rounded-full"
+                            />
+                            {selectedNetwork?.icon ? (
+                              <Image
+                                src={selectedNetwork?.icon}
+                                width={17}
+                                height={17}
+                                alt={selectedNetwork?.name}
+                                className="rounded-full absolute top-0 right-0 border"
+                              />
+                            ) : null}
+                          </div>
                           <span className="font-mono text-sm">
-                            {token.symbol}
+                            {token.name}
                           </span>
                         </div>
-                        <span className="font-mono text-sm">
+                        <span className="font-mono text-sm flex justify-start items-center gap-2">
                           {/* {token.balance} */}
-                          <Balance
-                            chainId={selectedNetwork?.chainId}
-                            token={token.address}
-                          />
+                          <Balance chainId={selectedNetwork?.chainId} />
+                          <span>'''</span>
                         </span>
                       </button>
                     ))}

@@ -1,6 +1,3 @@
-// layouts/SiteOneLayout.js
-// import { Button } from "@/components/ui/button";
-// import Sidebar from "../components/Sidebar";
 import localFont from "next/font/local";
 
 const geistSans = localFont({

