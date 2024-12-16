@@ -10,8 +10,9 @@
     "@typescript-eslint/no-var-requires": "off",
     "@typescript-eslint/no-explicit-any": "off",
     "@typescript-eslint/ban-ts-comment": "off",
-
+    
     // Additional common rule modifications (optional)
+    "react/no-unescaped-entities": "off",
     "react/react-in-jsx-scope": "off",
     "jsx-a11y/anchor-is-valid": "off",
     "react-hooks/exhaustive-deps": "off",
