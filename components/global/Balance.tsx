@@ -58,7 +58,7 @@ export const JumperBalance = ({ token, chainId }) => {
   // }, [chainId, address, token, refetch]);
 
   return (
-    <p>{data?.formatted > 0 ? Number(data?.formatted)?.toFixed(6) : null}</p>
+    <p>{+data?.formatted > 0 ? Number(data?.formatted)?.toFixed(6) : null}</p>
   );
 };
 
