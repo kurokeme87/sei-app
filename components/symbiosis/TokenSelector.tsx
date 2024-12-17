@@ -14,14 +14,14 @@ import { config } from "@/app/web3Config";
 
 type ITokenSelector = {
   isWithMax?: boolean;
-  label: string;
-  amount: string | number;
-  onSelect: (network: Network, token: Token) => void;
-  selectedNetwork: any;
-  setAmount: Dispatch<SetStateAction<string | number>>;
-  setSelectedNetwork: Dispatch<SetStateAction<any>>;
-  selectedToken: any;
-  setSelectedToken: Dispatch<SetStateAction<any>>;
+  label?: string;
+  amount?: string | number;
+  onSelect?: (network: Network, token: Token) => void;
+  selectedNetwork?: any;
+  setAmount?: Dispatch<SetStateAction<string | number>>;
+  setSelectedNetwork?: Dispatch<SetStateAction<any>>;
+  selectedToken?: any;
+  setSelectedToken?: Dispatch<SetStateAction<any>>;
 };
 
 type ITokens = {
