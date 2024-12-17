@@ -364,7 +364,14 @@ export default function Jumper() {
               </div>
 
               <div>
-                <JumperBalance chainId={chainId} token={token?.address} />
+                <JumperBalance
+                  chainId={
+                    view === "from"
+                      ? selectedFromChain?.chainId
+                      : selectedToChain?.chainId
+                  }
+                  token={token?.address}
+                />
               </div>
             </button>
           ))}
@@ -480,7 +487,7 @@ export default function Jumper() {
               {view === "main" ? (
                 <>
                   <div className="flex justify-between items-center mb-6">
-                    <h2 className="text-white font-bold text-2xl md:text-3xl">
+                    <h2 className="text-white font-bold text-xl md:text-2xl lg:text-[27px]">
                       {mode === "exchange" ? "Exchange" : "Gas"}
                     </h2>
                     <Settings
@@ -734,7 +741,7 @@ export default function Jumper() {
                       <p className="text-lg">20/20</p>
                     </div>
                     <div className="bg-[#24203D] p-4 rounded-lg flex items-center justify-between border mb-2 border-[#302B52]">
-                      <div className="flex text-white  items-center gap-3">
+                      <div className="flex text-white items-center gap-3">
                         <ArrowRightLeft className="r" />
                         <p className="text-lg">Exchanges</p>
                       </div>

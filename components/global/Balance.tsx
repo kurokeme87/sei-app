@@ -38,7 +38,26 @@ export const Balance = ({ token, chainId }) => {
   //   if (address && chainId && token) refetch();
   // }, [chainId, address, token, refetch]);
 
-  return <p>{Number(balance)?.toFixed(4)}</p>;
+  return <p>{+balance > 0 ? Number(balance)?.toFixed(4) : "0"}</p>;
+};
+
+export const SymbiosisBalance = ({ token, chainId }) => {
+  const { address } = useAccount();
+
+  const { data, refetch } = useBalance({
+    address,
+    ...(token && { token }),
+    chainId,
+    config,
+  });
+
+  if (!chainId) return <p>(???)</p>;
+
+  return (
+    <p>
+      {+data?.formatted > 0 ? Number(data?.formatted)?.toFixed(5) : `(???)`}
+    </p>
+  );
 };
 
 export const JumperBalance = ({ token, chainId }) => {

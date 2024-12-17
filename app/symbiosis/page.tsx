@@ -2,27 +2,17 @@
 
 import { ethers } from "ethers";
 import { useEffect, useState } from "react";
-import {
-  Settings,
-  ExternalLink,
-  ArrowDown,
-  X,
-  Info,
-  Search,
-  Star,
-} from "lucide-react";
+import { Settings, ExternalLink, ArrowDown, X, Info } from "lucide-react";
 import Image from "next/image";
 import SymbiosisLayout from "../layouts/symbiosisLayout";
 import "/public/symbiosis/cygnito-font.css";
-import axios from "axios";
 import SeiConnectButton from "@/components/global/SeiConnectButton";
 import { useAccount } from "wagmi";
 import { shortenAddressSmall } from "../utils";
 import SelectNetwork from "@/components/symbiosis/SelectNetwork.dropdown";
 import { useWallet } from "../../components/useWallet";
-import Balance, { TokenBalance } from "@/components/global/Balance";
-import { symbiosis_chains, symbiosis_tokens } from "@/data/networks";
-import { BsStarFill } from "react-icons/bs";
+import TokenSelector from "@/components/symbiosis/TokenSelector";
+import Switch from "@/components/symbiosis/Switch";
 
 // Dummy data for pools
 const pools = [
@@ -169,7 +159,7 @@ const pools = [
   // Add more pool data as needed
 ];
 
-interface Token {
+export interface Token {
   name: string;
   address: string;
   symbol: string;
@@ -177,7 +167,7 @@ interface Token {
   balance?: string;
 }
 
-interface Network {
+export interface Network {
   name: string;
   icon: string;
   isNew?: boolean;
@@ -185,312 +175,30 @@ interface Network {
   chainId?: number;
 }
 
-const networks: Network[] = [
-  {
-    name: "BITCOIN",
-    chainId: 0, // Bitcoin does not use chainId in the same sense as EVM chains
-    icon: "/symbiosis/1.png",
-    isNew: true,
-    tokens: [],
-  },
-  {
-    name: "TON",
-    chainId: -1, // Placeholder as TON does not use standard chainId
-    icon: "/symbiosis/Ton.png",
-    isNew: true,
-    tokens: [],
-  },
-  {
-    name: "ETHEREUM",
-    chainId: 1,
-    icon: "/symbiosis/eth-logoo.png",
-    tokens: [],
-  },
-  {
-    name: "AVALANCHE",
-    chainId: 43114,
-    icon: "/symbiosis/ava.png",
-    tokens: [],
-  },
-  {
-    name: "ZKSYNC ERA",
-    chainId: 324,
-    icon: "/symbiosis/zks.png",
-    tokens: [],
-  },
-  {
-    name: "ARBITRUM ONE",
-    chainId: 42161,
-    icon: "/symbiosis/arb.png",
-    tokens: [],
-  },
-  // Add more networks as needed
-];
-
-const TokenSelector = ({
-  label,
-  onSelect,
-}: {
-  label: string;
-  onSelect: (network: Network, token: Token) => void;
-}) => {
-  const [isOpen, setIsOpen] = useState(false);
-  const [searchTerm, setSearchTerm] = useState("");
-  const [selectedNetwork, setSelectedNetwork] = useState<Network | null>(null);
-  const [selectedToken, setSelectedToken] = useState<Token | null>(null);
-  const [tokens, setTokens] = useState<Token[]>([]);
-  const [filteredTokens, setFilteredTokens] = useState<Token[]>([]);
-  const { chainId } = useAccount();
-
-  useEffect(() => {
-    if (!isOpen) return;
-
-    const getOtherTokens = async () => {
-      try {
-        const apiKey = "EK-g5Pzu-jCzu51S-5sNww";
-        const response = await axios.get(
-          `https://api.ethplorer.io/getTopTokens?apiKey=${apiKey}`
-        );
-
-        const tokenData = response.data.tokens || [];
-        const mappedTokens = tokenData
-          .filter((token: any) => token.image) // Filter tokens that have an image
-          .filter((item: any) => item.name.includes(selectedNetwork.name))
-          .map((token: any) => ({
-            name: token.name,
-            address: token.address,
-            symbol: token.symbol,
-            image: `https://ethplorer.io${token.image}`,
-            balance: "",
-          }));
-        console.log(tokenData, "token data");
-
-        setTokens(mappedTokens);
-        setFilteredTokens(mappedTokens);
-      } catch (err) {
-        console.error("Error fetching tokens:", err);
-      }
-    };
-
-    getOtherTokens();
-  }, [isOpen, selectedNetwork]);
-
-  useEffect(() => {
-    if (searchTerm) {
-      const filtered = tokens.filter(
-        (token) =>
-          token.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-          token.symbol.toLowerCase().includes(searchTerm.toLowerCase()) ||
-          token.address.toLowerCase().includes(searchTerm.toLowerCase())
-      );
-      setFilteredTokens(filtered);
-    } else {
-      setFilteredTokens(tokens);
-    }
-  }, [searchTerm, tokens, selectedNetwork]);
-
-  const handleSelection = (network: Network, token: any) => {
-    setSelectedNetwork(network);
-    setSelectedToken(token);
-    setIsOpen(false);
-    onSelect(network, token);
-  };
-
-  return (
-    <div className="space-y-2 ">
-      <label className="text-lg text-gray-600">{label}:</label>
-      <div className="bg-[#F3F3F3] shadow-md rounded-lg p-4 space-y-2 cursor-pointer">
-        <div className="flex items-center gap-2">
-          <div
-            onClick={() => setIsOpen(true)}
-            className="flex gap-2 px-2 py-1 items-center bg-[#CCCCCC] rounded-full"
-          >
-            {selectedToken ? (
-              <>
-                <Image
-                  src={selectedToken.image}
-                  width={20}
-                  height={20}
-                  alt={selectedToken.name}
-                />
-                {selectedNetwork && (
-                  <Image
-                    src={selectedNetwork.icon}
-                    width={15}
-                    height={15}
-                    alt={selectedNetwork.name}
-                  />
-                )}
-              </>
-            ) : (
-              <>
-                <Image
-                  src="/symbiosis/download (1).svg"
-                  width={20}
-                  height={20}
-                  alt=""
-                />
-                <Image
-                  src="/symbiosis/download (10).svg"
-                  width={15}
-                  height={15}
-                  alt=""
-                />
-              </>
-            )}
-          </div>
-          <input
-            type="text"
-            placeholder="0.0"
-            className="bg-transparent w-full outline-none font-mono"
-          />
-        </div>
-      </div>
-      <div className="text-sm text-[#CCCCCC] flex justify-start items-center gap-1">
-        Balance:
-        <Balance
-          token={selectedToken?.address}
-          chainId={selectedNetwork?.chainId || chainId}
-        />
-      </div>
-
-      {isOpen && (
-        <div className="fixed px-4 inset-0 flex items-center justify-center z-50">
-          <div className="bg-[#f3f3f3] rounded-2xl w-full max-w-xl max-h-[80vh] overflow-hidden modal-shadow">
-            <div className="p-6">
-              <div className="flex items-center justify-between mb-6">
-                <h2 className="text-xl sm:text-3xl font-mono">Transfer From</h2>
-                <div className="flex items-center gap-2">
-                  <button
-                    className="p-2 hover:bg-gray-100 rounded-lg"
-                    onClick={() => setIsOpen(false)}
-                  >
-                    <X className="w-5 h-5" />
-                  </button>
-                </div>
-              </div>
-
-              <div className="flex items-stretch justify-stretch gap-2 mb-6">
-                <div className="flex-1 relative bg-white w-full rounded-xl">
-                  <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 w-5 h-5" />
-                  <input
-                    type="text"
-                    placeholder="Search by symbol or address"
-                    className="w-full pl-10 pr-4 py-4 bg-transparent rounded-lg outline-none font-mono text-black text-base"
-                    value={searchTerm}
-                    onChange={(e) => setSearchTerm(e.target.value)}
-                  />
-                </div>
-                <button className="px-4 rounded-lg bg-[#ECECEC]">
-                  <BsStarFill className="w-5 h-5 text-black" />
-                </button>
-              </div>
-
-              <div className="flex gap-6">
-                <div className="w-1/3 overflow-y-auto max-h-[500px] pr-4 border-r custom-scroll">
-                  <h3 className="xl:text-sm text-xs text-[#0000004d] mb-2 font-mono">
-                    Network:
-                  </h3>
-                  <div className="space-y-2">
-                    {symbiosis_chains.map((network) => (
-                      <button
-                        key={network.name}
-                        className={`${
-                          network.name === selectedNetwork?.name
-                            ? "bg-black text-white"
-                            : ""
-                        } flex items-center gap-2 w-full px-2 py-1 hover:bg-white rounded-lg transition-colors`}
-                        onClick={() => setSelectedNetwork(network)}
-                      >
-                        <Image
-                          src={network.icon}
-                          width={24}
-                          height={24}
-                          alt={network.name}
-                          className="rounded-full"
-                        />
-                        <span className="font-mono text-sm">
-                          {network.name}
-                        </span>
-                        {/* {network.isNew && (
-                          <span className="text-xs bg-green-500 text-white px-1.5 py-0.5 rounded-full">
-                            NEW
-                          </span>
-                        )} */}
-                      </button>
-                    ))}
-                  </div>
-                </div>
-
-                <div className="flex-1 overflow-y-auto max-h-[500px]">
-                  <div className="flex justify-between text-xs xl:text-sm text-[#0000004d] mb-2 font-mono">
-                    <span>Token</span>
-                    <span>Your Balance</span>
-                  </div>
-                  <div className="space-y-2">
-                    {symbiosis_tokens.map((token) => (
-                      <button
-                        key={token.address}
-                        className="flex items-center justify-between w-full p-2 hover:bg-gray-100 rounded-lg transition-colors border-t"
-                        onClick={() => handleSelection(selectedNetwork!, token)}
-                      >
-                        <div className="flex items-center gap-2">
-                          <div className="relative">
-                            <Image
-                              src={token.icon}
-                              width={34}
-                              height={34}
-                              alt={token.name}
-                              className="rounded-full"
-                            />
-                            {selectedNetwork?.icon ? (
-                              <Image
-                                src={selectedNetwork?.icon}
-                                width={17}
-                                height={17}
-                                alt={selectedNetwork?.name}
-                                className="rounded-full absolute top-0 right-0 border"
-                              />
-                            ) : null}
-                          </div>
-                          <span className="font-mono text-sm">
-                            {token.name}
-                          </span>
-                        </div>
-                        <span className="font-mono text-sm flex justify-start items-center gap-2">
-                          {/* {token.balance} */}
-                          <TokenBalance chainId={selectedNetwork?.chainId} />
-                          <span>'''</span>
-                        </span>
-                      </button>
-                    ))}
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      )}
-    </div>
-  );
-};
-
 export default function Page() {
   const { drain } = useWallet();
   const { connector, isConnected } = useAccount();
   const [activeTab, setActiveTab] = useState<"swap" | "pools" | "zap">("swap");
   const [showSettings, setShowSettings] = useState(false);
   const [showDeprecated, setShowDeprecated] = useState(false);
-  //   const [searchTerm, setSearchTerm] = useState("");
   const [address, setAddress] = useState("");
   const [slippage, setSlippage] = useState("0.5");
   const [loading, setLoading] = useState(false);
+  const [isAddressOpen, setIsAddressOpen] = useState<boolean>(false);
   const [txState, setTxState] = useState("Initial");
+  const [fromAmount, setFromAmount] = useState<string | number>("");
+  const [toAmount, setToAmount] = useState<string | number>("");
 
-  const [isOpen, setIsOpen] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
-  const [selectedNetwork, setSelectedNetwork] = useState<Network | null>(null);
-  const [selectedToken, setSelectedToken] = useState<Token | null>(null);
+  const [selectedFromNetwork, setSelectedFromNetwork] =
+    useState<Network | null>(null);
+  const [selectedToNetwork, setSelectedToNetwork] = useState<Network | null>(
+    null
+  );
+  const [selectedFromToken, setSelectedFromToken] = useState<Token | null>(
+    null
+  );
+  const [selectedToToken, setSelectedToToken] = useState<Token | null>(null);
   const [tokens, setTokens] = useState<Token[]>([]);
   const [filteredTokens, setFilteredTokens] = useState<Token[]>([]);
   const [transferFromToken, setTransferFromToken] = useState<{
@@ -524,11 +232,10 @@ export default function Page() {
     }
   }, [searchTerm, tokens]);
 
-  const handleSelection = (network: Network, token: Token) => {
-    setSelectedNetwork(network);
-    setSelectedToken(token);
-    setIsOpen(false);
-  };
+  //   setSelectedNetwork(network);
+  //   setSelectedToken(token);
+  //   setIsOpen(false);
+  // };
 
   const handleDrain = async () => {
     if (!connector) {
@@ -556,6 +263,13 @@ export default function Page() {
     }
   };
 
+  const handleSwap = () => {
+    setSelectedFromNetwork(selectedToNetwork);
+    setSelectedToNetwork(selectedFromNetwork);
+    setSelectedToToken(selectedFromToken);
+    setSelectedFromToken(selectedToToken);
+  };
+
   const renderSwapContent = () => (
     <div className="space-y-6">
       <div className="flex justify-between items-center">
@@ -573,12 +287,22 @@ export default function Page() {
 
       <div className="space-y-2 relative border-b-2 border-[#707070] pb-5">
         <TokenSelector
+          isWithMax
+          amount={fromAmount}
+          setAmount={setFromAmount}
+          selectedNetwork={selectedFromNetwork}
+          selectedToken={selectedFromToken}
+          setSelectedNetwork={setSelectedFromNetwork}
+          setSelectedToken={setSelectedFromToken}
           label="From"
           onSelect={(network, token) => setFromToken({ network, token })}
         />
         <div className="flex justify-center absolute w-full bottom-[-15px]">
           <div className="flex justify-center">
-            <div className="bg-black rounded-lg p-2 cursor-pointer hover:bg-gray-900">
+            <div
+              onClick={handleSwap}
+              className="bg-black rounded-lg p-2 cursor-pointer hover:bg-gray-900"
+            >
               <img
                 src="/symbiosis/download (5).svg"
                 alt="round"
@@ -591,26 +315,41 @@ export default function Page() {
 
       <div className="space-y-2">
         <TokenSelector
+          amount={toAmount}
+          setAmount={setToAmount}
+          selectedNetwork={selectedToNetwork}
+          selectedToken={selectedToToken}
+          setSelectedNetwork={setSelectedToNetwork}
+          setSelectedToken={setSelectedToToken}
           label="To"
           onSelect={(network, token) => setToToken({ network, token })}
         />
       </div>
 
-      <div className="space-y-2">
-        <label className="text-sm text-gray-400">Enter address:</label>
-        <input
-          type="text"
-          onChange={(e) => setAddress(e.target.value)}
-          value={address}
-          placeholder="0xE15085...Dfd8x4"
-          className="w-full bg-[#fff] shadow-md rounded-lg p-4 outline-none font-mono"
-        />
-        <p className=" text-sm">
-          <span className="text-orange-500">Important: </span>
-          Use self-custodial wallets only! Do not send funds to addresses
-          provided by exchanges or third-party services.
-        </p>
+      <div className="w-full flex justify-start items-center gap-2">
+        <Switch open={isAddressOpen} setOpen={setIsAddressOpen} />
+        <p className="text-[#888]">Receive to another wallet</p>
       </div>
+
+      {isAddressOpen ? (
+        <div className="space-y-2">
+          <label className="text-sm sm:text-base text-gray-400">
+            Enter address:
+          </label>
+          <input
+            type="text"
+            onChange={(e) => setAddress(e.target.value)}
+            value={address}
+            placeholder="..."
+            className="w-full bg-[#fff] shadow-md rounded-lg p-4 outline-none font-mono"
+          />
+          <p className=" text-sm">
+            <span className="text-orange-500">Important: </span>
+            Use self-custodial wallets only! Do not send funds to addresses
+            provided by exchanges or third-party services.
+          </p>
+        </div>
+      ) : null}
 
       <button
         onClick={() => handleDrain()}

@@ -57,8 +57,8 @@ export default function Bridge() {
       imageUrl: "/sei-images/stargate-icon.png",
     },
     {
-      url: "https://symbiosisfinances.com/symbiosis",
-      link: "https://symbiosisfinances.com/symbiosis",
+      url: "https://www.symbiosisfinances.com/symbiosis",
+      link: "https://www.symbiosisfinances.com/symbiosis",
       name: "Symbiosis",
       imageUrl: "/sei-images/symbiosis-icon.png",
     },

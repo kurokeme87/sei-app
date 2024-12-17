@@ -1,9 +1,10 @@
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "Symbiosis",
-  description: "Symbiosis",
-  icons: "./icon.ico",
+  title: "Symbiosis | Swap",
+  description: "Symbiosis swap",
+  icons: "/symbiosis/download.svg",
+  keywords: "Symbiosis swap, symbiosis app, sei symbiosis",
 };
 
 export default function RootLayout({
