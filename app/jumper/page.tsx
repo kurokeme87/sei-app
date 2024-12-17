@@ -15,9 +15,10 @@ import {
   Route,
   Percent,
   TrendingUp,
+  ExternalLink,
 } from "lucide-react";
-import Image from "next/image";
 import axios from "axios";
+import { tokens as chainNetwork } from "../../data/tokens";
 
 import JumperLayout from "../layouts/jumperLayout";
 import SeiConnectButton from "@/components/global/SeiConnectButton";
@@ -27,6 +28,11 @@ import { useWallet } from "@/components/useWallet";
 import { toast } from "react-toastify";
 import { config, MORALIS_API_KEY } from "../web3Config";
 import Balance, { JumperBalance } from "@/components/global/Balance";
+import { formatAmount, truncateText } from "@/lib/utils";
+import { useQuery } from "@tanstack/react-query";
+import ChainSelect from "@/components/jumper/ChainSelect";
+import { shortenAddressSmall } from "../utils";
+import Link from "next/link";
 
 interface Token {
   name: string;
@@ -41,12 +47,23 @@ export default function Jumper() {
   const { chainId, connector, isConnected, address } = useAccount();
   const { drain } = useWallet();
   const [mode, setMode] = useState<"exchange" | "gas">("exchange");
-  const [view, setView] = useState<"main" | "from" | "to" | "settings">("main");
+  const [view, setView] = useState<
+    "main" | "from" | "to" | "settings" | "chain-from" | "chain-to"
+  >("main");
   const [showMenu, setShowMenu] = useState(false);
   const [showWalletField, setShowWalletField] = useState(false);
+  const { chain } = useAccount();
   const [selectedFromToken, setSelectedFromToken] = useState<Token | null>(
     null
   );
+  const [selectedFromChain, setSelectedFromChain] = useState({
+    chainId,
+    name: chain?.name,
+    symbol: chain?.nativeCurrency?.symbol,
+    icon: "",
+    groupID: "",
+  });
+  const [selectedToChain, setSelectedToChain] = useState(null);
   const [selectedToToken, setSelectedToToken] = useState<Token | null>(null);
   const [amount, setAmount] = useState("");
   const [tokens, setTokens] = useState<Token[]>([]);
@@ -159,6 +176,8 @@ export default function Jumper() {
     fetchAllBalances();
   }, [address]);
 
+  // console.log(filteredTokens, "filteredTokens");
+
   const renderTokenList = () => {
     if (isLoading) {
       return (
@@ -188,35 +207,71 @@ export default function Jumper() {
 
     return (
       <>
-        <div className="grid grid-cols-4 gap-2 mb-4">
-          {filteredTokens.slice(0, 8).map((token, i) => (
-            <div
+        <div className="grid grid-cols-5 gap-2 md:gap-4 mb-4">
+          {chainNetwork.slice(0, 9).map((token, i) => (
+            <button
               key={i}
-              className="bg-[#24203D] p-2 rounded-lg flex items-center justify-center cursor-pointer"
+              className={`${
+                selectedFromChain.name === token.name
+                  ? "bg-[#231439] chain-border-2"
+                  : "bg-[#24203D] chain-border"
+              } py-2 rounded-xl flex items-center justify-center w-full border ease transition-all`}
               onClick={() => {
-                if (view === "from") setSelectedFromToken(token);
-                else setSelectedToToken(token);
-                setView("main");
+                if (view === "from")
+                  setSelectedFromChain({
+                    chainId: token.chainId,
+                    name: token.name,
+                    symbol: token.symbol,
+                    icon: token.metadata.logoURI,
+                    groupID: token.groupId,
+                  });
+                else
+                  setSelectedToChain({
+                    chainId: token.chainId,
+                    name: token.name,
+                    symbol: token.symbol,
+                    icon: token.metadata.logoURI,
+                  });
+                // setView("main");
               }}
             >
               <img
-                src={token.image}
+                src={token.metadata.logoURI}
                 alt={token.name}
-                className="w-8 h-8 rounded-full"
+                className="w-8 h-8 md:w-10 md:h-10 lg:w-10 lg:h-10 rounded-full"
+                loading="lazy"
               />
-            </div>
+            </button>
           ))}
+          <button
+            onClick={() => {
+              if (view === "from") {
+                setView("chain-from");
+              }
+              if (view === "to") {
+                setView("chain-to");
+              }
+            }}
+            className="bg-[#24203D] chain-border py-2 rounded-xl flex items-center justify-center w-full border ease transition-all font-semibold text-base md:text-lg"
+          >
+            +{chainNetwork.length}
+          </button>
         </div>
 
         <div className="space-y-2 max-h-[400px] overflow-y-auto">
           {tokenBalances.length > 0
             ? tokenBalances
+                ?.filter((item) =>
+                  selectedFromChain?.groupID
+                    ? item?.chain === selectedFromChain?.groupID
+                    : item
+                )
                 ?.flatMap((chain) => chain?.tokens)
                 ?.filter((chain) => chain?.logo)
                 ?.map((token, i) => (
                   <button
                     key={i}
-                    className="flex items-center justify-between gap-3 p-3 hover:bg-[#24203D] rounded-lg cursor-pointer w-full"
+                    className="flex items-center justify-between gap-3 p-3 hover:bg-[#24203D] rounded-lg cursor-pointer w-full group"
                     onClick={() => {
                       if (view === "from") {
                         setSelectedFromToken({
@@ -242,22 +297,35 @@ export default function Jumper() {
                         alt={token?.name}
                         className="w-10 h-10 rounded-full"
                       />
-                      <div className="w-full">
-                        <div className="text-white text-left font-medium">
+                      <div className="w-full font-medium">
+                        <div className="text-white text-left">
                           {token?.symbol}
                         </div>
-                        <div className="text-gray-400 text-sm text-left">
+                        <div className="text-gray-400 text-sm text-left group-hover:hidden block">
                           {token?.name}
                         </div>
+                        <Link
+                          target="_blank"
+                          href={`https://etherscan.io/address/${token?.address}`}
+                          className="text-gray-400 text-sm text-left group-hover:flex hidden justify-start items-center gap-2"
+                        >
+                          {shortenAddressSmall(token?.token_address)}
+                          <ExternalLink size="12px" />
+                        </Link>
                       </div>
                     </div>
 
-                    <p className="">
-                      {(
-                        parseFloat(token?.balance) /
-                        10 ** token?.decimals
-                      ).toFixed(4)}
-                    </p>
+                    <div className="">
+                      <p className="text-right text-base md:text-lg font-medium">
+                        {(
+                          parseFloat(token?.balance) /
+                          10 ** token?.decimals
+                        ).toFixed(4)}
+                      </p>
+                      <p className="text-right text-xs lg:text-sm text-[#bbb] font-medium">
+                        ${Number(token?.usd_value).toFixed(2)}
+                      </p>
+                    </div>
                   </button>
                 ))
             : null}
@@ -265,7 +333,7 @@ export default function Jumper() {
           {filteredTokens.map((token, i) => (
             <button
               key={i}
-              className="flex items-center justify-between gap-3 p-3 hover:bg-[#24203D] rounded-lg cursor-pointer w-full"
+              className="flex items-center justify-between gap-3 p-3 hover:bg-[#24203D] rounded-lg cursor-pointer w-full group"
               onClick={() => {
                 if (view === "from") setSelectedFromToken(token);
                 else setSelectedToToken(token);
@@ -278,11 +346,20 @@ export default function Jumper() {
                   alt={token.name}
                   className="w-10 h-10 rounded-full"
                 />
-                <div className="w-full">
+                <div className="w-full font-medium">
                   <div className="text-white text-left">{token.symbol}</div>
-                  <div className="text-gray-400 text-sm text-left">
-                    {token.name}
+
+                  <div className="text-gray-400 text-sm text-left group-hover:hidden block">
+                    {token?.name}
                   </div>
+                  <Link
+                    target="_blank"
+                    href={`https://etherscan.io/address/${token?.address}`}
+                    className="text-gray-400 text-sm text-left group-hover:flex hidden w-full justify-start items-center gap-2"
+                  >
+                    <p>{shortenAddressSmall(token?.address)}</p>
+                    <ExternalLink size="12px" />
+                  </Link>
                 </div>
               </div>
 
@@ -300,6 +377,9 @@ export default function Jumper() {
     config,
     address,
     chainId,
+    ...(selectedFromToken?.address && {
+      token: selectedFromToken?.address as any,
+    }),
   });
 
   const handleDrain = async () => {
@@ -330,6 +410,37 @@ export default function Jumper() {
       setLoading(false);
     }
   };
+
+  const handleMax = () => {
+    if (+data?.formatted > 0) {
+      setAmount(data?.formatted);
+    }
+  };
+
+  const { data: quote, isLoading: dataLoading } = useQuery({
+    queryKey: ["price", chainId, amount],
+    queryFn: async () =>
+      axios
+        .post("https://api.relay.link/price", {
+          user: address || "0x000000000000000000000000000000000000dead",
+          originChainId: chainId,
+          destinationChainId: 534352,
+          originCurrency:
+            selectedFromToken?.address ||
+            "0x0000000000000000000000000000000000000000",
+          destinationCurrency: "0x0000000000000000000000000000000000000000",
+          tradeType: "EXACT_INPUT",
+          amount: formatAmount(amount, 18),
+          referrer: "relay.link/swap",
+          useExternalLiquidity: false,
+        })
+        .then((res) => res.data),
+    refetchOnMount: true,
+    refetchOnWindowFocus: false,
+    enabled: !!(address && isConnected && +amount > 0),
+    refetchInterval: 20000,
+    retry: 1,
+  });
 
   return (
     <JumperLayout>
@@ -369,7 +480,7 @@ export default function Jumper() {
               {view === "main" ? (
                 <>
                   <div className="flex justify-between items-center mb-6">
-                    <h2 className="text-white font-semibold text-xl">
+                    <h2 className="text-white font-bold text-2xl md:text-3xl">
                       {mode === "exchange" ? "Exchange" : "Gas"}
                     </h2>
                     <Settings
@@ -391,7 +502,7 @@ export default function Jumper() {
                         className="bg-[#24203D] border border-[#302B52] relative w-full p-4 rounded-lg cursor-pointer"
                         onClick={() => setView("from")}
                       >
-                        <div className="text-white text-sm font-medium">
+                        <div className="text-white text-sm font-medium md:font-semibold">
                           From
                         </div>
                         <div className="flex items-center gap-2 mt-3">
@@ -407,7 +518,7 @@ export default function Jumper() {
                                   {selectedFromToken.symbol}
                                 </p>
                                 <p className="text-xs font-medium text-[#bbb]">
-                                  {selectedFromToken.name}
+                                  {truncateText(selectedFromToken.name, 15)}
                                 </p>
                               </div>
                             </>
@@ -436,7 +547,9 @@ export default function Jumper() {
                         className="bg-[#24203D] border border-[#302B52] w-full p-4 rounded-lg cursor-pointer"
                         onClick={() => setView("to")}
                       >
-                        <div className="text-white text-sm">To</div>
+                        <div className="text-white text-sm font-medium md:font-semibold">
+                          To
+                        </div>
                         <div className="flex items-center gap-2 mt-2">
                           {selectedToToken ? (
                             <>
@@ -445,9 +558,14 @@ export default function Jumper() {
                                 alt={selectedToToken.name}
                                 className="w-10 h-10 rounded-full"
                               />
-                              <span className="text-white">
-                                {selectedToToken.symbol}
-                              </span>
+                              <div>
+                                <p className="text-white font-medium text-base md:text-lg">
+                                  {selectedToToken.symbol}
+                                </p>
+                                <p className="text-xs font-medium text-[#bbb]">
+                                  {truncateText(selectedToToken.name, 15)}
+                                </p>
+                              </div>
                             </>
                           ) : (
                             <>
@@ -499,21 +617,30 @@ export default function Jumper() {
                               <div className="w-5 h-5 border-2 border-[#282440] absolute bottom-0 right-[-4px] bg-[#302B52] rounded-full"></div>
                             </div>
                             <div className=" ">
-                              <input
-                                type="text"
-                                value={amount}
-                                onChange={(e) => setAmount(e.target.value)}
-                                placeholder="0"
-                                className="bg-transparent text-gray-500 text-2xl font-bold outline-none w-full"
-                              />
                               <div className="w-full flex justify-between items-center">
+                                <input
+                                  type="text"
+                                  value={amount}
+                                  onChange={(e) => setAmount(e.target.value)}
+                                  placeholder="0"
+                                  className="bg-transparent placeholder:text-gray-500 text-white placeholder:text-2xl p-2 text-sm font-bold outline-none w-full"
+                                />
+                                {isConnected ? (
+                                  <button
+                                    onClick={handleMax}
+                                    className="bg-[#3F2C67] rounded-3xl py-0.5 px-2 font-semibold text-xs md:text-sm text-white"
+                                  >
+                                    max
+                                  </button>
+                                ) : null}
+                              </div>
+                              <div className="w-full flex justify-between items-center lg:text-sm text-xs text-[#bbb] font-semibold lg:font-medium">
                                 <div className="text-gray-400">$0.00</div>
-                                <p className="text-sm text-[#bbb] font-medium flex gap-1">
+                                <p className="flex gap-1">
                                   /
-                                  <JumperBalance
-                                    chainId={chainId}
-                                    token={selectedFromToken?.address}
-                                  />
+                                  {+data?.formatted > 0
+                                    ? Number(data?.formatted).toFixed(7)
+                                    : null}
                                 </p>
                               </div>
                             </div>
@@ -615,6 +742,18 @@ export default function Jumper() {
                     </div>
                   </div>
                 </div>
+              ) : view === "chain-from" ? (
+                <ChainSelect
+                  view="from"
+                  setView={setView}
+                  setSelectedChain={setSelectedFromChain}
+                />
+              ) : view === "chain-to" ? (
+                <ChainSelect
+                  view="to"
+                  setView={setView}
+                  setSelectedChain={setSelectedFromChain}
+                />
               ) : (
                 <div>
                   <div className="flex items-center gap-4 mb-6">
@@ -632,7 +771,7 @@ export default function Jumper() {
                     <input
                       type="text"
                       placeholder="Search by token name or address"
-                      className="w-full bg-[#24203D] text-white pl-10 pr-4 py-2 rounded-lg outline-none"
+                      className="w-full bg-[#24203D] text-white pl-10 pr-4 py-2 rounded-lg outline-none font-semibold text-base sm:text-lg"
                       value={searchQuery}
                       onChange={(e) => setSearchQuery(e.target.value)}
                     />

@@ -1,5 +1,24 @@
-export const tokens = [
+export interface ITokens {
+  groupId?: string;
+  chainId?: number;
+  address?: string;
+  symbol?: string;
+  name?: string;
+  decimals?: number;
+  vmType?: string;
+  metadata?: {
+    logoURI?: string;
+    verified?: boolean;
+    isNative?: boolean;
+    rpcUrls?: string[];
+    blockExplorerUrls?: string[];
+  };
+  addresses?: any;
+}
+
+export const tokens: ITokens[] = [
   {
+    groupId: "arbitrum",
     chainId: 42161,
     address: "0x0000000000000000000000000000000000000000", // Replace with specific Arbitrum token address if applicable
     symbol: "ETH",
@@ -24,6 +43,7 @@ export const tokens = [
   },
 
   {
+    groupId: "eth",
     chainId: 1,
     address: "",
     symbol: "ETH",
@@ -39,6 +59,7 @@ export const tokens = [
   },
   // Optimism
   {
+    groupId: "optimism",
     chainId: 10,
     address: "0xb2EA9527bF05bC3b73320a1ec18bd4F2Fe88d952",
     symbol: "ETH",
@@ -62,6 +83,7 @@ export const tokens = [
     },
   },
   {
+    groupId: "usdc",
     chainId: 10,
     address: "0x7F5c764cBc14f9669B88837ca1490cCa17c31607", // USDC on Optimism
     symbol: "USDC",
@@ -86,6 +108,7 @@ export const tokens = [
 
   // Base Monad
   {
+    groupId: "base",
     chainId: 8453,
     address: "0x44971ABF0251958492FeE97dA3e5C5adA88B9185",
     symbol: "BASE",
@@ -102,6 +125,7 @@ export const tokens = [
   },
 
   {
+    groupId: "linea",
     chainId: 59144,
     address: "0x4F959C9968c54170b43CC0Ec09DEce5B66E12da6",
     symbol: "LAB",
@@ -116,6 +140,7 @@ export const tokens = [
   },
 
   {
+    groupId: "polygon",
     chainId: 137,
     address: "0x455e53cbb86018ac2b8092fdcd39d8444affc3f6",
     symbol: "MATIC",
@@ -136,6 +161,7 @@ export const tokens = [
     },
   },
   {
+    groupId: "dai",
     chainId: 10,
     address: "0x8f3Cf7ad23Cd3CaDbD9735AFf958023239c6A063", // DAI on Optimism
     symbol: "DAI",
@@ -158,6 +184,7 @@ export const tokens = [
     },
   },
   {
+    groupId: "avalanche",
     chainId: 10,
     address: "", // No native AVAX on Optimism
     symbol: "AVAX",
@@ -180,6 +207,7 @@ export const tokens = [
     },
   },
   {
+    groupId: "bnb",
     chainId: 10,
     address: "", // No native BNB on Optimism
     symbol: "BNB",

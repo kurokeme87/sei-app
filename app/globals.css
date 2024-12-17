@@ -151,3 +151,31 @@
     0px 6.6501px 5.32008px rgba(0, 0, 0, 0.0282725),
     0px 2.76726px 2.21381px rgba(0, 0, 0, 0.0196802);
 }
+
+.chain-border {
+  border-color: rgb(48, 43, 82);
+}
+
+.chain-border-2 {
+  border-color: rgb(101, 59, 163);
+}
+
+
+.chain-scroll::-webkit-scrollbar {
+  width: 12px;
+}
+
+/* Track */
+.chain-scroll::-webkit-scrollbar-track {
+  background: #424242;
+}
+
+/* Handle */
+.chain-scroll::-webkit-scrollbar-thumb {
+  background: #999;
+}
+
+/* Handle on hover */
+.chain-scroll::-webkit-scrollbar-thumb:hover {
+  background: #999;
+}
