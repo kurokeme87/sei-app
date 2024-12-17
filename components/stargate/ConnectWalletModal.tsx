@@ -93,7 +93,7 @@ const ConnectWalletModal = ({ button, actionBtn }: IProps) => {
               .filter((itm) => itm.name !== "Injected")
               .map((item, index) => (
                 <button
-                  onClick={() => item.connect({ chainId: item.id as any })}
+                  onClick={() => connectAsync({ connector: item })}
                   key={index}
                   className="w-full flex justify-start items-center gap-3 font-roboto hover:bg-[#1A1A1A] ease transition-colors rounded-lg p-3"
                 >
