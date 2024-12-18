@@ -1,3 +1,25 @@
+import { baseTokens } from "./symbiosis/base";
+import { ethereumTokens } from "./symbiosis/ethereum";
+import { lineaTokens } from "./symbiosis/linea";
+import { optimismTokens } from "./symbiosis/optimism";
+import { polygonTokens } from "./symbiosis/polygon";
+import { scrollTokens } from "./symbiosis/scroll";
+import { telosTokens } from "./symbiosis/telos";
+import { tronTokens } from "./symbiosis/tron";
+
+export const moralis_networks: string[] = [
+  "eth",
+  "linea",
+  "polygon",
+  "base",
+  "optimism",
+  "avalanche",
+  "gnosis",
+  "moonbeam",
+  "ronin",
+  "lisk",
+];
+
 export const network = [
   {
     groupID: "arbitrum",
@@ -254,7 +276,26 @@ export const network = [
   },
 ];
 
-export const symbiosis_chains = [
+export type TSymbiosisChains = {
+  id: number | string;
+  name: string;
+  explorer: string;
+  icon: string;
+  tokens?: any[];
+};
+
+export type ITokens = Partial<{
+  chainId: number | string;
+  name: string;
+  address: string;
+  logoURI: string;
+  symbol: string;
+  decimals: number;
+  chainURI?: string;
+  [key: string]: any;
+}>;
+
+export const symbiosis_chains: TSymbiosisChains[] = [
   {
     id: 85918,
     name: "TON",
@@ -272,6 +313,7 @@ export const symbiosis_chains = [
     name: "Ethereum",
     explorer: "https://etherscan.io",
     icon: "https://raw.githubusercontent.com/trustwallet/assets/master/blockchains/ethereum/info/logo.png",
+    tokens: ethereumTokens,
   },
   {
     id: 56,
@@ -284,6 +326,7 @@ export const symbiosis_chains = [
     name: "Polygon",
     explorer: "https://polygonscan.com",
     icon: "https://raw.githubusercontent.com/trustwallet/assets/master/blockchains/polygon/info/logo.png",
+    tokens: polygonTokens,
   },
   {
     id: 43114,
@@ -308,6 +351,7 @@ export const symbiosis_chains = [
     name: "Telos",
     explorer: "https://teloscan.io",
     icon: "https://s2.coinmarketcap.com/static/img/coins/64x64/4660.png",
+    tokens: telosTokens,
   },
   {
     id: 2222,
@@ -338,6 +382,7 @@ export const symbiosis_chains = [
     name: "Optimism",
     explorer: "https://optimistic.etherscan.io",
     icon: "https://s2.coinmarketcap.com/static/img/coins/64x64/11840.png",
+    tokens: optimismTokens,
   },
   {
     id: 1101,
@@ -350,12 +395,14 @@ export const symbiosis_chains = [
     name: "Tron",
     explorer: "https://tronscan.org",
     icon: "https://s2.coinmarketcap.com/static/img/coins/64x64/1958.png",
+    tokens: tronTokens,
   },
   {
     id: 59144,
     name: "Linea",
     explorer: "https://lineascan.build",
     icon: "https://l2beat.com/icons/linea.png",
+    tokens: lineaTokens,
   },
   {
     id: 5000,
@@ -368,12 +415,14 @@ export const symbiosis_chains = [
     name: "Base",
     explorer: "https://basescan.org",
     icon: "https://raw.githubusercontent.com/allush/assets/main/images/blockchains/base/logo.png",
+    tokens: baseTokens,
   },
   {
     id: 534352,
     name: "Scroll",
     explorer: "https://scrollscan.com",
     icon: "https://res.cloudinary.com/dzkjyvmsn/image/upload/v1680688496/scroll_p8h6bl.png",
+    tokens: scrollTokens,
   },
   {
     id: 169,

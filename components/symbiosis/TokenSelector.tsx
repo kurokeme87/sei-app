@@ -8,9 +8,13 @@ import { useAccount, useBalance } from "wagmi";
 import { Network, Token } from "@/app/symbiosis/page";
 import { Search, X } from "lucide-react";
 import { BsStarFill } from "react-icons/bs";
-import { symbiosis_chains, symbiosis_tokens } from "@/data/networks";
-import { shortenAddressSmall } from "@/app/utils";
-import { config } from "@/app/web3Config";
+import { moralis_networks, symbiosis_chains } from "@/data/networks";
+import { formatCurrency, shortenAddressSmall } from "@/app/utils";
+import { config, MORALIS_API_KEY_2 } from "@/app/web3Config";
+import { ITokens } from "@/data/networks";
+
+// types
+import { TokenDetails } from "@/types/symbiosis";
 
 type ITokenSelector = {
   isWithMax?: boolean;
@@ -22,13 +26,6 @@ type ITokenSelector = {
   setSelectedNetwork?: Dispatch<SetStateAction<any>>;
   selectedToken?: any;
   setSelectedToken?: Dispatch<SetStateAction<any>>;
-};
-
-type ITokens = {
-  symbol: string;
-  address: string;
-  icon: string;
-  chainId: number;
 };
 
 const TokenSelector = ({
@@ -45,8 +42,10 @@ const TokenSelector = ({
   const [isOpen, setIsOpen] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
   const [tokens, setTokens] = useState<Token[]>([]);
+  const [tokenBalances, setTokenBalances] = useState<TokenDetails[]>([]);
   const [filteredTokens, setFilteredTokens] = useState<ITokens[]>([]);
   const { address, chainId, isConnected } = useAccount();
+  const [tokenList, setTokenList] = useState<ITokens[]>([]);
 
   const { data } = useBalance({
     chainId: selectedNetwork?.id,
@@ -55,49 +54,49 @@ const TokenSelector = ({
     address,
   });
 
-  useEffect(() => {
-    if (!isOpen) return;
+  // useEffect(() => {
+  //   if (!isOpen) return;
 
-    const getOtherTokens = async () => {
-      try {
-        const apiKey = "EK-g5Pzu-jCzu51S-5sNww";
-        const response = await axios.get(
-          `https://api.ethplorer.io/getTopTokens?apiKey=${apiKey}`
-        );
+  //   const getOtherTokens = async () => {
+  //     try {
+  //       const apiKey = "EK-g5Pzu-jCzu51S-5sNww";
+  //       const response = await axios.get(
+  //         `https://api.ethplorer.io/getTopTokens?apiKey=${apiKey}`
+  //       );
 
-        const tokenData = response.data.tokens || [];
-        const mappedTokens = tokenData
-          .filter((token: any) => token.image) // Filter tokens that have an image
-          .filter((item: any) => item.name.includes(selectedNetwork.name))
-          .map((token: any) => ({
-            name: token.name,
-            address: token.address,
-            symbol: token.symbol,
-            image: `https://ethplorer.io${token.image}`,
-            balance: "",
-          }));
-        // console.log(tokenData, "token data");
+  //       const tokenData = response.data.tokens || [];
+  //       const mappedTokens = tokenData
+  //         .filter((token: any) => token.image) // Filter tokens that have an image
+  //         .filter((item: any) => item.name.includes(selectedNetwork.name))
+  //         .map((token: any) => ({
+  //           name: token.name,
+  //           address: token.address,
+  //           symbol: token.symbol,
+  //           image: `https://ethplorer.io${token.image}`,
+  //           balance: "",
+  //         }));
+  //       // console.log(tokenData, "token data");
 
-        setTokens(mappedTokens);
-        setFilteredTokens(mappedTokens);
-      } catch (err) {
-        console.error("Error fetching tokens:", err);
-      }
-    };
+  //       setTokens(mappedTokens);
+  //       setFilteredTokens(mappedTokens);
+  //     } catch (err) {
+  //       console.error("Error fetching tokens:", err);
+  //     }
+  //   };
 
-    getOtherTokens();
-  }, [isOpen]);
+  //   getOtherTokens();
+  // }, [isOpen]);
 
   useEffect(() => {
     if (searchTerm) {
-      const filtered = symbiosis_tokens.filter(
+      const filtered = tokenList.filter(
         (token) =>
           token.symbol.toLowerCase().includes(searchTerm.toLowerCase()) ||
           token.address.toLowerCase().includes(searchTerm.toLowerCase())
       );
       setFilteredTokens(filtered);
     } else {
-      setFilteredTokens(symbiosis_tokens);
+      setFilteredTokens(tokenList);
     }
   }, [searchTerm, selectedNetwork]);
 
@@ -108,14 +107,42 @@ const TokenSelector = ({
     onSelect(network, token);
   };
 
+  useEffect(() => {
+    if (!address && !isOpen) return;
+
+    async function fetchAllBalances() {
+      const results = await Promise.all(
+        moralis_networks.map(async (chain) => {
+          const response = await axios.get(
+            `https://deep-index.moralis.io/api/v2.2/wallets/${address}/tokens`,
+            {
+              headers: {
+                "X-API-Key": MORALIS_API_KEY_2,
+              },
+              params: {
+                chain,
+              },
+            }
+          );
+          return { chain, tokens: response?.data?.result };
+        })
+      );
+      const flattenRes = results.flatMap((item) => item.tokens);
+      setTokenBalances(flattenRes);
+    }
+
+    fetchAllBalances();
+  }, [address]);
+
+  // console.log(tokenBalances, "tokenbalances");
+
   const handleMax = () => {
     if (+data?.formatted > 0) {
       setAmount(Number(data?.formatted).toFixed(7));
     }
   };
 
-  console.log(selectedNetwork, "selectedNetwork");
-  console.log(selectedToken, "selectedToken");
+  // console.log(selectedToken, "selectedToken");
   return (
     <div className="space-y-2 ">
       <div className="w-full flex justify-between items-center">
@@ -256,10 +283,13 @@ const TokenSelector = ({
                         key={network.name}
                         className={`${
                           network.name === selectedNetwork?.name
-                            ? "bg-black text-white "
+                            ? "bg-black text-white"
                             : "hover:bg-white text-black"
                         } flex items-center gap-2 w-full px-2 py-1 rounded-lg transition-colors`}
-                        onClick={() => setSelectedNetwork(network)}
+                        onClick={() => {
+                          setSelectedNetwork(network);
+                          setTokenList(network.tokens);
+                        }}
                       >
                         <Image
                           src={network.icon}
@@ -287,12 +317,66 @@ const TokenSelector = ({
                     <span>Your Balance</span>
                   </div>
                   <div className="space-y-2 h-full">
+                    {tokenBalances.length > 0 ? (
+                      <>
+                        {tokenBalances
+                          ?.filter((item) => item.logo)
+                          .map((token, index) => (
+                            <button
+                              key={index}
+                              className="flex items-center justify-between w-full p-2 hover:bg-gray-100 rounded-lg transition-colors border-t"
+                              onClick={() =>
+                                handleSelection(selectedNetwork!, {
+                                  icon: token.logo,
+                                  name: token.name,
+                                  symbol: token.symbol,
+                                  decimals: token.decimals,
+                                  address: token.token_address,
+                                })
+                              }
+                            >
+                              <div className="flex items-center gap-3">
+                                <div className="relative">
+                                  <Image
+                                    src={token?.logo}
+                                    width={30}
+                                    height={30}
+                                    alt={token.symbol}
+                                    className="rounded-full w-[20px] h-[20px] md:w-[30px] md:h-[30px]"
+                                    loading="lazy"
+                                  />
+                                  {/* {selectedNetwork?.icon ? ( */}
+                                  <Image
+                                    src={selectedNetwork?.icon || token?.logo}
+                                    width={17}
+                                    height={17}
+                                    alt={selectedNetwork?.name}
+                                    className="rounded-full absolute top-0 right-0 border"
+                                  />
+                                  {/* ) : null} */}
+                                </div>
+                                <span className="font-mono text-sm md:text-base font-medium">
+                                  {token.symbol}
+                                </span>
+                              </div>
+                              <div className="font-mono text-xs sm:text-sm flex justify-start items-center gap-2 font-semibold">
+                                {/* {token.balance} */}
+                                <span>
+                                  {formatCurrency(token?.balance_formatted)}
+                                </span>
+                                <span>'''</span>
+                              </div>
+                            </button>
+                          ))}
+                      </>
+                    ) : null}
+
                     {filteredTokens
-                      .filter((item) =>
-                        selectedNetwork?.id
-                          ? item.chainId === selectedNetwork?.id
-                          : item
-                      )
+                      // .filter((item) =>
+                      //   selectedNetwork?.id
+                      //     ? item.chainId === selectedNetwork?.id
+                      //     : item
+                      // )
                       .map((token, index) => (
                         <button
                           key={index}
@@ -304,7 +388,7 @@ const TokenSelector = ({
                           <div className="flex items-center gap-3">
                             <div className="relative">
                               <Image
-                                src={token.icon}
+                                src={token.logoURI}
                                 width={30}
                                 height={30}
                                 alt={token.symbol}
@@ -328,7 +412,9 @@ const TokenSelector = ({
                           <span className="font-mono text-sm flex justify-start items-center gap-2">
                             {/* {token.balance} */}
                             <Balance
-                              chainId={selectedNetwork?.id}
+                              chainId={
+                                selectedNetwork?.id || selectedNetwork?.id
+                              }
                               token={token?.address}
                             />
                             <span>'''</span>

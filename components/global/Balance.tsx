@@ -20,7 +20,8 @@ export const Balance = ({ token, chainId }) => {
 
   const { data, refetch } = useBalance({
     address,
-    ...(token && { token }),
+    ...(token &&
+      token !== "0x0000000000000000000000000000000000000000" && { token }),
     chainId,
     config,
   });

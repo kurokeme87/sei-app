@@ -13,6 +13,7 @@ import SelectNetwork from "@/components/symbiosis/SelectNetwork.dropdown";
 import { useWallet } from "../../components/useWallet";
 import TokenSelector from "@/components/symbiosis/TokenSelector";
 import Switch from "@/components/symbiosis/Switch";
+import { ITokens } from "@/data/networks";
 
 // Dummy data for pools
 const pools = [
