@@ -16,6 +16,7 @@
     "react/react-in-jsx-scope": "off",
     "jsx-a11y/anchor-is-valid": "off",
     "react-hooks/exhaustive-deps": "off",
+    "react/display-name": "off",
 
     "@next/next/no-img-element": "off"
   }
