@@ -286,7 +286,7 @@ export default function Page() {
         </div>
       </div>
 
-      <div className="space-y-2 relative border-b-2 border-[#707070] pb-5">
+      <div className="space-y-2 relative border-b-2 border-[#707070]">
         <TokenSelector
           isWithMax
           amount={fromAmount}

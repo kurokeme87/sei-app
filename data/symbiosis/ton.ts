@@ -1,0 +1,166 @@
+import { ITokens } from "../networks";
+
+export const tonTokens: ITokens[] = [
+  {
+    address: "EQCxE6mUtQJKFnGfaROTKOt1lZbDiiX1kCixRv7Nw2Id_sDs",
+    name: "USDT",
+    symbol: "USDT",
+    decimals: 6,
+    type: "JETTON",
+    logoURI:
+      "https://raw.githubusercontent.com/foxwallet/tokenlist/main/img/USDT.webp",
+  },
+  {
+    address: "EQAvlWFDxGF2lXm67y4yzC17wYKD9A0guwPkMs1gOsM__NOT",
+    name: "Notcoin",
+    symbol: "NOT",
+    decimals: 9,
+    type: "JETTON",
+    logoURI:
+      "https://raw.githubusercontent.com/foxwallet/tokenlist/main/img/NOT.webp",
+  },
+  {
+    address: "EQD0laik0FgHV8aNfRhebi8GDG2rpDyKGXem0MBfya_Ew1-8",
+    name: "Gomining",
+    symbol: "GOMINING",
+    decimals: 18,
+    type: "JETTON",
+    logoURI:
+      "https://raw.githubusercontent.com/foxwallet/tokenlist/main/img/GOMINING.webp",
+  },
+  {
+    address: "EQBZ_cafPyDr5KUTs0aNxh0ZTDhkpEZONmLJA2SNGlLm4Cko",
+    name: "Resistance Dog",
+    symbol: "REDO",
+    decimals: 9,
+    type: "JETTON",
+    logoURI:
+      "https://raw.githubusercontent.com/foxwallet/tokenlist/main/img/REDO.webp",
+  },
+  {
+    address: "EQBlqsm144Dq6SjbPI4jjZvA1hqTIP3CvHovbIfW_t-SCALE",
+    name: "Scaleton",
+    symbol: "SCALE",
+    decimals: 9,
+    logoURI: "ipfs://QmSMiXsZYMefwrTQ3P6HnDQaCpecS4EWLpgKK5EX1G8iA8",
+    type: "JETTON",
+  },
+  {
+    address: "EQA2kCVNwVsil2EM2mB0SkXytxCqQjS4mttjDpnXmwG9T6bO",
+    name: "STON",
+    symbol: "STON",
+    decimals: 9,
+    logoURI: "https://static.ston.fi/logo/ston_symbol.png",
+    type: "JETTON",
+  },
+  {
+    address: "EQDv-yr41_CZ2urg2gfegVfa44PDPjIK9F-MilEDKDUIhlwZ",
+    name: "ANON",
+    symbol: "ANON",
+    decimals: 9,
+    logoURI: "https://i.ibb.co/0MZg87z/IMG-8399.png",
+    type: "JETTON",
+  },
+  {
+    address: "EQCdpz6QhJtDtm2s9-krV2ygl45Pwl-KJJCV1-XrP-Xuuxoq",
+    name: "$PUNK",
+    symbol: "PUNK",
+    decimals: 9,
+    logoURI: "https://punk-metaverse.fra1.digitaloceanspaces.com/logo/punk.png",
+    type: "JETTON",
+  },
+  {
+    address: "EQC47093oX5Xhb0xuk2lCr2RhS8rj-vul61u4W2UH5ORmG_O",
+    name: "Gram",
+    symbol: "GRAM",
+    decimals: 9,
+    logoURI: "https://gramcoin.org/img/icon.png",
+    type: "JETTON",
+  },
+  {
+    address: "EQDCJL0iQHofcBBvFBHdVG233Ri2V4kCNFgfRT-gqAd3Oc86",
+    name: "Fanzee Token",
+    symbol: "FNZ",
+    decimals: 9,
+    logoURI:
+      "https://media.fanz.ee/images/91ee938a92934656a01131c569b377b6.png",
+    type: "JETTON",
+  },
+  {
+    address: "EQBynBO23ywHy_CgarY9NK9FTz0yDsG82PtcbSTQgGoXwiuA",
+    name: "Tether USD",
+    symbol: "jUSDT",
+    decimals: 6,
+    logoURI:
+      "https://bridge.ton.org/token/1/0xdac17f958d2ee523a2206206994597c13d831ec7.png",
+    type: "JETTON",
+  },
+  {
+    address: "EQCBdxpECfEPH2wUxi1a6QiOkSf-5qDjUWqLCUuKtD-GLINT",
+    name: "Glint Coin",
+    symbol: "GLINT",
+    decimals: 9,
+    logoURI: "https://nft.ton.diamonds/glint_meta.png",
+    type: "JETTON",
+  },
+  {
+    address: "EQCIXQn940RNcOk6GzSorRSiA9WZC9xUz-6lyhl6Ap6na2sh",
+    name: "Shards of Notcoin NFT bond",
+    symbol: "wNOT",
+    decimals: 9,
+    logoURI: "https://shardify.app/tokens/notcoin/image.png",
+    type: "JETTON",
+  },
+  {
+    address: "EQCcLAW537KnRg_aSPrnQJoyYjOZkzqYp6FVmRUvN1crSazV",
+    name: "Ambra",
+    symbol: "AMBR",
+    decimals: 9,
+    logoURI:
+      "ipfs://bafybeicsvozntp5iatwad32qgvisjxshop62erwohaqnajgsmkl77b6uh4",
+    type: "JETTON",
+  },
+  {
+    address: "EQCM3B12QK1e4yZSf8GtBRT0aLMNyEsBc_DhVfRRtOEffLez",
+    name: "Proxy TON",
+    symbol: "pTON",
+    decimals: 9,
+    logoURI: "https://static.ston.fi/logo/ton_symbol.png",
+    type: "JETTON",
+  },
+  {
+    address: "EQAQXlWJvGbbFfE8F3oS8s87lIgdovS455IsWFaRdmJetTon",
+    name: "JetTon",
+    symbol: "JETTON",
+    decimals: 9,
+    logoURI:
+      "https://raw.githubusercontent.com/JetTon-Bot/JetTon/main/jetton-256.png",
+    type: "JETTON",
+  },
+  {
+    address: "EQCJbp0kBpPwPoBG-U5C-cWfP_jnksvotGfArPF50Q9Qiv9h",
+    name: "Ton Raffles Token",
+    symbol: "RAFF",
+    decimals: 9,
+    logoURI: "https://tonraffles.store/raffjetton/jetton.svg",
+    type: "JETTON",
+  },
+  {
+    address: "EQCvxJy4eG8hyHBFsZ7eePxrRsUQSFE_jpptRAYBmcG_DOGS",
+    name: "Dogs",
+    symbol: "DOGS",
+    decimals: 9,
+    logoURI:
+      "https://raw.githubusercontent.com/foxwallet/tokenlist/main/img/DOGS.webp",
+    type: "JETTON",
+  },
+  {
+    address: "EQAfzzRcfpnQeIUeNfXrn6p_TGhk-Cne7MnRvT93jry8HMJd",
+    name: "NEUTON",
+    symbol: "NEUTON",
+    decimals: 9,
+    logoURI:
+      "https://raw.githubusercontent.com/foxwallet/tokenlist/main/img/NEUTON.webp",
+    type: "JETTON",
+  },
+];

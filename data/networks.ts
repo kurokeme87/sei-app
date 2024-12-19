@@ -1,11 +1,32 @@
+import { arbitrumTokens } from "./symbiosis/arbitrum";
+import { arbitrumNovaTokens } from "./symbiosis/arbitrum-nova";
+import { avalancheTokens } from "./symbiosis/avalanche";
+import { bahamutTokens } from "./symbiosis/bahamut";
 import { baseTokens } from "./symbiosis/base";
+import { bitcoinTokens } from "./symbiosis/bitcoin";
+import { blastTokens } from "./symbiosis/blast";
+import { bnbTokens } from "./symbiosis/bnb";
+import { bobaTokens } from "./symbiosis/boba";
+import { cronosTokens } from "./symbiosis/cronos";
 import { ethereumTokens } from "./symbiosis/ethereum";
+import { gravityTokens } from "./symbiosis/gravity";
 import { lineaTokens } from "./symbiosis/linea";
+import { mantaTokens } from "./symbiosis/manta";
+import { mantleTokens } from "./symbiosis/mantle";
+import { merlinTokens } from "./symbiosis/merlin";
+import { metisTokens } from "./symbiosis/metis";
+import { morphTokens } from "./symbiosis/morph";
 import { optimismTokens } from "./symbiosis/optimism";
 import { polygonTokens } from "./symbiosis/polygon";
 import { scrollTokens } from "./symbiosis/scroll";
+import { seiTokens } from "./symbiosis/sei";
+import { taikoTokens } from "./symbiosis/taiko";
 import { telosTokens } from "./symbiosis/telos";
+import { tonTokens } from "./symbiosis/ton";
 import { tronTokens } from "./symbiosis/tron";
+import { zetaChainTokens } from "./symbiosis/zeta-chain";
+import { zklinkTokens } from "./symbiosis/zklink";
+import { zkSyncEraTokens } from "./symbiosis/zkSyncEra";
 
 export const moralis_networks: string[] = [
   "eth",
@@ -301,12 +322,14 @@ export const symbiosis_chains: TSymbiosisChains[] = [
     name: "TON",
     explorer: "https://tonviewer.com",
     icon: "https://s2.coinmarketcap.com/static/img/coins/64x64/11419.png",
+    tokens: tonTokens,
   },
   {
     id: 3652501241,
     name: "Bitcoin",
     explorer: "https://mempool.space",
     icon: "https://s2.coinmarketcap.com/static/img/coins/64x64/1.png",
+    tokens: bitcoinTokens,
   },
   {
     id: 1,
@@ -320,31 +343,29 @@ export const symbiosis_chains: TSymbiosisChains[] = [
     name: "BNB",
     explorer: "https://bscscan.com",
     icon: "https://raw.githubusercontent.com/trustwallet/assets/master/blockchains/smartchain/info/logo.png",
+    tokens: bnbTokens,
   },
-  {
-    id: 137,
-    name: "Polygon",
-    explorer: "https://polygonscan.com",
-    icon: "https://raw.githubusercontent.com/trustwallet/assets/master/blockchains/polygon/info/logo.png",
-    tokens: polygonTokens,
-  },
+
   {
     id: 43114,
     name: "Avalanche",
     explorer: "https://snowtrace.io",
     icon: "https://raw.githubusercontent.com/trustwallet/assets/master/blockchains/avalanchex/info/logo.png",
+    tokens: avalancheTokens,
   },
   {
     id: 288,
     name: "Boba Ethereum",
     explorer: "https://eth.bobascan.com",
     icon: "https://raw.githubusercontent.com/allush/assets/main/images/blockchains/boba-ethereum/logo.png",
+    tokens: bobaTokens,
   },
   {
     id: 56288,
     name: "Boba BNB",
     explorer: "https://bnb.bobascan.com",
     icon: "https://raw.githubusercontent.com/allush/assets/main/images/blockchains/boba-bnb/logo.png",
+    tokens: bobaTokens,
   },
   {
     id: 40,
@@ -364,18 +385,21 @@ export const symbiosis_chains: TSymbiosisChains[] = [
     name: "ZkSync Era",
     explorer: "https://era.zksync.network",
     icon: "https://s2.coinmarketcap.com/static/img/coins/64x64/24091.png",
+    tokens: zkSyncEraTokens,
   },
   {
     id: 42161,
     name: "Arbitrum One",
     explorer: "https://arbiscan.io",
     icon: "https://s2.coinmarketcap.com/static/img/coins/64x64/11841.png",
+    tokens: arbitrumTokens,
   },
   {
     id: 42170,
     name: "Arbitrum Nova",
     explorer: "https://nova.arbiscan.io",
     icon: "https://l2beat.com/icons/nova.png",
+    tokens: arbitrumNovaTokens,
   },
   {
     id: 10,
@@ -383,6 +407,13 @@ export const symbiosis_chains: TSymbiosisChains[] = [
     explorer: "https://optimistic.etherscan.io",
     icon: "https://s2.coinmarketcap.com/static/img/coins/64x64/11840.png",
     tokens: optimismTokens,
+  },
+  {
+    id: 137,
+    name: "Polygon",
+    explorer: "https://polygonscan.com",
+    icon: "https://raw.githubusercontent.com/trustwallet/assets/master/blockchains/polygon/info/logo.png",
+    tokens: polygonTokens,
   },
   {
     id: 1101,
@@ -409,6 +440,7 @@ export const symbiosis_chains: TSymbiosisChains[] = [
     name: "Mantle",
     explorer: "https://explorer.mantle.xyz",
     icon: "https://s2.coinmarketcap.com/static/img/coins/64x64/27075.png",
+    tokens: mantleTokens,
   },
   {
     id: 8453,
@@ -429,18 +461,21 @@ export const symbiosis_chains: TSymbiosisChains[] = [
     name: "Manta",
     explorer: "https://pacific-explorer.manta.network",
     icon: "https://s2.coinmarketcap.com/static/img/coins/64x64/13631.png",
+    tokens: mantaTokens,
   },
   {
     id: 1088,
     name: "Metis",
     explorer: "https://explorer.metis.io",
     icon: "https://s2.coinmarketcap.com/static/img/coins/64x64/9640.png",
+    tokens: metisTokens,
   },
   {
     id: 5165,
     name: "Bahamut",
     explorer: "https://www.ftnscan.com",
     icon: "https://s2.coinmarketcap.com/static/img/coins/64x64/22615.png",
+    tokens: bahamutTokens,
   },
   {
     id: 34443,
@@ -459,18 +494,21 @@ export const symbiosis_chains: TSymbiosisChains[] = [
     name: "Blast",
     explorer: "https://blastscan.io",
     icon: "https://assets.coingecko.com/coins/images/35494/standard/blast2.jpeg?1708919600",
+    tokens: blastTokens,
   },
   {
     id: 4200,
     name: "Merlin",
     explorer: "https://scan.merlinchain.io",
     icon: "https://assets.coingecko.com/asset_platforms/images/188/small/merlin-chain.jpeg?1708522313",
+    tokens: merlinTokens,
   },
   {
     id: 810180,
     name: "ZkLink",
     explorer: "https://explorer.zklink.io",
     icon: "https://s2.coinmarketcap.com/static/img/coins/64x64/13039.png",
+    tokens: zklinkTokens,
   },
   {
     id: 1116,
@@ -483,24 +521,28 @@ export const symbiosis_chains: TSymbiosisChains[] = [
     name: "Taiko",
     explorer: "https://taikoscan.io",
     icon: "https://taikoscan.io/assets/taiko/images/svg/logos/chain-light.svg?v=24.5.4.0",
+    tokens: taikoTokens,
   },
   {
     id: 1329,
     name: "Sei v2",
     explorer: "https://seitrace.com",
     icon: "https://s2.coinmarketcap.com/static/img/coins/64x64/23149.png",
+    tokens: seiTokens,
   },
   {
     id: 7000,
     name: "ZetaChain",
     explorer: "https://zetachain.blockscout.com",
     icon: "https://s2.coinmarketcap.com/static/img/coins/64x64/21259.png",
+    tokens: zetaChainTokens,
   },
   {
     id: 25,
     name: "Cronos",
     explorer: "https://cronoscan.com",
     icon: "https://s2.coinmarketcap.com/static/img/coins/64x64/3635.png",
+    tokens: cronosTokens,
   },
   {
     id: 252,
@@ -513,24 +555,27 @@ export const symbiosis_chains: TSymbiosisChains[] = [
     name: "Gravity",
     explorer: "https://explorer.gravity.xyz",
     icon: "https://s2.coinmarketcap.com/static/img/coins/64x64/32120.png",
+    tokens: gravityTokens,
   },
-  {
-    id: 223,
-    name: "B² Network",
-    explorer: "https://explorer.bsquared.network",
-    icon: "https://coin-images.coingecko.com/asset_platforms/images/239/small/bsquared-network.jpeg?1713432732",
-  },
-  {
-    id: 388,
-    name: "Cronos zkEVM",
-    explorer: "https://explorer.zkevm.cronos.org/",
-    icon: "https://s2.coinmarketcap.com/static/img/coins/64x64/33873.png",
-  },
+  // {
+  //   id: 223,
+  //   name: "B² Network",
+  //   explorer: "https://explorer.bsquared.network",
+  //   icon: "https://coin-images.coingecko.com/asset_platforms/images/239/small/bsquared-network.jpeg?1713432732",
+  // },
+  // {
+  //   id: 388,
+  //   name: "Cronos zkEVM",
+  //   explorer: "https://explorer.zkevm.cronos.org/",
+  //   icon: "https://s2.coinmarketcap.com/static/img/coins/64x64/33873.png",
+
+  // },
   {
     id: 2818,
     name: "Morph",
     explorer: "https://explorer.morphl2.io",
     icon: "https://coin-images.coingecko.com/asset_platforms/images/22185/small/morph.jpg?1729659940",
+    tokens: morphTokens,
   },
 ];
 

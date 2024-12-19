@@ -1,0 +1,167 @@
+import { ITokens } from "../networks";
+
+export const zetaChainTokens: ITokens[] = [
+  {
+    address: "0x60D01EC2D5E98Ac51C8B4cF84DfCCE98D527c747",
+    name: "iZUMi Token",
+    symbol: "iZi",
+    decimals: 18,
+    logoURI:
+      "https://raw.githubusercontent.com/foxwallet/tokenlist/main/img/iZi.webp",
+  },
+  {
+    address: "0x5F0b1a82749cb4E2278EC87F8BF6B618dC71a8bf",
+    name: "Wrapped ZETA",
+    symbol: "WZETA",
+    decimals: 18,
+    logoURI:
+      "https://izumi-finance.oss-ap-southeast-1.aliyuncs.com/tokens/zeta.png",
+    tag: "recommend",
+  },
+  {
+    address: "0xd97B1de3619ed2c6BEb3860147E30cA8A7dC9891",
+    name: "ZRC20 ETH-eth_mainnet",
+    symbol: "ETH.ETH",
+    decimals: 18,
+    logoURI:
+      "https://izumi-finance.oss-ap-southeast-1.aliyuncs.com/tokens/eth.png",
+  },
+  {
+    address: "0x48f80608B672DC30DC7e3dbBd0343c5F02C738Eb",
+    name: "ZRC20 BNB-bsc_mainnet",
+    symbol: "BNB.BSC",
+    decimals: 18,
+    logoURI:
+      "https://izumi-finance.oss-ap-southeast-1.aliyuncs.com/tokens/bnb.png",
+  },
+  {
+    address: "0x13A0c5930C028511Dc02665E7285134B6d11A5f4",
+    name: "ZRC20 BTC-btc_mainnet",
+    symbol: "BTC.BTC",
+    decimals: 8,
+    logoURI:
+      "https://izumi-finance.oss-ap-southeast-1.aliyuncs.com/tokens/btc.png",
+  },
+  {
+    address: "0x91d4F0D54090Df2D81e834c3c8CE71C6c865e79F",
+    name: "ZRC20 USDT-bsc_mainnet",
+    symbol: "USDT.BSC",
+    decimals: 18,
+    logoURI:
+      "https://izumi-finance.oss-ap-southeast-1.aliyuncs.com/tokens/usdt.png",
+  },
+  {
+    address: "0x7c8dDa80bbBE1254a7aACf3219EBe1481c6E01d7",
+    name: "ZRC20 USDT-eth_mainnet",
+    symbol: "USDT.ETH",
+    decimals: 6,
+    logoURI:
+      "https://izumi-finance.oss-ap-southeast-1.aliyuncs.com/tokens/usdt.png",
+    tag: "recommend",
+  },
+  {
+    address: "0x05BA149A7bd6dC1F937fA9046A9e05C05f3b18b0",
+    name: "ZRC20 USDC-bsc_mainnet",
+    symbol: "USDC.BSC",
+    decimals: 18,
+    logoURI:
+      "https://izumi-finance.oss-ap-southeast-1.aliyuncs.com/tokens/usdc.png",
+  },
+  {
+    address: "0x0cbe0dF132a6c6B4a2974Fa1b7Fb953CF0Cc798a",
+    name: "ZRC20 USDC-eth_mainnet",
+    symbol: "USDC.ETH",
+    decimals: 6,
+    logoURI:
+      "https://izumi-finance.oss-ap-southeast-1.aliyuncs.com/tokens/usdc.png",
+  },
+  {
+    address: "0x45334a5B0a01cE6C260f2B570EC941C680EA62c0",
+    name: "Staked ZETA",
+    symbol: "stZETA",
+    decimals: 18,
+    logoURI:
+      "https://raw.githubusercontent.com/foxwallet/tokenlist/main/img/stZETA.webp",
+  },
+  {
+    address: "0x7a677e59dC2C8a42d6aF3a62748c5595034A008b",
+    name: "HUHU Cat Token",
+    symbol: "HUHU",
+    decimals: 18,
+    logoURI:
+      "https://izumi-finance.oss-ap-southeast-1.aliyuncs.com/tokens/huhu.png",
+  },
+  {
+    address: "0xc51e043B110672729d27332e1C145011065559b1",
+    name: "Zeta Cat Token",
+    symbol: "ZCat",
+    decimals: 18,
+    logoURI:
+      "https://izumi-finance.oss-ap-southeast-1.aliyuncs.com/tokens/zcat.png",
+  },
+  {
+    address: "0xcba2aeec821b0b119857a9ab39e09b034249681a",
+    name: "Accumulated Finance stZETA",
+    symbol: "stZETA",
+    decimals: 18,
+    logoURI:
+      "https://raw.githubusercontent.com/foxwallet/tokenlist/main/img/stZETA.webp",
+  },
+  {
+    address: "0x5d8dc3b34d7b07bb09495c480ad629900c0a2e02",
+    name: "Zebra USD",
+    symbol: "zbrUSD",
+    decimals: 18,
+    logoURI:
+      "https://izumi-finance.oss-ap-southeast-1.aliyuncs.com/tokens/zbrusd.png",
+  },
+  {
+    address: "0xe21399d1ad140afebeb83158f8e85ab553f03bca",
+    name: "Runes Bridge Token",
+    symbol: "RB",
+    decimals: 18,
+    logoURI:
+      "https://izumi-finance.oss-ap-southeast-1.aliyuncs.com/tokens/rb.png",
+    priceSource: "cmc:runesbridge",
+  },
+  {
+    address: "0x1e4bF3CaBD7707089138dD5a545B077413FA83FC",
+    name: "Puffer Vault",
+    symbol: "pufETH",
+    decimals: 18,
+    logoURI:
+      "https://izumi-finance.oss-ap-southeast-1.aliyuncs.com/tokens/pufeth.png",
+  },
+  {
+    address: "0x6B2a01A5f79dEb4c2f3c0eDa7b01DF456FbD726a",
+    name: "uniBTC Token",
+    symbol: "uniBTC",
+    decimals: 8,
+    logoURI:
+      "https://izumi-finance.oss-ap-southeast-1.aliyuncs.com/tokens/unibtc.png",
+  },
+  {
+    address: "0x1de70f3e971B62A0707dA18100392af14f7fB677",
+    name: "ZRC20 Base Mainnet ETH",
+    symbol: "ETH.BASE",
+    decimals: 18,
+    logoURI:
+      "https://izumi-finance.oss-ap-southeast-1.aliyuncs.com/tokens/eth.png",
+  },
+  {
+    address: "0x96152e6180e085fa57c7708e18af8f05e37b479d",
+    name: "ZRC20 USDC Base Mainnet",
+    symbol: "USDC.BASE",
+    decimals: 6,
+    logoURI:
+      "https://izumi-finance.oss-ap-southeast-1.aliyuncs.com/tokens/usdc.png",
+  },
+  {
+    address: "0x1fCca65fb6Ae3b2758b9b2B394CB227eAE404e1E",
+    name: "PumpToken BTC",
+    symbol: "pumpBTC",
+    decimals: 8,
+    logoURI:
+      "https://izumi-finance.oss-ap-southeast-1.aliyuncs.com/tokens/pumpbtc.png",
+  },
+];

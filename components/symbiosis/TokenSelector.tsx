@@ -15,6 +15,8 @@ import { ITokens } from "@/data/networks";
 
 // types
 import { TokenDetails } from "@/types/symbiosis";
+import { ethereumTokens } from "@/data/symbiosis/ethereum";
+import TokenList from "./TokenList";
 
 type ITokenSelector = {
   isWithMax?: boolean;
@@ -41,14 +43,14 @@ const TokenSelector = ({
 }: ITokenSelector) => {
   const [isOpen, setIsOpen] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
-  const [tokens, setTokens] = useState<Token[]>([]);
+  // const [tokens, setTokens] = useState<Token[]>([]);
   const [tokenBalances, setTokenBalances] = useState<TokenDetails[]>([]);
   const [filteredTokens, setFilteredTokens] = useState<ITokens[]>([]);
   const { address, chainId, isConnected } = useAccount();
-  const [tokenList, setTokenList] = useState<ITokens[]>([]);
+  const [tokenList, setTokenList] = useState<ITokens[]>(ethereumTokens);
 
-  const { data } = useBalance({
-    chainId: selectedNetwork?.id,
+  const { data, refetch } = useBalance({
+    ...(selectedNetwork?.id && { chainId: selectedNetwork?.id }),
     config,
     ...(selectedToken?.address && { token: selectedToken?.address }),
     address,
@@ -134,15 +136,18 @@ const TokenSelector = ({
     fetchAllBalances();
   }, [address]);
 
-  // console.log(tokenBalances, "tokenbalances");
-
   const handleMax = () => {
     if (+data?.formatted > 0) {
       setAmount(Number(data?.formatted).toFixed(7));
     }
   };
 
-  // console.log(selectedToken, "selectedToken");
+  useEffect(() => {
+    if (address && selectedNetwork?.id) {
+      refetch();
+    }
+  }, [address, selectedNetwork, refetch]);
+
   return (
     <div className="space-y-2 ">
       <div className="w-full flex justify-between items-center">
@@ -168,7 +173,8 @@ const TokenSelector = ({
           </div>
         ) : null}
       </div>
-      <div className="bg-[#F3F3F3] shadow-md rounded-lg p-4 space-y-2 cursor-pointer">
+
+      <div className="bg-[#F3F3F3] shadow-md rounded-lg p-2 md:p-4 space-y-2 cursor-pointer">
         <div className="flex items-center gap-2">
           <div
             onClick={() => setIsOpen(true)}
@@ -224,7 +230,7 @@ const TokenSelector = ({
             chainId={selectedNetwork?.id}
           /> */}
           <p>
-            {+data?.formatted > 0 && selectedNetwork?.id
+            {+data?.formatted > 0
               ? Number(data?.formatted).toFixed(6)
               : "(???)"}
           </p>
@@ -242,8 +248,8 @@ const TokenSelector = ({
 
       {isOpen && (
         <div className="fixed px-4 inset-0 flex items-center justify-center z-50">
-          <div className="bg-[#f3f3f3] rounded-2xl w-full max-w-xl max-h-[80vh] overflow-hidden modal-shadow">
-            <div className="p-6">
+          <div className="bg-[#f3f3f3] rounded-2xl w-full max-w-xl h-screen sm:max-h-[80vh] overflow-hidden modal-shadow">
+            <div className="py-3 px-2 sm:p-6">
               <div className="flex items-center justify-between mb-6">
                 <h2 className="text-xl sm:text-3xl font-mono">Transfer From</h2>
                 <div className="flex items-center gap-2">
@@ -256,23 +262,23 @@ const TokenSelector = ({
                 </div>
               </div>
 
-              <div className="flex items-stretch justify-stretch gap-2 mb-6">
+              <div className="flex items-stretch justify-stretch gap-2 mb-3 sm:mb-6">
                 <div className="flex-1 relative bg-white w-full rounded-xl">
                   <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 w-5 h-5" />
                   <input
                     type="text"
                     placeholder="Search by symbol or address"
-                    className="w-full pl-10 pr-4 py-4 bg-transparent rounded-lg outline-none font-mono text-black text-base"
+                    className="w-full pl-10 pr-4 py-3 m:py-4 bg-transparent rounded-lg outline-none font-mono text-black text-xs sm:text-base"
                     value={searchTerm}
                     onChange={(e) => setSearchTerm(e.target.value)}
                   />
                 </div>
                 <button className="px-4 rounded-lg bg-[#ECECEC]">
-                  <BsStarFill className="w-5 h-5 text-black" />
+                  <BsStarFill className="sm:w-5 sm:h-5 text-black" />
                 </button>
               </div>
 
-              <div className="flex gap-6">
+              <div className="flex gap-1 sm:gap-6">
                 <div className="w-1/3 overflow-y-auto max-h-[500px] pr-4 border-r custom-scroll">
                   <h3 className="xl:text-sm text-xs text-[#0000004d] mb-2 font-mono">
                     Network:
@@ -296,9 +302,9 @@ const TokenSelector = ({
                           width={18}
                           height={18}
                           alt={network.name}
-                          className="rounded-full"
+                          className="rounded-full w-[14px] h-[14px] md:w-[18px] md:h-[18px]"
                         />
-                        <span className="font-mono text-sm">
+                        <span className="font-mono text-xs sm:text-sm text-left w-full whitespace-nowrap">
                           {network.name}
                         </span>
                         {/* {network.isNew && (
@@ -311,7 +317,7 @@ const TokenSelector = ({
                   </div>
                 </div>
 
-                <div className="flex-1 overflow-y-auto max-h-[500px] pb-10">
+                <div className="flex-1 overflow-y-auto max-h-[500px]">
                   <div className="flex justify-between text-xs xl:text-sm text-[#0000004d] mb-2 font-mono">
                     <span>Token</span>
                     <span>Your Balance</span>
@@ -371,56 +377,12 @@ const TokenSelector = ({
                       </>
                     ) : null}
 
-                    {filteredTokens
-                      // .filter((item) =>
-                      //   selectedNetwork?.id
-                      //     ? item.chainId === selectedNetwork?.id
-                      //     : item
-                      // )
-                      .map((token, index) => (
-                        <button
-                          key={index}
-                          className="flex items-center justify-between w-full p-2 hover:bg-gray-100 rounded-lg transition-colors border-t"
-                          onClick={() =>
-                            handleSelection(selectedNetwork!, token)
-                          }
-                        >
-                          <div className="flex items-center gap-3">
-                            <div className="relative">
-                              <Image
-                                src={token.logoURI}
-                                width={30}
-                                height={30}
-                                alt={token.symbol}
-                                className="rounded-full"
-                                loading="lazy"
-                              />
-                              {/* {selectedNetwork?.icon ? ( */}
-                              <Image
-                                src={selectedNetwork?.icon || token?.icon}
-                                width={17}
-                                height={17}
-                                alt={selectedNetwork?.name || token?.address}
-                                className="rounded-full absolute top-0 right-0 border"
-                              />
-                              {/* ) : null} */}
-                            </div>
-                            <span className="font-mono text-sm md:text-base font-medium">
-                              {token.symbol}
-                            </span>
-                          </div>
-                          <span className="font-mono text-sm flex justify-start items-center gap-2">
-                            {/* {token.balance} */}
-                            <Balance
-                              chainId={
-                                selectedNetwork?.id || selectedNetwork?.id
-                              }
-                              token={token?.address}
-                            />
-                            <span>'''</span>
-                          </span>
-                        </button>
-                      ))}
+                    {/* {?.map((token, index) => ( */}
+                    <TokenList
+                      onSelect={handleSelection}
+                      selectedNetwork={setSelectedNetwork}
+                      tokens={filteredTokens}
+                    />
                   </div>
                 </div>
               </div>

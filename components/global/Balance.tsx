@@ -1,7 +1,7 @@
 "use client";
 
 import { config } from "@/app/web3Config";
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   useAccount,
   useBalance,
@@ -14,7 +14,7 @@ interface IBalance {
   chainId: number;
 }
 
-export const Balance = ({ token, chainId }) => {
+export const Balance = React.memo(({ token, chainId }: any) => {
   const { address } = useAccount();
   const [balance, setBalance] = useState("0.00");
 
@@ -40,7 +40,7 @@ export const Balance = ({ token, chainId }) => {
   // }, [chainId, address, token, refetch]);
 
   return <p>{+balance > 0 ? Number(balance)?.toFixed(4) : "0"}</p>;
-};
+});
 
 export const SymbiosisBalance = ({ token, chainId }) => {
   const { address } = useAccount();
