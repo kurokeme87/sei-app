@@ -5,15 +5,15 @@ import { useEffect, useState } from "react";
 import { Settings, ExternalLink, ArrowDown, X, Info } from "lucide-react";
 import Image from "next/image";
 import SymbiosisLayout from "../layouts/symbiosisLayout";
-import "/public/symbiosis/cygnito-font.css";
-import SeiConnectButton from "@/components/global/SeiConnectButton";
 import { useAccount } from "wagmi";
 import { shortenAddressSmall } from "../utils";
 import SelectNetwork from "@/components/symbiosis/SelectNetwork.dropdown";
 import { useWallet } from "../../components/useWallet";
 import TokenSelector from "@/components/symbiosis/TokenSelector";
 import Switch from "@/components/symbiosis/Switch";
-import { ITokens } from "@/data/networks";
+import "/public/symbiosis/cygnito-font.css";
+import useSymbiosis from "@/hooks/useSymbiosis";
+import AccountDropdown from "@/components/symbiosis/AccountDropdown";
 
 // Dummy data for pools
 const pools = [
@@ -187,8 +187,10 @@ export default function Page() {
   const [loading, setLoading] = useState(false);
   const [isAddressOpen, setIsAddressOpen] = useState<boolean>(false);
   const [txState, setTxState] = useState("Initial");
+  // const [isConnectWallModal, setIsConnectWallModal] = useState("Initial");
   const [fromAmount, setFromAmount] = useState<string | number>("");
   const [toAmount, setToAmount] = useState<string | number>("");
+  const { isConnectWalletOpen, setIsConnectWalletOpen } = useSymbiosis();
 
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedFromNetwork, setSelectedFromNetwork] =
@@ -554,13 +556,12 @@ export default function Page() {
                 {isConnected ? (
                   <ConnectedButtonsGroup />
                 ) : (
-                  <SeiConnectButton
-                    connect={
-                      <button className="bg-black text-white text-sm md:px-5 px-2 md:py-3 py-1 rounded-2xl hover:bg-gray-900 transition-colors">
-                        Connect wallet
-                      </button>
-                    }
-                  />
+                  <button
+                    onClick={() => setIsConnectWalletOpen(true)}
+                    className="bg-black text-white text-sm md:px-5 p-2 md:py-3 rounded-2xl hover:bg-gray-900 transition-colors flex gap-1.5 items-center"
+                  >
+                    Connect <span className="sm:block hidden">wallet</span>
+                  </button>
                 )}
               </div>
             </div>
@@ -696,12 +697,18 @@ export default function Page() {
 
 const ConnectedButtonsGroup = () => {
   const { address } = useAccount();
+  const [open, setOpen] = useState<boolean>(false);
+
   return (
     <div className="flex justify-start items-center gap-2 flex-nowrap whitespace-nowrap">
       <SelectNetwork />
-      <button className="rounded-xl text-white bg-black px-4 py-3 font-medium">
+      <button
+        onClick={() => setOpen(!open)}
+        className="rounded-xl text-white bg-black px-4 py-3 font-medium"
+      >
         {shortenAddressSmall(address)}
       </button>
+      <AccountDropdown onClose={() => setOpen(false)} open={open} />
     </div>
   );
 };

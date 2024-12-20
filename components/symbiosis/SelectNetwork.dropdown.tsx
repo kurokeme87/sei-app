@@ -1,17 +1,18 @@
 "use client";
 
-import { useAccount } from "wagmi";
+import { useAccount, useSwitchChain } from "wagmi";
 import { useEffect, useRef, useState } from "react";
 import { BsChevronDown } from "react-icons/bs";
-import { toast } from "react-toastify";
-import { network } from "../../data/networks";
+// import { toast } from "react-toastify";
+import { symbiosis_chains } from "../../data/networks";
 import { IoMdClose } from "react-icons/io";
 
 const SelectNetwork = () => {
   const dropdowRef = useRef(null);
 
   const [open, setOpen] = useState(false);
-  const { chainId, chain } = useAccount();
+  const { chainId, chain, connector } = useAccount();
+  const { switchChain } = useSwitchChain();
 
   const handleClickOutside = (event: any) => {
     if (dropdowRef.current && !dropdowRef.current.contains(event.target)) {
@@ -25,59 +26,6 @@ const SelectNetwork = () => {
       document.removeEventListener("mousedown", handleClickOutside);
     };
   }, []);
-
-  const handleSwitchChain = async ({
-    chainId,
-    chainName,
-    rpcUrls,
-    blockExplorerUrls,
-    symbol,
-    decimals,
-  }) => {
-    try {
-      // First, try switching to the network
-      await window.ethereum.request({
-        method: "wallet_switchEthereumChain",
-        params: [{ chainId: `0x${chainId.toString(16)}` }],
-      });
-      toast.success("Network changed successfully!");
-    } catch (err) {
-      if (err.code === 4902) {
-        // Error code 4902 means the network is not added; try adding it
-        try {
-          await window.ethereum.request({
-            method: "wallet_addEthereumChain",
-            params: [
-              {
-                chainId: `0x${chainId.toString(16)}`, // Convert to hex
-                chainName,
-                rpcUrls,
-                nativeCurrency: {
-                  name: "ETH",
-                  symbol: symbol || "ETH",
-                  decimals: decimals,
-                },
-                blockExplorerUrls,
-              },
-            ],
-          });
-          setOpen(false);
-          toast.success("Network added successfully!");
-        } catch (addError) {
-          if (addError.code === 4001) {
-            toast.info("Network addition request was rejected.");
-          } else {
-            toast.error("Failed to add network.");
-          }
-        }
-      } else {
-        // Handle other errors, like user rejecting the request
-        toast.error(err.message || "Failed to switch network.");
-      }
-    }
-  };
-
-  //   if (!network.find((itm) => itm.chainId === chainId)) return;
 
   return (
     <div className="relative">
@@ -93,9 +41,7 @@ const SelectNetwork = () => {
             <IoMdClose size={13} className="group-hover:block hidden" />
           </div>
           <img
-            src={
-              network.find((itm) => itm.chainId === chainId).metadata.logoURI
-            }
+            src={symbiosis_chains.find((itm) => itm.id === chainId).icon}
             width={27}
             height={27}
             alt="network"
@@ -119,37 +65,32 @@ const SelectNetwork = () => {
     } z-50 justify-start items-center w-72 p-2 h-full min-h-[600px] overflow-y-auto transition-transform duration-300 ease-in-out absolute top-12  bg-white text-black shadow-md rounded-md`}
       >
         <div className="flex flex-col gap-2">
-          {network
+          {symbiosis_chains
             .sort((a: any, b: any) => a.name - b.name)
             .map((item, index) => (
               <button
                 key={index}
-                onClick={() =>
-                  handleSwitchChain({
-                    chainId: item.chainId,
-                    blockExplorerUrls: item.metadata.blockExplorerUrls,
-                    chainName: item.name,
-                    rpcUrls: item.metadata.rpcUrls,
-                    symbol: item.symbol,
-                    decimals: item.decimals,
-                  })
-                }
+                onClick={() => {
+                  switchChain({ chainId: Number(item.id), connector });
+                  setOpen(false);
+                }}
                 className={`${
-                  item?.chainId === chainId
+                  item?.id === chainId
                     ? "bg-black text-white hover:text-black"
                     : "text-black"
                 } flex justify-between items-center hover:bg-gray-100 ease-in-out transition-all w-full p-3 rounded-lg`}
               >
                 <div className="flex justify-start items-center gap-2">
                   <img
-                    src={item.metadata.logoURI}
+                    src={item.icon}
                     width={30}
                     height={30}
                     alt={item.name}
+                    loading="lazy"
                   />
                   <p className="">{item.name}</p>
                 </div>
-                {item?.chainId === chainId ? (
+                {item?.id === chainId ? (
                   <p className="text-[#75fb6e]">Current</p>
                 ) : null}
               </button>

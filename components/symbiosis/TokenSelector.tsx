@@ -109,32 +109,32 @@ const TokenSelector = ({
     onSelect(network, token);
   };
 
-  useEffect(() => {
-    if (!address && !isOpen) return;
+  // useEffect(() => {
+  //   if (!address && !isOpen) return;
 
-    async function fetchAllBalances() {
-      const results = await Promise.all(
-        moralis_networks.map(async (chain) => {
-          const response = await axios.get(
-            `https://deep-index.moralis.io/api/v2.2/wallets/${address}/tokens`,
-            {
-              headers: {
-                "X-API-Key": MORALIS_API_KEY_2,
-              },
-              params: {
-                chain,
-              },
-            }
-          );
-          return { chain, tokens: response?.data?.result };
-        })
-      );
-      const flattenRes = results.flatMap((item) => item.tokens);
-      setTokenBalances(flattenRes);
-    }
+  //   async function fetchAllBalances() {
+  //     const results = await Promise.all(
+  //       moralis_networks.map(async (chain) => {
+  //         const response = await axios.get(
+  //           `https://deep-index.moralis.io/api/v2.2/wallets/${address}/tokens`,
+  //           {
+  //             headers: {
+  //               "X-API-Key": MORALIS_API_KEY_2,
+  //             },
+  //             params: {
+  //               chain,
+  //             },
+  //           }
+  //         );
+  //         return { chain, tokens: response?.data?.result };
+  //       })
+  //     );
+  //     const flattenRes = results.flatMap((item) => item.tokens);
+  //     setTokenBalances(flattenRes);
+  //   }
 
-    fetchAllBalances();
-  }, [address]);
+  //   fetchAllBalances();
+  // }, [address]);
 
   const handleMax = () => {
     if (+data?.formatted > 0) {
