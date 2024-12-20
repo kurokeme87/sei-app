@@ -1,5 +1,6 @@
 import { defaultWagmiConfig } from "@web3modal/wagmi/react/config";
 import { cookieStorage, createStorage } from "wagmi";
+import { PhantomConnector } from "phantom-wagmi-connector";
 import {
   metaMask,
   safe,
@@ -84,6 +85,7 @@ export const config = defaultWagmiConfig({
   metadata,
   connectors: [
     metaMask(),
+
     walletConnect({
       projectId,
       metadata: {
@@ -92,6 +94,7 @@ export const config = defaultWagmiConfig({
     }),
     coinbaseWallet(),
     safe(),
+    new PhantomConnector({ chains }),
   ],
   ssr: true,
   storage: createStorage({
