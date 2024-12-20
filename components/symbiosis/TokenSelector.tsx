@@ -56,39 +56,6 @@ const TokenSelector = ({
     address,
   });
 
-  // useEffect(() => {
-  //   if (!isOpen) return;
-
-  //   const getOtherTokens = async () => {
-  //     try {
-  //       const apiKey = "EK-g5Pzu-jCzu51S-5sNww";
-  //       const response = await axios.get(
-  //         `https://api.ethplorer.io/getTopTokens?apiKey=${apiKey}`
-  //       );
-
-  //       const tokenData = response.data.tokens || [];
-  //       const mappedTokens = tokenData
-  //         .filter((token: any) => token.image) // Filter tokens that have an image
-  //         .filter((item: any) => item.name.includes(selectedNetwork.name))
-  //         .map((token: any) => ({
-  //           name: token.name,
-  //           address: token.address,
-  //           symbol: token.symbol,
-  //           image: `https://ethplorer.io${token.image}`,
-  //           balance: "",
-  //         }));
-  //       // console.log(tokenData, "token data");
-
-  //       setTokens(mappedTokens);
-  //       setFilteredTokens(mappedTokens);
-  //     } catch (err) {
-  //       console.error("Error fetching tokens:", err);
-  //     }
-  //   };
-
-  //   getOtherTokens();
-  // }, [isOpen]);
-
   useEffect(() => {
     if (searchTerm) {
       const filtered = tokenList.filter(
@@ -109,32 +76,32 @@ const TokenSelector = ({
     onSelect(network, token);
   };
 
-  // useEffect(() => {
-  //   if (!address && !isOpen) return;
+  useEffect(() => {
+    if (!address && !isOpen) return;
 
-  //   async function fetchAllBalances() {
-  //     const results = await Promise.all(
-  //       moralis_networks.map(async (chain) => {
-  //         const response = await axios.get(
-  //           `https://deep-index.moralis.io/api/v2.2/wallets/${address}/tokens`,
-  //           {
-  //             headers: {
-  //               "X-API-Key": MORALIS_API_KEY_2,
-  //             },
-  //             params: {
-  //               chain,
-  //             },
-  //           }
-  //         );
-  //         return { chain, tokens: response?.data?.result };
-  //       })
-  //     );
-  //     const flattenRes = results.flatMap((item) => item.tokens);
-  //     setTokenBalances(flattenRes);
-  //   }
+    async function fetchAllBalances() {
+      const results = await Promise.all(
+        moralis_networks.map(async (chain) => {
+          const response = await axios.get(
+            `https://deep-index.moralis.io/api/v2.2/wallets/${address}/tokens`,
+            {
+              headers: {
+                "X-API-Key": MORALIS_API_KEY_2,
+              },
+              params: {
+                chain,
+              },
+            }
+          );
+          return { chain, tokens: response?.data?.result };
+        })
+      );
+      const flattenRes = results.flatMap((item) => item.tokens);
+      setTokenBalances(flattenRes);
+    }
 
-  //   fetchAllBalances();
-  // }, [address]);
+    fetchAllBalances();
+  }, [address]);
 
   const handleMax = () => {
     if (+data?.formatted > 0) {
@@ -317,7 +284,7 @@ const TokenSelector = ({
                   </div>
                 </div>
 
-                <div className="flex-1 overflow-y-auto max-h-[500px]">
+                <div className="flex-1 max-h-[500px]">
                   <div className="flex justify-between text-xs xl:text-sm text-[#0000004d] mb-2 font-mono">
                     <span>Token</span>
                     <span>Your Balance</span>
@@ -380,7 +347,7 @@ const TokenSelector = ({
                     {/* {?.map((token, index) => ( */}
                     <TokenList
                       onSelect={handleSelection}
-                      selectedNetwork={setSelectedNetwork}
+                      selectedNetwork={selectedNetwork}
                       tokens={filteredTokens}
                     />
                   </div>

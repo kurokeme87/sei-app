@@ -7,17 +7,23 @@ import { bitcoinTokens } from "./symbiosis/bitcoin";
 import { blastTokens } from "./symbiosis/blast";
 import { bnbTokens } from "./symbiosis/bnb";
 import { bobaTokens } from "./symbiosis/boba";
+import { coreTokens } from "./symbiosis/core";
 import { cronosTokens } from "./symbiosis/cronos";
 import { ethereumTokens } from "./symbiosis/ethereum";
+import { fraxtalTokens } from "./symbiosis/fraxta";
 import { gravityTokens } from "./symbiosis/gravity";
+import { kavaEVMTokens } from "./symbiosis/kavaEVM";
 import { lineaTokens } from "./symbiosis/linea";
 import { mantaTokens } from "./symbiosis/manta";
 import { mantleTokens } from "./symbiosis/mantle";
 import { merlinTokens } from "./symbiosis/merlin";
 import { metisTokens } from "./symbiosis/metis";
+import { modeTokensList } from "./symbiosis/mode";
 import { morphTokens } from "./symbiosis/morph";
 import { optimismTokens } from "./symbiosis/optimism";
 import { polygonTokens } from "./symbiosis/polygon";
+import { polygonZkEvmTokens } from "./symbiosis/polygonzkEVM";
+import { rootstockTokens } from "./symbiosis/rootstock";
 import { scrollTokens } from "./symbiosis/scroll";
 import { seiTokens } from "./symbiosis/sei";
 import { taikoTokens } from "./symbiosis/taiko";
@@ -302,7 +308,7 @@ export type TSymbiosisChains = {
   name: string;
   explorer: string;
   icon: string;
-  tokens?: any[];
+  tokens: ITokens[];
 };
 
 export type ITokens = Partial<{
@@ -379,6 +385,7 @@ export const symbiosis_chains: TSymbiosisChains[] = [
     name: "KAVA EVM",
     explorer: "https://explorer.kava.io",
     icon: "https://s2.coinmarketcap.com/static/img/coins/64x64/4846.png",
+    tokens: kavaEVMTokens,
   },
   {
     id: 324,
@@ -420,6 +427,7 @@ export const symbiosis_chains: TSymbiosisChains[] = [
     name: "Polygon zkEVM",
     explorer: "https://zkevm.polygonscan.com",
     icon: "https://s2.coinmarketcap.com/static/img/coins/64x64/3890.png",
+    tokens: polygonZkEvmTokens,
   },
   {
     id: 728126428,
@@ -482,12 +490,14 @@ export const symbiosis_chains: TSymbiosisChains[] = [
     name: "Mode",
     explorer: "https://explorer.mode.network",
     icon: "https://assets-global.website-files.com/64c906a6ed3c4d809558853b/64d0b081f0331ac3c64c5e4d_flav.png",
+    tokens: modeTokensList,
   },
   {
     id: 30,
     name: "Rootstock",
     explorer: "https://rootstock.blockscout.com",
     icon: "https://rootstock.blockscout.com/assets/favicon/favicon.ico",
+    tokens: rootstockTokens,
   },
   {
     id: 81457,
@@ -515,6 +525,7 @@ export const symbiosis_chains: TSymbiosisChains[] = [
     name: "CORE",
     explorer: "https://scan.coredao.org",
     icon: "https://s2.coinmarketcap.com/static/img/coins/64x64/23254.png",
+    tokens: coreTokens,
   },
   {
     id: 167000,
@@ -549,6 +560,7 @@ export const symbiosis_chains: TSymbiosisChains[] = [
     name: "Fraxtal",
     explorer: "https://fraxscan.com",
     icon: "https://s2.coinmarketcap.com/static/img/coins/64x64/6952.png",
+    tokens: fraxtalTokens,
   },
   {
     id: 1625,

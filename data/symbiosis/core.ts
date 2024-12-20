@@ -1,0 +1,85 @@
+import { ITokens } from "../networks";
+
+export const coreTokens: ITokens[] = [
+  {
+    chainId: 1116, // Core network ID
+    name: "CORE",
+    address: "0x5c69b19f63e49e4b3b5977d8e7d8c9d6fbd49cc1",
+    logoURI: "https://s2.coinmarketcap.com/static/img/coins/64x64/23254.png",
+    symbol: "CORE",
+    decimals: 18,
+  },
+  {
+    chainId: 1116,
+    name: "CoreBTC",
+    address: "0x073d4A34C32153e10B8A028A7cDcd9A0015C0f83",
+    logoURI: "https://s2.coinmarketcap.com/static/img/coins/128x128/1.png",
+    symbol: "CoreBTC",
+    decimals: 8,
+  },
+  {
+    chainId: 1116,
+    name: "ARS",
+    address: "0x6574D98e34C83d75D466E1a3E4416783E2e6E458",
+    logoURI: "https://s2.coinmarketcap.com/static/img/coins/64x64/27847.png",
+    symbol: "ARS",
+    decimals: 18,
+  },
+  {
+    chainId: 1116,
+    name: "CoreBTC",
+    address: "0x073d4A34C32153e10B8A028A7cDcd9A0015C0f83",
+    logoURI: "https://s2.coinmarketcap.com/static/img/coins/128x128/1.png",
+    symbol: "CoreBTC",
+    decimals: 8,
+  },
+  {
+    chainId: 1116,
+    name: "Planet",
+    address: "0x6cF7D5ec1f9f9fcb29eB9f33F31c347a75d9237f",
+    logoURI: "https://s2.coinmarketcap.com/static/img/coins/64x64/26585.png",
+    symbol: "Planet",
+    decimals: 18,
+  },
+  {
+    chainId: 1116,
+    name: "USD Coin",
+    address: "0x9d1B1218f8A9abDD83c76Fc3ed9B9e63Ae6D8BeD",
+    logoURI: "https://s2.coinmarketcap.com/static/img/coins/64x64/3408.png",
+    symbol: "USDC",
+    decimals: 6,
+  },
+  {
+    chainId: 1116,
+    name: "Tether USD",
+    address: "0xD3D19C7475a1d3E89aF6A78ee0F4F42a586dE99e",
+    logoURI: "https://s2.coinmarketcap.com/static/img/coins/64x64/825.png",
+    symbol: "USDT",
+    decimals: 6,
+  },
+  {
+    chainId: 1116,
+    name: "WCORE",
+    address: "0xDe0F9E4B2F2CdffB6C92656f8f93E5681F9d07F6",
+    logoURI: "https://s2.coinmarketcap.com/static/img/coins/64x64/23254.png",
+    symbol: "WCORE",
+    decimals: 18,
+  },
+  {
+    chainId: 1116,
+    name: "Wrapped Ether",
+    address: "0x7b7F73F75999a1048d03447A68e3B62B1C444dE1",
+    logoURI: "https://s2.coinmarketcap.com/static/img/coins/64x64/1027.png",
+    symbol: "WETH",
+    decimals: 18,
+  },
+  {
+    chainId: 1116,
+    name: "stCORE",
+    address: "0x21a37eC72F68D4e96D71b9aEF9f0B9Bd35e9B13e",
+    logoURI:
+      "https://izumi-finance.oss-ap-southeast-1.aliyuncs.com/tokens/stcore.png",
+    symbol: "stCORE",
+    decimals: 18,
+  },
+];

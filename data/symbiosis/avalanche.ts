@@ -2,6 +2,15 @@ import { ITokens } from "../networks";
 
 export const avalancheTokens: ITokens[] = [
   {
+    chainId: 43114,
+    name: "Avalanche",
+    address: "0x0000000000000000000000000000000000000000", // Native AVAX, not an ERC-20 contract
+    logoURI: "https://cryptologos.cc/logos/avalanche-avax-logo.png",
+    symbol: "AVAX",
+    decimals: 18,
+    chainURI: "https://snowtrace.io",
+  },
+  {
     chainId: 43113,
     address: "0x63E537A69b3f5B03F4f46c5765c82861BD874b6e",
     decimals: 18,

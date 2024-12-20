@@ -4,7 +4,26 @@ export const ethereumTokens: ITokens[] = [
   {
     chainId: 1,
     asset: "c60_t0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2",
-
+    address: "",
+    name: "Ethereun",
+    symbol: "ETH",
+    decimals: 18,
+    logoURI:
+      "https://assets-cdn.trustwallet.com/blockchains/ethereum/assets/0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2/logo.png",
+  },
+  {
+    chainId: 1,
+    asset: "c60_t0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2",
+    address: "0x455e53cbb86018ac2b8092fdcd39d8444affc3f6",
+    name: "Polygon Ecosystem Token",
+    symbol: "POL",
+    decimals: 18,
+    logoURI:
+      "https://www.google.com/s2/favicons?domain=https://polygon.technology&sz=32",
+  },
+  {
+    chainId: 1,
+    asset: "c60_t0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2",
     address: "0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2",
     name: "WETH",
     symbol: "WETH",
@@ -15,7 +34,6 @@ export const ethereumTokens: ITokens[] = [
   {
     chainId: 1,
     asset: "c60_t0x0000000000085d4780B73119b644AE5ecd22b376",
-
     address: "0x0000000000085d4780B73119b644AE5ecd22b376",
     name: "TrueUSD",
     symbol: "TUSD",
@@ -25,7 +43,6 @@ export const ethereumTokens: ITokens[] = [
   },
   {
     asset: "c60_t0x0000000000095413afC295d19EDeb1Ad7B71c952",
-
     address: "0x0000000000095413afC295d19EDeb1Ad7B71c952",
     name: "Tokenlon",
     symbol: "LON",

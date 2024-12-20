@@ -78,6 +78,15 @@ export const arbitrumTokens: ITokens[] = [
       "https://izumi-finance.oss-ap-southeast-1.aliyuncs.com/tokens/arbi.png",
   },
   {
+    chainId: 42161,
+    name: "Ether",
+    address: "0x0000000000000000000000000000000000000000", // Native ETH, not an ERC-20 contract
+    logoURI: "https://cryptologos.cc/logos/ethereum-eth-logo.png",
+    symbol: "ETH",
+    decimals: 18,
+    chainURI: "https://arbiscan.io",
+  },
+  {
     address: "0x748b5BE12ac1Ce2EF73035189F943591C1822B7d",
     name: "MetaLine Gold",
     symbol: "MTG",

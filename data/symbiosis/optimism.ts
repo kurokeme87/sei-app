@@ -2,6 +2,72 @@ import { ITokens } from "../networks";
 
 export const optimismTokens: ITokens[] = [
   {
+    chainId: 10, // Optimism network ID
+    name: "Ethereum",
+    address: "0x4200000000000000000000000000000000000006",
+    logoURI:
+      "https://raw.githubusercontent.com/trustwallet/assets/master/blockchains/ethereum/info/logo.png",
+    symbol: "ETH",
+    decimals: 18,
+  },
+  {
+    chainId: 10,
+    name: "Dai Stablecoin",
+    address: "0xFf795577d9AC8bD7D90Ee22b6C1703490b6512FD",
+    logoURI: "https://s2.coinmarketcap.com/static/img/coins/64x64/4943.png",
+    symbol: "DAI",
+    decimals: 18,
+  },
+  {
+    chainId: 10,
+    name: "USD Coin",
+    address: "0x7F5c764dB9d36B204F2F5dF16E6c2e1C96D1e9c8",
+    logoURI: "https://s2.coinmarketcap.com/static/img/coins/64x64/3408.png",
+    symbol: "USDC",
+    decimals: 6,
+  },
+  {
+    chainId: 10,
+    name: "Optimism",
+    address: "0x4200000000000000000000000000000000000042",
+    logoURI:
+      "https://raw.githubusercontent.com/trustwallet/assets/master/blockchains/optimism/info/logo.png",
+    symbol: "OP",
+    decimals: 18,
+  },
+  {
+    chainId: 10,
+    name: "USD Coin (Ethereum)",
+    address: "0xA0b86991C6218b36c1d19D4A2e9eb0ce3606e3B4",
+    logoURI: "https://s2.coinmarketcap.com/static/img/coins/64x64/3408.png",
+    symbol: "USDC.e",
+    decimals: 6,
+  },
+  {
+    chainId: 10,
+    name: "Wrapped Bitcoin",
+    address: "0x4B0A4F8F1B0a5fCd9C6a3b43F3C30b38A60ECa5C",
+    logoURI: "https://s2.coinmarketcap.com/static/img/coins/64x64/3717.png",
+    symbol: "WBTC",
+    decimals: 8,
+  },
+  {
+    chainId: 10,
+    name: "Aave",
+    address: "0xF0fF9B3221DCE4b5E3b87f8F8E2A2A8489eC8eB4",
+    logoURI: "https://ethereum-optimism.github.io/data/AAVE/logo.svg",
+    symbol: "AAVE",
+    decimals: 18,
+  },
+  {
+    chainId: 10,
+    name: "Acumen",
+    address: "0x9bF00670033A1d8A557D88b8b63B57c60f67C78d",
+    logoURI: "https://ethereum-optimism.github.io/data/ACX/logo.png",
+    symbol: "ACX",
+    decimals: 18,
+  },
+  {
     asset: "c10000070_t0x4200000000000000000000000000000000000006",
     type: "OPTIMISM",
     address: "0x4200000000000000000000000000000000000006",

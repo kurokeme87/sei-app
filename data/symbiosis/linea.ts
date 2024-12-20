@@ -78,6 +78,15 @@ export const lineaTokens: ITokens[] = [
   },
   {
     chainId: 59144,
+    name: "Ethereum",
+    address: "0x4200000000000000000000000000000000000006",
+    logoURI:
+      "https://raw.githubusercontent.com/trustwallet/assets/master/blockchains/ethereum/info/logo.png",
+    symbol: "ETH",
+    decimals: 18,
+  },
+  {
+    chainId: 59144,
     chainURI: "https://lineascan.build/block/0",
     tokenId:
       "https://lineascan.build/address/0xff8069906C1BdD7650c889f54639a5fcE486ca3e",

@@ -2,6 +2,15 @@ import { ITokens } from "../networks";
 
 export const baseTokens: ITokens[] = [
   {
+    chainId: 8453,
+    name: "Ether",
+    address: "0x0000000000000000000000000000000000000000", // Native ETH, not an ERC-20 contract
+    logoURI: "https://cryptologos.cc/logos/ethereum-eth-logo.png",
+    symbol: "ETH",
+    decimals: 18,
+    chainURI: "https://basescan.org",
+  },
+  {
     chainId: 1,
     address: "0xbe9895146f7af43049ca1c1ae358b0541ea49704",
     name: "Coinbase Wrapped Staked ETH",

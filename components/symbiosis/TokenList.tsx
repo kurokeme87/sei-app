@@ -39,7 +39,7 @@ const TokenList = ({ tokens, onSelect, selectedNetwork }: TokenListProps) => {
                 width={17}
                 height={17}
                 alt={selectedNetwork?.name || token?.address}
-                className="rounded-full absolute top-0 right-0 border"
+                className="rounded-full absolute -top-1 -right-2 border-2 border-gray-50 w-[14px] h-[14px]"
                 loading="lazy"
               />
             ) : null}
@@ -48,9 +48,9 @@ const TokenList = ({ tokens, onSelect, selectedNetwork }: TokenListProps) => {
             {token.symbol}
           </span>
         </div>
-        <span className="font-mono text-sm flex justify-start items-center gap-2">
+        <span className="font-mono text-sm md:text-base flex justify-start items-center gap-2">
           <Balance
-            chainId={selectedNetwork?.id || selectedNetwork?.id}
+            chainId={selectedNetwork?.id || token.chainId}
             token={token?.address}
             key={index}
           />
