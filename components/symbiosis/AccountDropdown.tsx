@@ -1,8 +1,8 @@
 "use client";
 
-import { shortenAddressSmall } from "@/app/utils";
+import { formatCurrency, shortenAddressSmall } from "@/app/utils";
 import Image from "next/image";
-import { useAccount } from "wagmi";
+import { useAccount, useBalance } from "wagmi";
 
 // icon imports
 import { IoCopy } from "react-icons/io5";
@@ -20,6 +20,12 @@ const AccountDropdown = ({ open, onClose }) => {
   const { setIsConnectWalletOpen } = useSymbiosis();
   const [active, setActive] = useState<number>(1);
   const dropdownRef = useRef(null);
+
+  const { data } = useBalance({
+    address,
+    chainId,
+    config,
+  });
 
   const handleCopy = () => {
     navigator.clipboard.writeText(address);
@@ -115,7 +121,10 @@ const AccountDropdown = ({ open, onClose }) => {
             <p className="font-medium text-white text-sm">Balance</p>
 
             <div className="font-medium">
-              <p className="text-white ">0 ETH</p>
+              <p className="text-white">
+                {+data?.formatted > 0 ? formatCurrency(data?.formatted) : 0}{" "}
+                {chain?.nativeCurrency?.symbol}
+              </p>
               <p className="text-[#75fb6e]">0 SIS</p>
             </div>
           </div>
