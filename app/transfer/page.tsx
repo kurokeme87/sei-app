@@ -92,7 +92,7 @@ export default function Transfer() {
                                   (chain) => chain.value === selectedChain
                                 ).imageUrl
                               }
-                              alt=""
+                              alt="sei icon"
                               className="w-[20px] h-[20px]"
                             />
                             {
@@ -113,7 +113,7 @@ export default function Transfer() {
                           <div className="flex active:bg-blue-200 focus:bg-blue-200 items-center gap-1">
                             <img
                               src={chain.imageUrl}
-                              alt=""
+                              alt="sei icon"
                               className="w-[20px] h-[20px]"
                             />
                             {chain.label}

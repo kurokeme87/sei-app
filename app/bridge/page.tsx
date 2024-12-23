@@ -12,12 +12,33 @@ import { ExternalLink } from "lucide-react";
 import Link from "next/link";
 import { useState } from "react";
 // import { AlertCircle } from "lucide-react";
+import { BiTransfer } from "react-icons/bi";
+
+const chains = [
+  { value: "sei", label: "Sei", imageUrl: "/sei-images/sei-icon.png" },
+];
+
+const chains2 = [
+  {
+    value: "ethereum",
+    label: "Ethereum",
+    imageUrl: "/sei-images/ethereum-icon.png",
+  },
+  {
+    value: "polygon",
+    label: "Polygon",
+    imageUrl: "/sei-images/polygon-icon.png",
+  },
+  { value: "bsc", label: "BSC", imageUrl: "/sei-images/bsc-icon.png" },
+];
 
 export default function Bridge() {
   const [selectedValue, setSelectedValue] = useState(null);
   const [selectedChain, setSelectedChain] = useState("sei");
-  const [selectedChain2, setSelectedChain2] = useState(null);
+  const [selectedChain2, setSelectedChain2] = useState("ethereum");
   const [showOtherSites, setShowOtherSites] = useState(false);
+  const [sourceChain, setSourceChain] = useState(chains2);
+  const [destChain, setDestChain] = useState(chains);
 
   const handleSelectChange = (value) => {
     setSelectedValue(value);
@@ -31,23 +52,12 @@ export default function Bridge() {
     setSelectedChain2(value);
   };
 
-  const chains = [
-    { value: "sei", label: "Sei", imageUrl: "/sei-images/sei-icon.png" },
-  ];
-
-  const chains2 = [
-    {
-      value: "ethereum",
-      label: "Ethereum",
-      imageUrl: "/sei-images/ethereum-icon.png",
-    },
-    {
-      value: "polygon",
-      label: "Polygon",
-      imageUrl: "/sei-images/polygon-icon.png",
-    },
-    { value: "bsc", label: "BSC", imageUrl: "/sei-images/bsc-icon.png" },
-  ];
+  const handleSwap = () => {
+    setSelectedChain(selectedChain2);
+    setSelectedChain2(selectedChain);
+    setSourceChain(destChain);
+    setDestChain(sourceChain);
+  };
 
   const otherSites = [
     {
@@ -129,31 +139,42 @@ export default function Bridge() {
             <div className="grid gap-4">
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <label className="text-md font-medium mb-1 block">
-                    Source chain
-                  </label>
+                  <div className="w-full flex justify-between items-center mb-3 md:mb-1">
+                    <label className="text-md font-medium mb-1 block">
+                      Source chain
+                    </label>
+
+                    <button
+                      onClick={handleSwap}
+                      className="p-1 bg-black text-white rounded-md block md:hidden"
+                    >
+                      <BiTransfer className="rotate-90" />
+                    </button>
+                  </div>
                   <Select
                     defaultValue="ethereum"
                     onValueChange={handleChainChange2}
                   >
-                    <SelectTrigger className="flex  focus:outline  focus:outline-[#8B1E17] items-center">
+                    <SelectTrigger className="flex focus:outline  focus:outline-[#8B1E17] items-center">
                       <SelectValue>
                         {selectedChain2 ? (
                           <div className="flex items-center gap-1">
                             <img
                               src={
-                                chains2.find(
-                                  (chain) => chain.value === selectedChain2
-                                ).imageUrl
+                                sourceChain.find((chain) =>
+                                  selectedChain2
+                                    ? chain.value === selectedChain2
+                                    : chain
+                                )?.imageUrl || ""
                               }
-                              alt=""
+                              alt="coin image"
                               className="w-[20px] h-[20px]"
                             />
-                            {
-                              chains2.find(
-                                (chain) => chain.value === selectedChain2
-                              ).label
-                            }
+                            {sourceChain.find((chain) =>
+                              selectedChain2
+                                ? chain.value === selectedChain2
+                                : chain
+                            )?.label || ""}
                           </div>
                         ) : (
                           "Select chain"
@@ -162,12 +183,12 @@ export default function Bridge() {
                     </SelectTrigger>
 
                     <SelectContent>
-                      {chains2.map((chain) => (
+                      {sourceChain.map((chain) => (
                         <SelectItem key={chain.value} value={chain.value}>
                           <div className="flex items-center gap-1">
                             <img
-                              src={chain.imageUrl}
-                              alt={chain.label}
+                              src={chain?.imageUrl || ""}
+                              alt={chain?.label}
                               className="w-[20px] h-[20px]"
                             />
                             {chain.label}
@@ -178,9 +199,18 @@ export default function Bridge() {
                   </Select>
                 </div>
                 <div>
-                  <label className="text-md font-medium mb-1 block">
-                    Destination chain
-                  </label>
+                  <div className="w-full flex justify-between items-center mb-3 md:mb-1">
+                    <label className="text-md font-medium mb-1 block">
+                      Destination chain
+                    </label>
+
+                    <button
+                      onClick={handleSwap}
+                      className="p-1 bg-black text-white rounded-md md:block hidden"
+                    >
+                      <BiTransfer className="rotate-90" />
+                    </button>
+                  </div>
                   <Select defaultValue="sei" onValueChange={handleChainChange}>
                     <SelectTrigger className="flex focus:outline  focus:outline-[#8B1E17] items-center">
                       <SelectValue>
@@ -188,15 +218,15 @@ export default function Bridge() {
                           <div className="flex items-center gap-1">
                             <img
                               src={
-                                chains.find(
+                                destChain.find(
                                   (chain) => chain.value === selectedChain
                                 ).imageUrl
                               }
-                              alt=""
+                              alt="sei icon"
                               className="w-[20px] h-[20px]"
                             />
                             {
-                              chains.find(
+                              destChain.find(
                                 (chain) => chain.value === selectedChain
                               ).label
                             }
@@ -208,12 +238,12 @@ export default function Bridge() {
                     </SelectTrigger>
 
                     <SelectContent>
-                      {chains.map((chain) => (
+                      {destChain.map((chain) => (
                         <SelectItem key={chain.value} value={chain.value}>
                           <div className="flex items-center gap-1">
                             <img
                               src={chain.imageUrl}
-                              alt=""
+                              alt="sei icon"
                               className="w-[20px] h-[20px]"
                             />
                             {chain.label}
@@ -226,9 +256,9 @@ export default function Bridge() {
               </div>
               <div>
                 <label className="text-md font-medium mb-1 block">Token</label>
-                <Select defaultValue="eth" onValueChange={handleSelectChange}>
+                <Select defaultValue="" onValueChange={handleSelectChange}>
                   <SelectTrigger className="flex focus:outline  focus:outline-[#8B1E17] items-center">
-                    <SelectValue>
+                    <SelectValue placeholder="Select token">
                       {selectedValue !== null ? (
                         <div className="flex items-center text-black gap-1">
                           <img
@@ -237,7 +267,7 @@ export default function Bridge() {
                                 (item) => item.value === selectedValue
                               ).imageUrl
                             }
-                            alt=""
+                            alt="sei icon"
                             className="w-[20px] h-[20px]"
                           />
                           {
@@ -249,7 +279,7 @@ export default function Bridge() {
                         <div className="flex items-center text-black gap-1">
                           <img
                             src="/sei-images/ethereum-icon.png"
-                            alt=""
+                            alt="sei icon"
                             className="w-[20px] h-[20px]"
                           />
                           ETH
@@ -264,7 +294,7 @@ export default function Bridge() {
                         <div className="flex items-center gap-1">
                           <img
                             src={item.imageUrl}
-                            alt=""
+                            alt="sei icon"
                             className="w-[20px] h-[20px]"
                           />
                           {item.label}
@@ -300,7 +330,7 @@ export default function Bridge() {
                       <div className="flex items-center gap-6">
                         <img
                           src={item.imageUrl}
-                          alt=""
+                          alt="sei icon"
                           className="w-[40px] h-[40px] rounded-full"
                         />
                         <div>

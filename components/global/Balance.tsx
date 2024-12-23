@@ -1,5 +1,6 @@
 "use client";
 
+import { formatCurrency } from "@/app/utils";
 import { config } from "@/app/web3Config";
 import React, { useEffect, useState } from "react";
 import {
@@ -39,7 +40,7 @@ export const Balance = React.memo(({ token, chainId }: any) => {
   //   if (address && chainId && token) refetch();
   // }, [chainId, address, token, refetch]);
 
-  return <p>{+balance > 0 ? Number(balance)?.toFixed(4) : "0"}</p>;
+  return <p>{+balance > 0 ? formatCurrency(balance) : "0"}</p>;
 });
 
 export const SymbiosisBalance = ({ token, chainId }) => {

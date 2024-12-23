@@ -249,7 +249,7 @@ export default function Pool() {
                   <img
                     src={pool.logo}
                     className="w-5 h-5 rounded-full"
-                    alt=""
+                    alt="sei icon"
                   />
                   <div className="flex items-center gap-2">
                     <span className="text-[11px] bg-teal-500 text-white px-1 py-1 rounded">
@@ -258,7 +258,7 @@ export default function Pool() {
                     <img
                       src={pool.logo2}
                       className="w-5 h-5 rounded-full"
-                      alt=""
+                      alt="sei icon"
                     />
                   </div>
                 </div>
@@ -338,7 +338,7 @@ export default function Pool() {
                       <img
                         src={pool.logo}
                         className="w-5 h-5 rounded-full"
-                        alt=""
+                        alt="sei icon"
                       />
                       {pool.token}
                     </td>
@@ -347,7 +347,7 @@ export default function Pool() {
                         <img
                           src={pool.logo2}
                           className="w-5 h-5 rounded-full"
-                          alt=""
+                          alt="sei icon"
                         />
                         {pool.network}
                       </div>

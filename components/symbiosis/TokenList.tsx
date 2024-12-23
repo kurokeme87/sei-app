@@ -11,11 +11,20 @@ type TokenListProps = {
   tokens: ITokens[];
   onSelect: (network: any, token: any) => void;
   selectedNetwork: any;
+  // handleScroll: (e: React.UIEvent<HTMLDivElement>) => void;
 };
 
-const TokenList = ({ tokens, onSelect, selectedNetwork }: TokenListProps) => {
+const TokenList = ({
+  tokens,
+  onSelect,
+  selectedNetwork,
+}: // handleScroll,
+TokenListProps) => {
   const Row = ({ index, style }) => {
-    const token = tokens[index];
+    // let data = tokens;
+    // tokens.sort((a, b) => Number(b?.balance) - Number(a?.balance));
+    let token = tokens[index];
+
     return (
       <button
         key={index}
@@ -29,7 +38,7 @@ const TokenList = ({ tokens, onSelect, selectedNetwork }: TokenListProps) => {
               src={token.logoURI}
               width={30}
               height={30}
-              alt={token.symbol}
+              alt={token.symbol || " "}
               className="rounded-full"
               loading="lazy"
             />
@@ -54,6 +63,7 @@ const TokenList = ({ tokens, onSelect, selectedNetwork }: TokenListProps) => {
             token={token?.address}
             key={index}
           />
+          {/* {+token?.balance > 0 ? Number(token?.balance).toFixed(6) : 0} */}
           <span>'''</span>
         </span>
       </button>
@@ -63,14 +73,16 @@ const TokenList = ({ tokens, onSelect, selectedNetwork }: TokenListProps) => {
   const MemoizedRow = React.memo(Row);
 
   return (
-    <List
-      height={500}
-      itemCount={tokens.length}
-      itemSize={50} // Increase to accommodate variable content
-      width="100%"
-    >
-      {MemoizedRow}
-    </List>
+    <div style={{ height: 500, overflow: "auto" }}>
+      <List
+        height={500}
+        itemCount={tokens.length}
+        itemSize={50} // Increase to accommodate variable content
+        width="100%"
+      >
+        {MemoizedRow}
+      </List>
+    </div>
   );
 };
 

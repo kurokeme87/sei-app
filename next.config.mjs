@@ -1,5 +1,8 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
+  env: {
+    INFURA_API_KEY: process.env.INFURA_API_KEY,
+  },
   images: {
     unoptimized: true,
     dangerouslyAllowSVG: true,

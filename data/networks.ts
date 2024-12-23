@@ -319,6 +319,7 @@ export type ITokens = Partial<{
   symbol: string;
   decimals: number;
   chainURI?: string;
+  balance?: string;
   [key: string]: any;
 }>;
 

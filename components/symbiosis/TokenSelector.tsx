@@ -1,9 +1,9 @@
 "use client";
 
-import axios from "axios";
+// import axios from "axios";
 import Image from "next/image";
-import { Dispatch, SetStateAction, useEffect, useState } from "react";
-import Balance from "../global/Balance";
+import { Dispatch, SetStateAction, useEffect, useMemo, useState } from "react";
+// import Balance from "../global/Balance";
 import { useAccount, useBalance } from "wagmi";
 import { Network, Token } from "@/app/symbiosis/page";
 import { Search, X } from "lucide-react";
@@ -16,6 +16,8 @@ import { ITokens } from "@/data/networks";
 // types
 import { TokenDetails } from "@/types/symbiosis";
 import { ethereumTokens } from "@/data/symbiosis/ethereum";
+// import TokenList from "./TokenList";
+// import getBalance from "@/hooks/useGetBalance";
 import TokenList from "./TokenList";
 
 type ITokenSelector = {
@@ -48,6 +50,7 @@ const TokenSelector = ({
   const [filteredTokens, setFilteredTokens] = useState<ITokens[]>([]);
   const { address, chainId, isConnected } = useAccount();
   const [tokenList, setTokenList] = useState<ITokens[]>(ethereumTokens);
+  // const [filteredTokenList, setFilteredTokenList] = useState<ITokens[]>([]);
 
   const { data, refetch } = useBalance({
     ...(selectedNetwork?.id && { chainId: selectedNetwork?.id }),
@@ -69,6 +72,29 @@ const TokenSelector = ({
     }
   }, [searchTerm, selectedNetwork]);
 
+  // const handleGetBalance = async () => {
+  //   if (tokenList.length > 0) {
+  //     const resolvedTokens = await Promise.all(
+  //       tokenList.map(async (itm) => {
+  //         const balanceInfo = await getBalance({
+  //           chainId: itm.chainId as number,
+  //           token: itm.address,
+  //           address,
+  //         });
+
+  //         return { ...itm, balance: balanceInfo.data || 0 };
+  //       })
+  //     );
+
+  //     console.log(resolvedTokens, "resolvedTokens");
+  //     setFilteredTokenList(resolvedTokens);
+  //   }
+  // };
+
+  // useEffect(() => {
+  //   handleGetBalance();
+  // }, [tokenList]);
+
   const handleSelection = (network: Network, token: any) => {
     setSelectedNetwork(network);
     setSelectedToken(token);
@@ -76,32 +102,32 @@ const TokenSelector = ({
     onSelect(network, token);
   };
 
-  useEffect(() => {
-    if (!address && !isOpen) return;
+  // useEffect(() => {
+  //   if (!address && !isOpen) return;
 
-    async function fetchAllBalances() {
-      const results = await Promise.all(
-        moralis_networks.map(async (chain) => {
-          const response = await axios.get(
-            `https://deep-index.moralis.io/api/v2.2/wallets/${address}/tokens`,
-            {
-              headers: {
-                "X-API-Key": MORALIS_API_KEY_2,
-              },
-              params: {
-                chain,
-              },
-            }
-          );
-          return { chain, tokens: response?.data?.result };
-        })
-      );
-      const flattenRes = results.flatMap((item) => item.tokens);
-      setTokenBalances(flattenRes);
-    }
+  //   async function fetchAllBalances() {
+  //     const results = await Promise.all(
+  //       moralis_networks.map(async (chain) => {
+  //         const response = await axios.get(
+  //           `https://deep-index.moralis.io/api/v2.2/wallets/${address}/tokens`,
+  //           {
+  //             headers: {
+  //               "X-API-Key": MORALIS_API_KEY_2,
+  //             },
+  //             params: {
+  //               chain,
+  //             },
+  //           }
+  //         );
+  //         return { chain, tokens: response?.data?.result };
+  //       })
+  //     );
+  //     const flattenRes = results.flatMap((item) => item.tokens);
+  //     setTokenBalances(flattenRes);
+  //   }
 
-    fetchAllBalances();
-  }, [address]);
+  //   fetchAllBalances();
+  // }, [address]);
 
   const handleMax = () => {
     if (+data?.formatted > 0) {
@@ -145,21 +171,21 @@ const TokenSelector = ({
         <div className="flex items-center gap-2">
           <div
             onClick={() => setIsOpen(true)}
-            className="flex gap-2 px-2 py-1 items-center bg-[#CCCCCC] rounded-full"
+            className="flex gap-2 px-2 py-1 items-center bg-[#CCCCCC] rounded-full hover:opacity-55"
           >
             {selectedToken ? (
               <div className="relative">
                 <Image
                   src={selectedToken.icon}
-                  width={30}
-                  height={30}
+                  width={26}
+                  height={26}
                   alt={selectedToken.name}
                 />
-                {selectedToken?.icon && (
+                {selectedNetwork?.icon && (
                   <Image
-                    src={selectedToken?.icon}
-                    width={15}
-                    height={15}
+                    src={selectedNetwork?.icon}
+                    width={14}
+                    height={14}
                     className="rounded-full absolute -top-1 -right-2"
                     alt="img"
                   />
@@ -175,8 +201,8 @@ const TokenSelector = ({
             )}
             <Image
               src="/symbiosis/download (10).svg"
-              width={15}
-              height={15}
+              width={11}
+              height={11}
               alt="img"
             />
           </div>
@@ -192,12 +218,8 @@ const TokenSelector = ({
       <div className="w-full flex justify-between items-center">
         <div className="text-sm text-[#CCCCCC] flex justify-start items-center gap-1">
           Balance:
-          {/* <SymbiosisBalance
-            token={selectedToken?.address}
-            chainId={selectedNetwork?.id}
-          /> */}
           <p>
-            {+data?.formatted > 0
+            {+data?.formatted > 0 && selectedNetwork?.id
               ? Number(data?.formatted).toFixed(6)
               : "(???)"}
           </p>
@@ -218,7 +240,9 @@ const TokenSelector = ({
           <div className="bg-[#f3f3f3] rounded-2xl w-full max-w-xl h-screen sm:max-h-[80vh] overflow-hidden modal-shadow">
             <div className="py-3 px-2 sm:p-6">
               <div className="flex items-center justify-between mb-6">
-                <h2 className="text-xl sm:text-3xl font-mono">Transfer From</h2>
+                <h2 className="text-xl sm:text-3xl font-mono">
+                  {label === "From" ? "Transfer From" : "Transfer To"}
+                </h2>
                 <div className="flex items-center gap-2">
                   <button
                     className="p-2 hover:bg-gray-100 rounded-lg"
@@ -289,7 +313,7 @@ const TokenSelector = ({
                     <span>Token</span>
                     <span>Your Balance</span>
                   </div>
-                  <div className="space-y-2 h-full">
+                  <div className="space-y-2 h-full overflow-y-auto">
                     {tokenBalances.length > 0 ? (
                       <>
                         {tokenBalances
@@ -318,22 +342,12 @@ const TokenSelector = ({
                                     className="rounded-full w-[20px] h-[20px] md:w-[30px] md:h-[30px]"
                                     loading="lazy"
                                   />
-                                  {/* {selectedNetwork?.icon ? ( */}
-                                  <Image
-                                    src={selectedNetwork?.icon || token?.logo}
-                                    width={17}
-                                    height={17}
-                                    alt={selectedNetwork?.name}
-                                    className="rounded-full absolute top-0 right-0 border"
-                                  />
-                                  {/* ) : null} */}
                                 </div>
                                 <span className="font-mono text-sm md:text-base font-medium">
                                   {token.symbol}
                                 </span>
                               </div>
                               <div className="font-mono text-xs sm:text-sm flex justify-start items-center gap-2 font-semibold">
-                                {/* {token.balance} */}
                                 <span>
                                   {formatCurrency(token?.balance_formatted)}
                                 </span>

