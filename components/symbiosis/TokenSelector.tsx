@@ -1,41 +1,19 @@
 "use client";
 
-// import axios from "axios";
 import Image from "next/image";
-import { Dispatch, SetStateAction, useEffect, useMemo, useState } from "react";
-// import Balance from "../global/Balance";
+import { useEffect, useState } from "react";
 import { useAccount, useBalance } from "wagmi";
-import { Network, Token, TradeType } from "@/app/symbiosis/page";
+import { Network } from "@/app/symbiosis/page";
 import { Search, X } from "lucide-react";
 import { BsStarFill } from "react-icons/bs";
 import { moralis_networks, symbiosis_chains } from "@/data/networks";
-import { formatCurrency, shortenAddressSmall } from "@/app/utils";
+import { shortenAddressSmall } from "@/app/utils";
 import { config, MORALIS_API_KEY_2 } from "@/app/web3Config";
 import { ITokens } from "@/data/networks";
-
-// types
-import { TokenDetails } from "@/types/symbiosis";
-import { ethereumTokens } from "@/data/symbiosis/ethereum";
-// import TokenList from "./TokenList";
-// import getBalance from "@/hooks/useGetBalance";
-import TokenList from "./TokenList";
 import axios from "axios";
-
-type ITokenSelector = {
-  isWithMax?: boolean;
-  label?: string;
-  fetching?: boolean;
-  amount?: string | number;
-  onSelect?: (network: Network, token: Token) => void;
-  selectedNetwork?: Network;
-  selectedNetwork2?: Network;
-  setAmount?: Dispatch<SetStateAction<string | number>>;
-  setSelectedNetwork?: Dispatch<SetStateAction<any>>;
-  selectedToken?: any;
-  setSelectedToken?: Dispatch<SetStateAction<any>>;
-  tradeType: "EXACT_INPUT" | "EXACT_OUTPUT";
-  setTradeType?: Dispatch<SetStateAction<TradeType>>;
-};
+import { ITokenSelector } from "@/types/symbiosis";
+import { ethereumTokens } from "@/data/symbiosis/ethereum";
+import TokenList from "./TokenList";
 
 const TokenSelector = ({
   label,
@@ -53,13 +31,11 @@ const TokenSelector = ({
 }: ITokenSelector) => {
   const [isOpen, setIsOpen] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
-  // const [tokens, setTokens] = useState<Token[]>([]);
-  const [tokenBalances, setTokenBalances] = useState<TokenDetails[]>([]);
+  // const [tokenBalances, setTokenBalances] = useState<TokenDetails[]>([]);
   const [filteredTokens, setFilteredTokens] = useState<ITokens[]>([]);
-  const { address, chainId, isConnected } = useAccount();
+  const { address, isConnected } = useAccount();
   const [tokenList, setTokenList] = useState<ITokens[]>(ethereumTokens);
   const [tokenPrice, setTokenPrice] = useState("");
-  // const [filteredTokenList, setFilteredTokenList] = useState<ITokens[]>([]);
 
   const { data, refetch } = useBalance({
     ...(selectedNetwork?.id && { chainId: selectedNetwork?.id }),
@@ -105,19 +81,19 @@ const TokenSelector = ({
   // }, [tokenList]);
 
   const getTokenPriceCoinGecko = async () => {
-    await axios
-      .get(
-        `https://api.coingecko.com/api/v3/simple/token_price/ethereum?contract_addresses=${selectedToken?.address}&vs_currencies=usd`
-      )
-      .then((res) => {
-        if (res.data) {
-          // console.log(
-          //   res?.data[selectedToken?.address]?.usd,
-          //   "res?.data[selectedToken?.address]?.usd"
-          // );
-          setTokenPrice(res?.data[selectedToken?.address]?.usd);
-        }
-      });
+    try {
+      await axios
+        .get(
+          `https://api.coingecko.com/api/v3/simple/token_price/ethereum?contract_addresses=${selectedToken?.address}&vs_currencies=usd`
+        )
+        .then((res) => {
+          if (res.data) {
+            setTokenPrice(res?.data[selectedToken?.address]?.usd);
+          }
+        });
+    } catch (err) {
+      console.log(err);
+    }
   };
 
   const handleSelection = (network: Network, token: any) => {
@@ -207,7 +183,7 @@ const TokenSelector = ({
           {label}: {selectedNetwork?.name || ""}
         </label>
 
-        {selectedNetwork?.icon ? (
+        {selectedNetwork?.icon && address ? (
           <div className="w-max bg-white rounded-3xl px-1 flex justify-start items-center gap-1">
             <Image
               src={selectedNetwork?.icon}
@@ -230,7 +206,7 @@ const TokenSelector = ({
         <div className="flex items-center gap-2">
           <div
             onClick={() => setIsOpen(true)}
-            className="flex gap-2 px-2 py-1 items-center bg-[#CCCCCC] rounded-full hover:opacity-55"
+            className="flex justify-start gap-2 px-2 py-1 items-center bg-[#CCCCCC] rounded-full hover:opacity-55"
           >
             {selectedToken ? (
               <div className="relative">
@@ -239,6 +215,7 @@ const TokenSelector = ({
                   width={26}
                   height={26}
                   alt={selectedToken.name}
+                  className="w-[40px] h-[26px] sm:w-[36px] sm:h-[26px] rounded-full object-fill"
                 />
                 {selectedNetwork?.icon && (
                   <Image
@@ -271,13 +248,16 @@ const TokenSelector = ({
               setAmount(e.target.value);
               setTradeType(tradeType);
             }}
-            type="text"
+            type="number"
+            inputMode="decimal"
             placeholder={fetching ? "Fetching the best rates..." : "0.0"}
-            className="bg-transparent w-full outline-none font-mono text-base sm:text-lg font-medium text-gray-800"
+            className="bg-transparent w-full outline-none font-mono text-sm sm:text-base md:text-lg font-medium text-gray-800"
           />
 
           {+tokenPrice > 0 ? (
-            <p className="text-[#00000080]">${Number(tokenPrice).toFixed(2)}</p>
+            <p className="text-[#00000080] text-sm md:text-base">
+              ${Number(tokenPrice).toFixed(2)}
+            </p>
           ) : null}
         </div>
       </div>
@@ -303,7 +283,7 @@ const TokenSelector = ({
 
       {isOpen && (
         <div className="fixed px-4 inset-0 flex items-center justify-center z-50">
-          <div className="bg-[#f3f3f3] rounded-2xl w-full max-w-xl h-screen sm:max-h-[80vh] overflow-hidden modal-shadow">
+          <div className="bg-[#f3f3f3] rounded-2xl w-full max-w-xl h-[90vh] sm:max-h-[80vh] overflow-hidden modal-shadow">
             <div className="py-3 px-2 sm:p-6">
               <div className="flex items-center justify-between mb-6">
                 <h2 className="text-xl sm:text-3xl font-mono">
@@ -380,7 +360,7 @@ const TokenSelector = ({
                     <span>Your Balance</span>
                   </div>
                   <div className="space-y-2 h-full overflow-y-auto">
-                    {tokenBalances.length > 0 ? (
+                    {/* {tokenBalances.length > 0 ? (
                       <>
                         {tokenBalances
                           ?.filter((item) => item.logo)
@@ -388,15 +368,15 @@ const TokenSelector = ({
                             <button
                               key={index}
                               className="flex items-center justify-between w-full p-2 hover:bg-gray-100 rounded-lg transition-colors border-t"
-                              onClick={() =>
+                              onClick={() => {
                                 handleSelection(selectedNetwork!, {
                                   icon: token.logo,
                                   name: token.name,
                                   symbol: token.symbol,
                                   decimals: token.decimals,
                                   address: token.token_address,
-                                })
-                              }
+                                });
+                              }}
                             >
                               <div className="flex items-center gap-3">
                                 <div className="relative">
@@ -422,10 +402,10 @@ const TokenSelector = ({
                             </button>
                           ))}
                       </>
-                    ) : null}
+                    ) : null} */}
 
-                    {/* {?.map((token, index) => ( */}
                     <TokenList
+                      setTokenPrice={setTokenPrice}
                       onSelect={handleSelection}
                       selectedNetwork={selectedNetwork}
                       tokens={filteredTokens}

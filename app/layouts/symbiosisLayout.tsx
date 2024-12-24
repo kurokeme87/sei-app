@@ -22,7 +22,7 @@ export default function SymbiosisLayout({
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
         <div className="flex h-screen bg-background">
-          <main className="flex-1 pb-8 relative   overflow-auto">
+          <main className="flex-1 pb-8 relative overflow-auto">
             <img
               src="/symbiosis/7324371f5b8b734d87b9.svg"
               alt="Symbiosis"
@@ -33,7 +33,7 @@ export default function SymbiosisLayout({
               alt="Symbiosis"
               className="rounded-2xl h-[70%] z-0 right-0 bottom-0 md:fixed hidden"
             />
-            <div className=" mx-auto">
+            <div className="mx-auto">
               {/* <div className="absolute z-10 top-0 right-5 mt-4 mb-4">
                 <Button variant="destructive">Connect Wallet</Button>
               </div> */}

