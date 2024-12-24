@@ -19,6 +19,7 @@ import axios from "axios";
 import { formatAmount } from "@/lib/utils";
 import QuoteCard from "@/components/symbiosis/SymbiosisQuoteCard";
 import { TSwapQuote } from "@/types/symbiosis";
+import { TbSettingsFilled } from "react-icons/tb";
 
 // Dummy data for pools
 const pools = [
@@ -376,9 +377,9 @@ export default function Page() {
           <h2 className="text-2xl">Exchange</h2>
           <p>{"{?}"}</p>
         </div>
-        <div className="bg-[#f1f1f1] p-2 rounded-lg">
-          <Settings
-            className="w-6 h-6 cursor-pointer hover:text-gray-300 transition-colors"
+        <div className="bg-[#f1f1f1] p-2 rounded-xl hover:opacity-65">
+          <TbSettingsFilled
+            className="w-6 h-6 cursor-pointer transition-colors hover:opacity-65"
             onClick={() => setShowSettings(true)}
           />
         </div>
@@ -399,13 +400,17 @@ export default function Page() {
           label="From"
           onSelect={(network, token) => setFromToken({ network, token })}
         />
-        <div className="flex justify-center absolute w-full bottom-[-15px]">
+        <div className="flex justify-center absolute w-full bottom-[-35px]">
           <div className="flex justify-center">
             <div
               onClick={handleSwap}
-              className="bg-black rounded-lg p-2 cursor-pointer hover:bg-gray-900"
+              className="bg-black rounded-xl p-2 cursor-pointer hover:bg-gray-900"
             >
-              <img src="/symbiosis/download (5).svg" alt="round" />
+              <img
+                src="/symbiosis/download (5).svg"
+                alt="round"
+                className="h-6 w-6"
+              />
             </div>
           </div>
         </div>

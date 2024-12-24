@@ -226,7 +226,7 @@ const TokenSelector = ({
         ) : null}
       </div>
 
-      <div className="bg-[#F3F3F3] shadow-md rounded-lg p-2 md:p-4 space-y-2 cursor-pointer">
+      <div className="bg-white shadow-md rounded-lg p-2 md:p-4 space-y-2 cursor-pointer">
         <div className="flex items-center gap-2">
           <div
             onClick={() => setIsOpen(true)}
