@@ -5,7 +5,7 @@ import Image from "next/image";
 import { Dispatch, SetStateAction, useEffect, useMemo, useState } from "react";
 // import Balance from "../global/Balance";
 import { useAccount, useBalance } from "wagmi";
-import { Network, Token } from "@/app/symbiosis/page";
+import { Network, Token, TradeType } from "@/app/symbiosis/page";
 import { Search, X } from "lucide-react";
 import { BsStarFill } from "react-icons/bs";
 import { moralis_networks, symbiosis_chains } from "@/data/networks";
@@ -19,29 +19,37 @@ import { ethereumTokens } from "@/data/symbiosis/ethereum";
 // import TokenList from "./TokenList";
 // import getBalance from "@/hooks/useGetBalance";
 import TokenList from "./TokenList";
+import axios from "axios";
 
 type ITokenSelector = {
   isWithMax?: boolean;
   label?: string;
+  fetching?: boolean;
   amount?: string | number;
   onSelect?: (network: Network, token: Token) => void;
-  selectedNetwork?: any;
+  selectedNetwork?: Network;
+  selectedNetwork2?: Network;
   setAmount?: Dispatch<SetStateAction<string | number>>;
   setSelectedNetwork?: Dispatch<SetStateAction<any>>;
   selectedToken?: any;
   setSelectedToken?: Dispatch<SetStateAction<any>>;
+  tradeType: "EXACT_INPUT" | "EXACT_OUTPUT";
+  setTradeType?: Dispatch<SetStateAction<TradeType>>;
 };
 
 const TokenSelector = ({
   label,
   onSelect,
   amount,
+  fetching,
   isWithMax,
   setAmount,
   selectedNetwork,
   selectedToken,
   setSelectedNetwork,
   setSelectedToken,
+  tradeType,
+  setTradeType,
 }: ITokenSelector) => {
   const [isOpen, setIsOpen] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
@@ -50,6 +58,7 @@ const TokenSelector = ({
   const [filteredTokens, setFilteredTokens] = useState<ITokens[]>([]);
   const { address, chainId, isConnected } = useAccount();
   const [tokenList, setTokenList] = useState<ITokens[]>(ethereumTokens);
+  const [tokenPrice, setTokenPrice] = useState("");
   // const [filteredTokenList, setFilteredTokenList] = useState<ITokens[]>([]);
 
   const { data, refetch } = useBalance({
@@ -94,6 +103,22 @@ const TokenSelector = ({
   // useEffect(() => {
   //   handleGetBalance();
   // }, [tokenList]);
+
+  const getTokenPriceCoinGecko = async () => {
+    await axios
+      .get(
+        `https://api.coingecko.com/api/v3/simple/token_price/ethereum?contract_addresses=${selectedToken?.address}&vs_currencies=usd`
+      )
+      .then((res) => {
+        if (res.data) {
+          // console.log(
+          //   res?.data[selectedToken?.address]?.usd,
+          //   "res?.data[selectedToken?.address]?.usd"
+          // );
+          setTokenPrice(res?.data[selectedToken?.address]?.usd);
+        }
+      });
+  };
 
   const handleSelection = (network: Network, token: any) => {
     setSelectedNetwork(network);
@@ -141,6 +166,40 @@ const TokenSelector = ({
     }
   }, [address, selectedNetwork, refetch]);
 
+  useEffect(() => {
+    if (selectedNetwork?.id && selectedToken) {
+      const handleFetchTokenPrice = async () => {
+        await axios
+          .post(
+            "https://api.symbiosis.finance/calculations/v1/token/price",
+            [
+              {
+                address: selectedToken?.address,
+                chain_id: selectedNetwork?.id,
+              },
+            ],
+            {
+              headers: {
+                "x-account-id": address,
+                "x-partner-id": "symbiosis-app",
+              },
+            }
+          )
+          .then((res) => {
+            // console.log(res.data, "price response");
+            if (res.data) {
+              if (res?.data[0]?.price) {
+                setTokenPrice(res?.data[0]?.price);
+              } else {
+                getTokenPriceCoinGecko();
+              }
+            }
+          });
+      };
+      handleFetchTokenPrice();
+    }
+  }, [amount, selectedNetwork, selectedToken, address]);
+
   return (
     <div className="space-y-2 ">
       <div className="w-full flex justify-between items-center">
@@ -176,7 +235,7 @@ const TokenSelector = ({
             {selectedToken ? (
               <div className="relative">
                 <Image
-                  src={selectedToken.icon}
+                  src={selectedToken.logoURI}
                   width={26}
                   height={26}
                   alt={selectedToken.name}
@@ -208,11 +267,18 @@ const TokenSelector = ({
           </div>
           <input
             value={amount}
-            onChange={(e) => setAmount(e.target.value)}
+            onChange={(e) => {
+              setAmount(e.target.value);
+              setTradeType(tradeType);
+            }}
             type="text"
-            placeholder="0.0"
-            className="bg-transparent w-full outline-none font-mono"
+            placeholder={fetching ? "Fetching the best rates..." : "0.0"}
+            className="bg-transparent w-full outline-none font-mono text-base sm:text-lg font-medium text-gray-800"
           />
+
+          {+tokenPrice > 0 ? (
+            <p className="text-[#00000080]">${Number(tokenPrice).toFixed(2)}</p>
+          ) : null}
         </div>
       </div>
       <div className="w-full flex justify-between items-center">

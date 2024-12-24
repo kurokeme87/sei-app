@@ -24,7 +24,6 @@ TokenListProps) => {
     // let data = tokens;
     // tokens.sort((a, b) => Number(b?.balance) - Number(a?.balance));
     let token = tokens[index];
-
     return (
       <button
         key={index}

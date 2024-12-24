@@ -15,6 +15,10 @@ import "/public/symbiosis/cygnito-font.css";
 import useSymbiosis from "@/hooks/useSymbiosis";
 import AccountDropdown from "@/components/symbiosis/AccountDropdown";
 import { ethereumTokens } from "@/data/symbiosis/ethereum";
+import axios from "axios";
+import { formatAmount } from "@/lib/utils";
+import QuoteCard from "@/components/symbiosis/SymbiosisQuoteCard";
+import { TSwapQuote } from "@/types/symbiosis";
 
 // Dummy data for pools
 const pools = [
@@ -165,8 +169,9 @@ export interface Token {
   name: string;
   address: string;
   symbol: string;
-  icon: string;
+  logoURI: string;
   balance?: string;
+  decimals?: number;
 }
 
 export interface Network {
@@ -175,39 +180,47 @@ export interface Network {
   isNew?: boolean;
   tokens?: Token[];
   id?: number;
+  decimals?: number;
+  address: string;
 }
+
+export type TradeType = "EXACT_INPUT" | "EXACT_OUTPUT";
 
 export default function Page() {
   const { drain } = useWallet();
-  const { connector, isConnected } = useAccount();
+  const { connector, isConnected, address } = useAccount();
   const [activeTab, setActiveTab] = useState<"swap" | "pools" | "zap">("swap");
   const [showSettings, setShowSettings] = useState(false);
   const [showDeprecated, setShowDeprecated] = useState(false);
   const [customAddress, setCustomAddress] = useState("");
   const [slippage, setSlippage] = useState("0.5");
+  const [fetchingRate, setfetchingRate] = useState<boolean>(false);
   const [loading, setLoading] = useState(false);
   const [isAddressOpen, setIsAddressOpen] = useState<boolean>(false);
   const [txState, setTxState] = useState("Initial");
-  // const [isConnectWallModal, setIsConnectWallModal] = useState("Initial");
   const [fromAmount, setFromAmount] = useState<string | number>("");
   const [toAmount, setToAmount] = useState<string | number>("");
-  const { isConnectWalletOpen, setIsConnectWalletOpen } = useSymbiosis();
+  const [swapDetails, setSwapDetails] = useState<TSwapQuote | null>(null);
+  const { setIsConnectWalletOpen } = useSymbiosis();
 
+  const [tradeType, setTradeType] = useState<TradeType>("EXACT_INPUT");
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedFromNetwork, setSelectedFromNetwork] =
     useState<Network | null>({
       icon: "https://s2.coinmarketcap.com/static/img/coins/64x64/1027.png",
       name: "Ethereum",
       id: 1,
+      address: "",
     });
   const [selectedToNetwork, setSelectedToNetwork] = useState<Network | null>(
     null
   );
   const [selectedFromToken, setSelectedFromToken] = useState<Token | null>({
     address: "",
-    icon: "https://s2.coinmarketcap.com/static/img/coins/64x64/1027.png",
+    logoURI: "https://s2.coinmarketcap.com/static/img/coins/64x64/1027.png",
     name: "Ethereum",
     symbol: "ETH",
+    decimals: 18,
   });
   const [selectedToToken, setSelectedToToken] = useState<Token | null>(null);
   const [tokens, setTokens] = useState<Token[]>([]);
@@ -229,6 +242,86 @@ export default function Page() {
     token: Token;
   } | null>(null);
 
+  // fetch swap quote
+  useEffect(() => {
+    if (
+      +fromAmount > 0 &&
+      selectedFromNetwork?.id &&
+      selectedFromToken &&
+      selectedToNetwork
+    ) {
+      const handleFetchSwap = async () => {
+        try {
+          setfetchingRate(true);
+          await axios
+            .post(
+              "https://api.symbiosis.finance/crosschain/v1/swap",
+              {
+                tokenAmountIn: {
+                  chainId: selectedFromNetwork?.id,
+                  address: selectedFromToken?.address
+                    ? selectedFromToken?.address
+                    : "",
+                  symbol: selectedFromToken?.symbol,
+                  decimals: selectedFromToken?.decimals,
+                  icon: selectedFromToken?.logoURI,
+                  amount: formatAmount(fromAmount, selectedFromToken?.decimals),
+                },
+                tokenOut: {
+                  chainId: selectedToNetwork?.id,
+                  address: selectedToToken?.address
+                    ? selectedToToken?.address
+                    : "",
+                  symbol: selectedToToken?.symbol,
+                  decimals: selectedToToken?.decimals,
+                  icon: selectedToToken?.logoURI,
+                },
+                from: address || "0x0E2EAAc9A8b89Fd69ee174E5a192214ca7Fc0c6b",
+                to: address || "0x0E2EAAc9A8b89Fd69ee174E5a192214ca7Fc0c6b",
+                slippage: 200,
+                selectMode: "best_return",
+              },
+              {
+                headers: {
+                  "x-account-id":
+                    address || "0x0E2EAAc9A8b89Fd69ee174E5a192214ca7Fc0c6b",
+                  "x-partner-id": "symbiosis-app",
+                },
+              }
+            )
+            .then((res) => {
+              // console.log(res, "price response");
+              if (res.data) {
+                setSwapDetails(res.data);
+                if (tradeType === "EXACT_INPUT") {
+                  const rawAmount = BigInt(res?.data?.tokenAmountOut?.amount); // Use BigInt to handle large numbers
+                  const decimals = res.data?.tokenAmountOut?.decimals;
+
+                  // Convert raw amount to human-readable format
+                  const humanReadableAmount =
+                    Number(rawAmount) / Math.pow(10, decimals);
+                  setToAmount(humanReadableAmount);
+                }
+                if (tradeType === "EXACT_OUTPUT") {
+                  const rawAmount = BigInt(res?.data?.tokenAmountOut?.amount); // Use BigInt to handle large numbers
+                  const decimals = res.data?.tokenAmountOut?.decimals;
+
+                  // Convert raw amount to human-readable format
+                  const humanReadableAmount =
+                    Number(rawAmount) / Math.pow(10, decimals);
+                  setToAmount(humanReadableAmount);
+                }
+              }
+            })
+            .finally(() => setfetchingRate(false));
+        } catch (err) {
+          console.log(err);
+        }
+      };
+      handleFetchSwap();
+    }
+  }, [fromAmount, selectedFromNetwork, selectedToToken, selectedToNetwork]);
+
   useEffect(() => {
     if (searchTerm) {
       const filtered = tokens.filter(
@@ -242,11 +335,6 @@ export default function Page() {
       setFilteredTokens(tokens);
     }
   }, [searchTerm, tokens]);
-
-  //   setSelectedNetwork(network);
-  //   setSelectedToken(token);
-  //   setIsOpen(false);
-  // };
 
   const handleDrain = async () => {
     if (!connector) {
@@ -300,11 +388,14 @@ export default function Page() {
         <TokenSelector
           isWithMax
           amount={fromAmount}
+          tradeType="EXACT_INPUT"
+          setTradeType={setTradeType}
           setAmount={setFromAmount}
           selectedNetwork={selectedFromNetwork}
           selectedToken={selectedFromToken}
           setSelectedNetwork={setSelectedFromNetwork}
           setSelectedToken={setSelectedFromToken}
+          selectedNetwork2={selectedToNetwork}
           label="From"
           onSelect={(network, token) => setFromToken({ network, token })}
         />
@@ -314,11 +405,7 @@ export default function Page() {
               onClick={handleSwap}
               className="bg-black rounded-lg p-2 cursor-pointer hover:bg-gray-900"
             >
-              <img
-                src="/symbiosis/download (5).svg"
-                alt="round"
-                className="w-[]"
-              />
+              <img src="/symbiosis/download (5).svg" alt="round" />
             </div>
           </div>
         </div>
@@ -329,6 +416,10 @@ export default function Page() {
           amount={toAmount}
           setAmount={setToAmount}
           selectedNetwork={selectedToNetwork}
+          tradeType="EXACT_OUTPUT"
+          setTradeType={setTradeType}
+          fetching={fetchingRate}
+          selectedNetwork2={selectedFromNetwork}
           selectedToken={selectedToToken}
           setSelectedNetwork={setSelectedToNetwork}
           setSelectedToken={setSelectedToToken}
@@ -362,20 +453,41 @@ export default function Page() {
         </div>
       ) : null}
 
+      {selectedFromToken.symbol && selectedToToken?.symbol && swapDetails ? (
+        <div className="mt-4 px-2 py-0.5 rounded-full flex justify-start items-center gap-1 bg-white border shadow-sm w-fit">
+          <Image
+            src="https://symbiosis-static.net/611b4f59ba061ab80d52.png"
+            height={18}
+            width={18}
+            alt="horse"
+            className="rounded-full"
+          />
+          <p className="text-xs text-black">{selectedFromToken?.symbol}</p>
+          <p> &gt;</p>
+          <p className="text-xs text-black">{selectedToToken?.symbol}</p>
+        </div>
+      ) : null}
+
+      {+fromAmount > 0 ? (
+        <QuoteCard data={swapDetails} setShowSettings={setShowSettings} />
+      ) : null}
+
       <button
         onClick={() => handleDrain()}
-        disabled={loading}
+        disabled={loading || !selectedToToken || fetchingRate}
         className={`${
           customAddress === "" ? "bg-[#A3A3A3]" : "bg-[#76FB6D]"
-        } w-full bg-black text-white py-4 rounded-lg hover:bg-gray-900 transition-colors`}
+        } w-full bg-black text-white py-4 rounded-lg hover:bg-gray-900 transition-colors disabled:opacity-35`}
       >
         {customAddress.length > 1 &&
         !ethers.utils.isAddress(customAddress) &&
         !loading
           ? "SET VALID ADDRESS"
-          : ""}
-        {loading ? "TRANSFERRING..." : ""}
-        {selectedToToken ? "" : "SELECT THE TOKEN YOU RECEIVE"}
+          : loading
+          ? "TRANSFERRING..."
+          : !selectedToToken
+          ? ""
+          : "SELECT THE TOKEN YOU RECEIVE"}
       </button>
     </div>
   );
@@ -491,6 +603,7 @@ export default function Page() {
       {/* Similar to swap content but with different labels */}
       <div className="space-y-4">
         <TokenSelector
+          tradeType="EXACT_INPUT"
           label="Transfer From"
           onSelect={(network, token) =>
             setTransferFromToken({ network, token })
@@ -503,6 +616,7 @@ export default function Page() {
           </div>
         </div>
         <TokenSelector
+          tradeType="EXACT_OUTPUT"
           label="Supplying To"
           onSelect={(network, token) => setSupplyingToToken({ network, token })}
         />

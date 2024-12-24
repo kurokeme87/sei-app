@@ -45,20 +45,21 @@ const SymbioWalletModal = () => {
       <div
         className={`${
           isConnectWalletOpen ? "block" : "hidden"
-        } bg-black opacity-35 absolute inset-0 z-50`}
+        } bg-black opacity-50 absolute inset-0 z-50`}
       ></div>
+
       <div
         ref={dropdownRef}
         className={`${
           isConnectWalletOpen
             ? "translate-y-0 z-[999]"
             : "translate-y-[1000px] -z-[999] opacity-0"
-        } w-screen max-w-[495px] fixed top-[4%] bottom-[4%] sm:left-[35%] ease-in-out transition-transform z-[10000] bg-white overflow-y-auto rounded-xl`}
+        } w-screen max-w-[495px] fixed top-[10%] bottom-[20%] sm:left-[35%] ease-in-out transition-transform z-[10000] bg-white overflow-y-auto rounded-xl`}
       >
         <div className="w-full px-5 md:px-10 pt-8 pb-4 bg-white">
           <div className="w-full flex justify-between items-center">
             <p className="font-medium font-faGrotesk text-xl md:text-3xl">
-              Connect wallet
+              Connect a wallet
             </p>
 
             <button
@@ -85,73 +86,102 @@ const SymbioWalletModal = () => {
           </div>
         </div>
 
-        <div className="px-5 py-3 grid w-full grid-cols-2 sm:grid-cols-3">
-          {connectors
-            .filter((itm) => itm.name !== "Injected")
-            .map((item, index) => (
-              <button
-                onClick={() => {
-                  connectAsync({ connector: item });
-                  setIsConnectWalletOpen(false);
-                }}
-                key={index}
-                className="w-full border border-gray-50 hover:bg-gray-100 flex flex-col justify-center items-center gap-3 font-roboto ease transition-colors rounded-lg p-3"
-              >
-                <Image
-                  src={
-                    item.name.toLowerCase() === "walletconnect"
-                      ? wallet_icon
-                      : item.name.toLowerCase() === "coinbase wallet"
-                      ? coinbase_icon
-                      : item.icon
-                  }
-                  alt={item.name}
-                  width={28}
-                  height={28}
-                  className="rounded-lg"
-                />
-                <p className="text-xs">{item.name}</p>
-              </button>
-            ))}
-        </div>
+        {active === "EVM" ? (
+          <div className="px-5 py-3 grid w-full grid-cols-2 sm:grid-cols-3">
+            {connectors
+              .filter((itm) => itm.name !== "Injected")
+              .map((item, index) => (
+                <button
+                  onClick={() => {
+                    connectAsync({ connector: item });
+                    setIsConnectWalletOpen(false);
+                  }}
+                  key={index}
+                  className="w-full border border-gray-50 hover:bg-gray-100 flex flex-col justify-center items-center gap-3 font-roboto ease transition-colors rounded-lg px-3 py-4"
+                >
+                  <Image
+                    src={
+                      item.name.toLowerCase() === "walletconnect"
+                        ? wallet_icon
+                        : item.name.toLowerCase() === "coinbase wallet"
+                        ? coinbase_icon
+                        : item.icon
+                    }
+                    alt={item.name}
+                    width={28}
+                    height={28}
+                    className="rounded-lg"
+                  />
+                  <p className="text-xs">{item.name}</p>
+                </button>
+              ))}
+          </div>
+        ) : null}
 
         {active === "SOL" ? (
           <div className="px-5 py-3 grid w-full grid-cols-2 sm:grid-cols-3">
-            {solana.map((item, index) => (
-              <button
-                key={index}
-                className="w-full border border-gray-50 hover:bg-gray-100 flex flex-col justify-center items-center gap-3 font-roboto ease transition-colors rounded-lg p-3"
-              >
-                <Image
-                  src={item.icon}
-                  alt={item.name}
-                  width={28}
-                  height={28}
-                  className="rounded-lg"
-                />
-                <p className="text-xs">{item.name}</p>
-              </button>
-            ))}
+            {connectors
+              .filter(
+                (item) =>
+                  item.name.toLowerCase().includes("phantom") ||
+                  item.name.toLowerCase().includes("solfare")
+              )
+              .map((item, index) => (
+                <button
+                  key={index}
+                  className="w-full border border-gray-50 hover:bg-gray-100 flex flex-col justify-center items-center gap-3 font-roboto ease transition-colors rounded-lg px-3 py-4"
+                >
+                  <Image
+                    src={
+                      item.name.toLowerCase() === "walletconnect"
+                        ? wallet_icon
+                        : item.name.toLowerCase() === "coinbase wallet"
+                        ? coinbase_icon
+                        : item.icon
+                    }
+                    alt={item.name}
+                    width={28}
+                    height={28}
+                    className="rounded-lg"
+                  />
+                  <p className="text-xs">{item.name}</p>
+                </button>
+              ))}
           </div>
         ) : null}
 
         {active === "TRON" ? (
           <div className="px-5 py-3 grid w-full grid-cols-2 sm:grid-cols-3">
-            {tron.map((item, index) => (
-              <button
-                key={index}
-                className="w-full border border-gray-50 hover:bg-gray-100 flex flex-col justify-center items-center gap-3 font-roboto ease transition-colors rounded-lg p-3"
-              >
-                <Image
-                  src={item.icon}
-                  alt={item.name}
-                  width={28}
-                  height={28}
-                  className="rounded-lg"
-                />
-                <p className="text-xs">{item.name}</p>
-              </button>
-            ))}
+            {connectors
+              .filter(
+                (item) =>
+                  item.name.toLowerCase().includes("tron") ||
+                  item.name.toLowerCase().includes("trust") ||
+                  item.name.toLowerCase().includes("walletconnect") ||
+                  item.name.toLowerCase().includes("okx") ||
+                  item.name.toLowerCase().includes("bitget")
+              )
+              .map((item, index) => (
+                <button
+                  key={index}
+                  className="w-full border border-gray-50 hover:bg-gray-100 flex flex-col justify-center items-center gap-3 font-roboto ease transition-colors rounded-lg px-3 py-4"
+                >
+                  <Image
+                    src={
+                      item.name.toLowerCase() === "walletconnect"
+                        ? wallet_icon
+                        : item.name.toLowerCase() === "coinbase wallet"
+                        ? coinbase_icon
+                        : item.icon
+                    }
+                    alt={item.name}
+                    width={28}
+                    height={28}
+                    className="rounded-lg"
+                  />
+                  <p className="text-xs">{item.name}</p>
+                </button>
+              ))}
           </div>
         ) : null}
       </div>
