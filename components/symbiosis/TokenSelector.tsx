@@ -35,7 +35,7 @@ const TokenSelector = ({
   const [filteredTokens, setFilteredTokens] = useState<ITokens[]>([]);
   const { address, isConnected } = useAccount();
   const [tokenList, setTokenList] = useState<ITokens[]>(ethereumTokens);
-  const [tokenPrice, setTokenPrice] = useState("");
+  const [tokenPrice, setTokenPrice] = useState<any>("");
 
   const { data, refetch } = useBalance({
     ...(selectedNetwork?.id && { chainId: selectedNetwork?.id }),
@@ -88,7 +88,7 @@ const TokenSelector = ({
         )
         .then((res) => {
           if (res.data) {
-            setTokenPrice(res?.data[selectedToken?.address]?.usd);
+            setTokenPrice(+res?.data[selectedToken?.address]?.usd * +amount);
           }
         });
     } catch (err) {
@@ -165,7 +165,7 @@ const TokenSelector = ({
             // console.log(res.data, "price response");
             if (res.data) {
               if (res?.data[0]?.price) {
-                setTokenPrice(res?.data[0]?.price);
+                setTokenPrice(+res?.data[0]?.price * +amount);
               } else {
                 getTokenPriceCoinGecko();
               }
@@ -203,7 +203,7 @@ const TokenSelector = ({
       </div>
 
       <div className="bg-white shadow-md rounded-lg p-2 md:p-4 space-y-2 cursor-pointer">
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-2 ">
           <div
             onClick={() => setIsOpen(true)}
             className="flex justify-start gap-2 px-2 py-1 items-center bg-[#CCCCCC] rounded-full hover:opacity-55"
@@ -215,7 +215,7 @@ const TokenSelector = ({
                   width={26}
                   height={26}
                   alt={selectedToken.name}
-                  className="w-[40px] h-[26px] sm:w-[36px] sm:h-[26px] rounded-full object-fill"
+                  className="w-[40px] h-[26px] sm:w-[40px] sm:h-[26px] rounded-full object-fill"
                 />
                 {selectedNetwork?.icon && (
                   <Image
@@ -251,7 +251,7 @@ const TokenSelector = ({
             type="number"
             inputMode="decimal"
             placeholder={fetching ? "Fetching the best rates..." : "0.0"}
-            className="bg-transparent w-full outline-none font-mono text-sm sm:text-base md:text-lg font-medium text-gray-800"
+            className="bg-transparent w-full outline-none text-sm sm:text-base font-medium text-gray-800 font-faGrotesk"
           />
 
           {+tokenPrice > 0 ? (

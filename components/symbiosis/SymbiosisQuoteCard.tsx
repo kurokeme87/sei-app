@@ -14,7 +14,7 @@ interface IQuoteCard {
 const QuoteCard = ({ data, setShowSettings }: IQuoteCard) => {
   const [isExpanded, setIsExpanded] = useState<boolean>(false);
   const divRef = useRef<HTMLDivElement | null>(null);
-  const [divHeight, setDivHeight] = useState<string>("110px");
+  const [divHeight, setDivHeight] = useState<string>("90px");
 
   const rawAmount = BigInt(data?.fee.amount || 0); // Use BigInt to handle large numbers
   const decimals = data?.fee.decimals;
@@ -33,7 +33,7 @@ const QuoteCard = ({ data, setShowSettings }: IQuoteCard) => {
       if (isExpanded) {
         setDivHeight(`${divRef.current.scrollHeight}px`); // Set to full content height
       } else {
-        setDivHeight("110px"); // Collapse to 0 height
+        setDivHeight("90px"); // Collapse to 0 height
       }
     }
   }, [isExpanded]);

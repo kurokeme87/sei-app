@@ -110,3 +110,83 @@ export type ITokenSelector = {
   tradeType: "EXACT_INPUT" | "EXACT_OUTPUT";
   setTradeType?: Dispatch<SetStateAction<TradeType>>;
 };
+
+export type TimeframeData = {
+  transactions: number;
+  addresses: number;
+  amount_usd: number;
+  timestamp: string; // ISO8601 date string
+};
+
+export type TStatisticsData = {
+  updated_at: string; // ISO8601 date string
+  total: TimeframeData;
+  month: TimeframeData;
+  week: TimeframeData;
+  day: TimeframeData;
+};
+
+export type TransactionToken = {
+  symbol: string;
+  name: string;
+  address: string;
+  decimals: number;
+};
+
+type RouteToken = {
+  symbol: string;
+  name: string;
+  address: string;
+  decimals: number;
+};
+
+export type IRoute = {
+  chain_id: number;
+  amount: number;
+  token: RouteToken;
+};
+
+export type TransactionDetails = {
+  id: number;
+  from_client_id: string;
+  from_chain_id: number;
+  from_tx_hash?: string;
+  to_tx_hash: any;
+  join_chain_id: number | null;
+  join_tx_hash: string | null;
+  to_chain_id: number;
+  event_type: number;
+  type: number;
+  hash: string;
+  state: number;
+  created_at: string; // ISO8601 date string
+  from_address: string;
+  from_sender: string;
+  to_address: string;
+  amounts: number[];
+  tokens: TransactionToken[];
+  to_solana_address: string | null;
+  to_solana_asset: string | null;
+  to_solana_provider: string | null;
+  to_solana_tx_hash: string | null;
+  transit_token: any;
+  from_amount_usd: number;
+  to_amount_usd: number;
+  to_tx_id: any;
+  retry_active: boolean;
+  to_is_lost: boolean;
+  join_is_lost: boolean;
+  from_is_lost: boolean;
+  to_is_ignore: boolean;
+  join_is_ignore: boolean;
+  from_is_ignore: boolean;
+  from_route?: IRoute[];
+  to_route?: IRoute[];
+  mined_at?: string;
+  success_at?: any;
+  duration: any;
+  to_sender?: string;
+  to_btc_provider?: any;
+  to_btc_tx_hash?: any;
+  last_retry_at?: any;
+};

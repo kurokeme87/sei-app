@@ -160,7 +160,6 @@
   border-color: rgb(101, 59, 163);
 }
 
-
 .chain-scroll::-webkit-scrollbar {
   width: 12px;
 }
@@ -178,4 +177,16 @@
 /* Handle on hover */
 .chain-scroll::-webkit-scrollbar-thumb:hover {
   background: #999;
+}
+
+/* Chrome, Safari, Edge, Opera */
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+/* Firefox */
+input[type="number"] {
+  -moz-appearance: textfield;
 }
