@@ -30,8 +30,6 @@ const TransactionTable = () => {
     }
   }, [searchTerm]);
 
-  //   console.log(filtereData, "filtered data");
-
   return (
     <div className="w-full shadow-md bg-[#F2F2F2] rounded-3xl p-4 md:p-5 mt-10 font-faGrotesk">
       <input
@@ -103,9 +101,9 @@ const TransactionTable = () => {
                   {formatCurrency(item.from_amount_usd || "0")}
                 </td>
                 <td className="text-black p-2">
-                  {item.state === 0 ? (
+                  {item.state === 1 ? (
                     <p className="font-medium text-[#999]">Pneding</p>
-                  ) : item.state === 1 ? (
+                  ) : item.state === 0 ? (
                     <p className="font-medium text-[#238d18]">Success</p>
                   ) : (
                     ""
