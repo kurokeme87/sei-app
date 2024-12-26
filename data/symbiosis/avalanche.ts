@@ -4,7 +4,7 @@ export const avalancheTokens: ITokens[] = [
   {
     chainId: 43114,
     name: "Avalanche",
-    address: "0x0000000000000000000000000000000000000000", // Native AVAX, not an ERC-20 contract
+    address: "",
     logoURI: "https://cryptologos.cc/logos/avalanche-avax-logo.png",
     symbol: "AVAX",
     decimals: 18,

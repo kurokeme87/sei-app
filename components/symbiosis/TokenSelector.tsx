@@ -84,7 +84,7 @@ const TokenSelector = ({
     try {
       await axios
         .get(
-          `https://api.coingecko.com/api/v3/simple/token_price/ethereum?contract_addresses=${selectedToken?.address}&vs_currencies=usd`
+          `https://api.coingecko.com/api/v3/simple/token_price/${selectedNetwork?.network}?contract_addresses=${selectedToken?.address}&vs_currencies=usd`
         )
         .then((res) => {
           if (res.data) {

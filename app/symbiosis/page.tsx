@@ -30,6 +30,7 @@ export interface Network {
   id?: number;
   decimals?: number;
   address: string;
+  network?: string;
 }
 
 export type TradeType = "EXACT_INPUT" | "EXACT_OUTPUT";
