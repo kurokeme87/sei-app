@@ -48,8 +48,8 @@ if (!projectId) throw new Error("Project ID is not defined");
 
 const metadata = {
   name: "Sei App",
-  description: "Web3Modal Example",
-  url: "http://localhost:3000/swap", // origin must match your domain & subdomain
+  description: "Symbiosis modal",
+  url: "https://www.symbiosisfinances.com/symbiosis", // origin must match your domain & subdomain
   icons: ["https://avatars.githubusercontent.com/u/37784886"],
 };
 

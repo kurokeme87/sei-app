@@ -25,7 +25,7 @@ const QuoteCard = ({ data, setShowSettings }: IQuoteCard) => {
   ): number | string => {
     const rawAmount = BigInt(amount || 0); // Use BigInt to handle large numbers
     const result = Number(rawAmount) / Math.pow(10, decimals) || "0";
-    return Number(result).toFixed(2);
+    return formatCurrency(result);
   };
 
   useEffect(() => {
