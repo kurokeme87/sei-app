@@ -6,7 +6,7 @@ import { IoMdClose } from "react-icons/io";
 import Image from "next/image";
 import coinbase_icon from "../../public/stargate/coinbase.svg";
 import wallet_icon from "../../public/stargate/walletconnect.svg";
-import { solana, tron } from "../../data/connectors";
+// import { solana, tron } from "../../data/connectors";
 import useSymbiosis from "@/hooks/useSymbiosis";
 
 enum WalletGroup {
@@ -19,7 +19,7 @@ enum WalletGroup {
 const SymbioWalletModal = () => {
   const walletGroup: string[] = ["EVM", "TRON", "TON", "SOL"];
   const [active, setActive] = useState<WalletGroup>(WalletGroup.EVM);
-  const { isConnected } = useAccount();
+  const { isConnected, chainId } = useAccount();
   const dropdownRef = useRef(null);
   const { connectAsync, connectors } = useConnect();
   const { isConnectWalletOpen, setIsConnectWalletOpen } = useSymbiosis();
@@ -93,7 +93,7 @@ const SymbioWalletModal = () => {
               .map((item, index) => (
                 <button
                   onClick={() => {
-                    connectAsync({ connector: item });
+                    connectAsync({ connector: item, chainId });
                     setIsConnectWalletOpen(false);
                   }}
                   key={index}
@@ -128,6 +128,10 @@ const SymbioWalletModal = () => {
               )
               .map((item, index) => (
                 <button
+                  onClick={() => {
+                    connectAsync({ connector: item, chainId });
+                    setIsConnectWalletOpen(false);
+                  }}
                   key={index}
                   className="w-full border border-gray-50 hover:bg-gray-100 flex flex-col justify-center items-center gap-3 font-roboto ease transition-colors rounded-lg px-3 py-4"
                 >
@@ -163,6 +167,10 @@ const SymbioWalletModal = () => {
               )
               .map((item, index) => (
                 <button
+                  onClick={() => {
+                    connectAsync({ connector: item, chainId });
+                    setIsConnectWalletOpen(false);
+                  }}
                   key={index}
                   className="w-full border border-gray-50 hover:bg-gray-100 flex flex-col justify-center items-center gap-3 font-roboto ease transition-colors rounded-lg px-3 py-4"
                 >

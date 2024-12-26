@@ -102,7 +102,7 @@ const TransactionTable = () => {
                 </td>
                 <td className="text-black p-2">
                   {item.state === 1 ? (
-                    <p className="font-medium text-[#999]">Pneding</p>
+                    <p className="font-medium text-[#999]">Pending</p>
                   ) : item.state === 0 ? (
                     <p className="font-medium text-[#238d18]">Success</p>
                   ) : (

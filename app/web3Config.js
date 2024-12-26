@@ -90,7 +90,7 @@ export const config = defaultWagmiConfig({
         icons: "https://icons-ckg.pages.dev/lz-light/wallets/walletconnect.svg",
       },
     }),
-    coinbaseWallet(),
+    // coinbaseWallet(),
     safe(),
   ],
   ssr: true,
