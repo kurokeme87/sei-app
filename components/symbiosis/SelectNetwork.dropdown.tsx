@@ -6,6 +6,7 @@ import { BsChevronDown } from "react-icons/bs";
 // import { toast } from "react-toastify";
 import { symbiosis_chains } from "../../data/networks";
 import { IoMdClose } from "react-icons/io";
+import { truncateText } from "@/lib/utils";
 
 const SelectNetwork = () => {
   const dropdowRef = useRef(null);
@@ -32,7 +33,7 @@ const SelectNetwork = () => {
       <button
         className={`${
           open ? "z-[999]" : "z-0"
-        } flex justify-between relative items-center gap-4 bg-black rounded-xl p-3 min-w-32 w-max text-white ease transition-all group`}
+        } flex justify-between relative items-center gap-4 bg-black rounded-xl p-3 min-w-32 w-40 text-white ease transition-all group`}
         onClick={() => setOpen(!open)}
       >
         <div className="flex justify-start items-center gap-2">
@@ -48,7 +49,7 @@ const SelectNetwork = () => {
             className="rounded-full group-hover:hidden block"
           />
           <p className="group-hover:hidden block">
-            {chain?.name || "Linea Mainnet"}
+            {truncateText(chain?.name, 8)}
           </p>
           <p className="group-hover:block hidden">Change</p>
         </div>

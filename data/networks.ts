@@ -309,6 +309,7 @@ export type TSymbiosisChains = {
   explorer: string;
   icon: string;
   tokens: ITokens[];
+  network?: string;
 };
 
 export type ITokens = Partial<{
@@ -344,6 +345,7 @@ export const symbiosis_chains: TSymbiosisChains[] = [
     explorer: "https://etherscan.io",
     icon: "https://raw.githubusercontent.com/trustwallet/assets/master/blockchains/ethereum/info/logo.png",
     tokens: ethereumTokens,
+    network: "ethereum",
   },
   {
     id: 56,
@@ -401,6 +403,7 @@ export const symbiosis_chains: TSymbiosisChains[] = [
     explorer: "https://arbiscan.io",
     icon: "https://s2.coinmarketcap.com/static/img/coins/64x64/11841.png",
     tokens: arbitrumTokens,
+    network: "arbitrum-one",
   },
   {
     id: 42170,
@@ -415,6 +418,7 @@ export const symbiosis_chains: TSymbiosisChains[] = [
     explorer: "https://optimistic.etherscan.io",
     icon: "https://s2.coinmarketcap.com/static/img/coins/64x64/11840.png",
     tokens: optimismTokens,
+    network: "optimistic-ethereum",
   },
   {
     id: 137,

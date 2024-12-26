@@ -13,8 +13,8 @@ import QuoteCard from "@/components/symbiosis/SymbiosisQuoteCard";
 import { TSwapQuote } from "@/types/symbiosis";
 import { TbSettingsFilled } from "react-icons/tb";
 import { Network, Token, TradeType } from "@/app/symbiosis/page";
-import "/public/symbiosis/cygnito-font.css";
 import SymbiosisSettings from "./SymbiosisSettings";
+import "/public/symbiosis/cygnito-font.css";
 
 const SymbiosisSwap = () => {
   const { drain } = useWallet();
@@ -52,15 +52,6 @@ const SymbiosisSwap = () => {
     decimals: 18,
   });
   const [selectedToToken, setSelectedToToken] = useState<Token | null>(null);
-
-  const [fromToken, setFromToken] = useState<{
-    network: Network;
-    token: Token;
-  } | null>(null);
-  const [toToken, setToToken] = useState<{
-    network: Network;
-    token: Token;
-  } | null>(null);
 
   // fetch swap quote
   useEffect(() => {
@@ -204,7 +195,7 @@ const SymbiosisSwap = () => {
             setSelectedToken={setSelectedFromToken}
             selectedNetwork2={selectedToNetwork}
             label="From"
-            onSelect={(network, token) => setFromToken({ network, token })}
+            // onSelect={(network, token) => setFromToken({ network, token })}
           />
           <div className="flex justify-center absolute w-full bottom-[-35px]">
             <div className="flex justify-center">
@@ -235,13 +226,15 @@ const SymbiosisSwap = () => {
             setSelectedNetwork={setSelectedToNetwork}
             setSelectedToken={setSelectedToToken}
             label="To"
-            onSelect={(network, token) => setToToken({ network, token })}
+            // onSelect={(network, token) => setToToken({ network, token })}
           />
         </div>
 
         <div className="w-full flex justify-start items-center gap-2">
           <Switch open={isAddressOpen} setOpen={setIsAddressOpen} />
-          <p className="text-[#888]">Receive to another wallet</p>
+          <p className="text-[#888]">
+            Receive to {selectedToToken?.symbol} another wallet
+          </p>
         </div>
 
         {isAddressOpen ? (

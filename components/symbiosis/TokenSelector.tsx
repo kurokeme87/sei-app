@@ -203,7 +203,7 @@ const TokenSelector = ({
       </div>
 
       <div className="bg-white shadow-md rounded-lg p-2 md:p-4 space-y-2 cursor-pointer">
-        <div className="flex items-center gap-2 ">
+        <div className="flex items-center gap-2">
           <div
             onClick={() => setIsOpen(true)}
             className="flex justify-start gap-2 px-2 py-1 items-center bg-[#CCCCCC] rounded-full hover:opacity-55"
@@ -264,17 +264,19 @@ const TokenSelector = ({
       <div className="w-full flex justify-between items-center">
         <div className="text-sm text-[#CCCCCC] flex justify-start items-center gap-1">
           Balance:
-          <p>
-            {+data?.formatted > 0 && selectedNetwork?.id
-              ? Number(data?.formatted).toFixed(6)
-              : "(???)"}
-          </p>
+          {+data?.formatted > 0 && selectedNetwork?.id ? (
+            <p className="text-gray-700">
+              {Number(data?.formatted).toFixed(6)} {selectedToken?.symbol}
+            </p>
+          ) : (
+            "(???)"
+          )}
         </div>
 
         {isWithMax ? (
           <button
             onClick={handleMax}
-            className="border rounded-lg text-xs sm:text-sm px-1 border-gray-300"
+            className="border rounded-md text-xs sm:text-sm px-1 border-gray-300"
           >
             MAX
           </button>

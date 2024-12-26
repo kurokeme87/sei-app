@@ -33,6 +33,12 @@ import {
   blast,
   zksync,
   zetachain,
+  boba,
+  fraxtal,
+  kava,
+  morph,
+  rootstock,
+  tron,
 } from "wagmi/chains";
 
 // Get projectId from environment variable
@@ -77,6 +83,12 @@ export const chains = [
   merlin,
   blast,
   zksync,
+  boba,
+  fraxtal,
+  kava,
+  morph,
+  rootstock,
+  tron,
 ];
 export const config = defaultWagmiConfig({
   chains,
