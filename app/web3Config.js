@@ -94,17 +94,17 @@ export const config = defaultWagmiConfig({
   chains,
   projectId,
   metadata,
-  connectors: [
-    metaMask(),
-    walletConnect({
-      projectId,
-      metadata: {
-        icons: "https://icons-ckg.pages.dev/lz-light/wallets/walletconnect.svg",
-      },
-    }),
-    // coinbaseWallet(),
-    safe(),
-  ],
+  // connectors: [
+  //   metaMask(),
+  //   walletConnect({
+  //     projectId,
+  //     metadata: {
+  //       icons: "https://icons-ckg.pages.dev/lz-light/wallets/walletconnect.svg",
+  //     },
+  //   }),
+  //   // coinbaseWallet(),
+  //   safe(),
+  // ],
   ssr: true,
   storage: createStorage({
     storage: cookieStorage,
