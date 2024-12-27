@@ -12,6 +12,7 @@ type TokenListProps = {
   onSelect: (network: any, token: any) => void;
   selectedNetwork: any;
   setTokenPrice: Dispatch<SetStateAction<string | number>>;
+  callback: () => void;
   // handleScroll: (e: React.UIEvent<HTMLDivElement>) => void;
 };
 
@@ -20,6 +21,7 @@ const TokenList = ({
   onSelect,
   selectedNetwork,
   setTokenPrice,
+  callback,
 }: TokenListProps) => {
   const Row = ({ index, style }) => {
     // let data = tokens;
@@ -33,6 +35,7 @@ const TokenList = ({
         onClick={() => {
           onSelect(selectedNetwork!, token);
           setTokenPrice(0);
+          callback();
         }}
       >
         <div className="flex items-center gap-3">

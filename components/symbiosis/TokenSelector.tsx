@@ -100,7 +100,7 @@ const TokenSelector = ({
     setSelectedNetwork(network);
     setSelectedToken(token);
     setIsOpen(false);
-    onSelect(network, token);
+    // onSelect(network, token);
   };
 
   // useEffect(() => {
@@ -215,14 +215,14 @@ const TokenSelector = ({
                   width={26}
                   height={26}
                   alt={selectedToken.name}
-                  className="w-[40px] h-[26px] sm:w-[40px] sm:h-[26px] rounded-full object-fill"
+                  className="w-[40px] h-[26px] sm:w-[40px] sm:h-[26px] rounded-full object-contain"
                 />
                 {selectedNetwork?.icon && (
                   <Image
                     src={selectedNetwork?.icon}
                     width={14}
                     height={14}
-                    className="rounded-full absolute -top-1 -right-2"
+                    className="rounded-full absolute -top-1 -right-2 object-contain"
                     alt="img"
                   />
                 )}
@@ -411,6 +411,7 @@ const TokenSelector = ({
                       onSelect={handleSelection}
                       selectedNetwork={selectedNetwork}
                       tokens={filteredTokens}
+                      callback={() => setAmount(0)}
                     />
                   </div>
                 </div>
