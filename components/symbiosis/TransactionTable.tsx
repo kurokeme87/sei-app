@@ -4,6 +4,7 @@ import { formatCurrency, shortenAddressSmall } from "@/app/utils";
 import { transactions } from "@/data/symbiosis/transactions";
 import { shortenAddress } from "@/lib/utils";
 import { TransactionDetails } from "@/types/symbiosis";
+import Link from "next/link";
 import { useEffect, useState } from "react";
 
 const TransactionTable = () => {
@@ -113,7 +114,25 @@ const TransactionTable = () => {
                 <td className="p-2">
                   <p className="text-[#999]">{item.created_at}</p>
                 </td>
-                <td className="text-black underline p-2">View</td>
+                <td
+                  onClick={() => {
+                    localStorage.setItem(
+                      "fromName",
+                      item.from_route[0]?.token?.name
+                    );
+                    localStorage.setItem(
+                      "toName",
+                      item?.to_route[0]?.token?.name
+                    );
+                  }}
+                  className="text-black underline p-2"
+                >
+                  <Link
+                    href={`/symbiosis/transactions/${item.from_chain_id}/${item.from_address}`}
+                  >
+                    View
+                  </Link>
+                </td>
               </tr>
             ))}
 

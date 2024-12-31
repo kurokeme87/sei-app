@@ -3,7 +3,6 @@
 import { useAccount, useSwitchChain } from "wagmi";
 import { useEffect, useRef, useState } from "react";
 import { BsChevronDown } from "react-icons/bs";
-// import { toast } from "react-toastify";
 import { symbiosis_chains } from "../../data/networks";
 import { IoMdClose } from "react-icons/io";
 import { truncateText } from "@/lib/utils";
@@ -32,7 +31,7 @@ const SelectNetwork = () => {
     <div className="relative">
       <button
         className={`${
-          open ? "z-[999]" : "z-0"
+          open ? "z-90" : ""
         } flex justify-between relative items-center gap-4 bg-black rounded-xl p-3 min-w-32 w-40 text-white ease transition-all group`}
         onClick={() => setOpen(!open)}
       >
@@ -61,9 +60,9 @@ const SelectNetwork = () => {
         className={`
     ${
       open
-        ? "pointer-events-auto translate-y-0 opacity-100 visible"
+        ? "pointer-events-auto translate-y-0 opacity-100 visible z-50"
         : "opacity-0 translate-y-1 invisible"
-    } z-50 justify-start items-center w-72 p-2 h-full min-h-[600px] overflow-y-auto transition-transform duration-300 ease-in-out absolute top-12  bg-white text-black shadow-md rounded-md`}
+    } justify-start items-center w-72 p-2 h-full min-h-[600px] overflow-y-auto transition-transform duration-300 ease-in-out absolute top-12  bg-white text-black shadow-md rounded-md`}
       >
         <div className="flex flex-col gap-2">
           {symbiosis_chains

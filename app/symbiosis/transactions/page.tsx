@@ -9,9 +9,9 @@ import { MdOutlinePermContactCalendar } from "react-icons/md";
 import { formatCurrency } from "@/app/utils";
 import { TStatisticsData } from "@/types/symbiosis";
 import TransactionTable from "@/components/symbiosis/TransactionTable";
+import TransactionNav from "@/components/symbiosis/TransactionNav";
 
 import "/public/symbiosis/cygnito-font.css";
-import TransactionNav from "@/components/symbiosis/TransactionNav";
 
 type TActive = "total" | "month" | "day";
 
@@ -24,7 +24,7 @@ const Page = () => {
       await axios
         .get("https://api.symbiosis.finance/explorer/v1/statistics")
         .then((res) => {
-          console.log(res.data, "res.data");
+          // console.log(res.data, "res.data");
           setStatistics(res.data);
         });
     };
@@ -33,10 +33,10 @@ const Page = () => {
   }, []);
 
   return (
-    <div className="w-full bg-[#E9E9E9] min-h-screen p-5 sm:p-11 lg:p-12 md:py-16">
+    <div className="w-full bg-[#E9E9E9] min-h-screen p-5 sm:p-11 lg:p-12 md:py-12">
       <TransactionNav />
-      <div className="w-full flex sm:flex-row flex-col justify-between sm:items-center gap-3 font-faGrotesk mt-6 md:mt-16">
-        <h1 className="text-xl md:text-2xl lg:text-3xl text-black font-medium">
+      <div className="w-full flex sm:flex-row flex-col justify-between sm:items-center gap-3 font-faGrotesk mt-6 md:mt-11">
+        <h1 className="text-xl lg:text-2xl xl:text-[27px] text-black font-medium">
           Statistics overview
         </h1>
 

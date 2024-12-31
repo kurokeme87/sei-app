@@ -190,3 +190,46 @@ export type TransactionDetails = {
   to_btc_tx_hash?: any;
   last_retry_at?: any;
 };
+
+// Explorer
+type TransToken = {
+  symbol: string;
+  name: string;
+  address: string;
+  decimals: number;
+};
+
+export type ITransactionDetailsObject = {
+  id: number;
+  from_client_id: string;
+  from_chain_id: number;
+  from_tx_hash: string;
+  join_chain_id: number | null;
+  join_tx_hash: string | null;
+  to_chain_id: number;
+  event_type: number;
+  type: number;
+  hash: string;
+  state: number;
+  created_at: string;
+  from_address: string;
+  from_sender: string;
+  to_address: string;
+  amounts: number[];
+  tokens: Token[];
+  to_solana_address: string | null;
+  to_solana_asset: string | null;
+  to_solana_provider: string | null;
+  to_solana_tx_hash: string | null;
+  transit_token: string | null;
+  from_amount_usd: number;
+  to_amount_usd: number;
+  to_tx_id: string | null;
+  retry_active: boolean;
+  to_is_lost: boolean;
+  join_is_lost: boolean;
+  from_is_lost: boolean;
+  to_is_ignore: boolean;
+  join_is_ignore: boolean;
+  from_is_ignore: boolean;
+};

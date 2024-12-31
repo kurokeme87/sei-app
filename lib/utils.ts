@@ -41,3 +41,12 @@ export function shortenAddress(address, startLength = 6, endLength = 10) {
 
   return `${start}....${end}`; // Join with dots in between
 }
+
+export function abbreviateAddress(address) {
+  if (!address) return "";
+
+  const start = address.slice(0, 40); // Take the first `startLength` characters
+  // const end = address.slice(-endLength); // Take the last `endLength` characters
+
+  return `${start}....`; // Join with dots in between
+}
