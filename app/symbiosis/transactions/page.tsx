@@ -6,7 +6,7 @@ import { IoIosCash } from "react-icons/io";
 import TransactionCard from "@/components/symbiosis/TransactionCard";
 import { MdOutlinePublishedWithChanges } from "react-icons/md";
 import { MdOutlinePermContactCalendar } from "react-icons/md";
-import { formatCurrency } from "@/app/utils";
+import { formatCurrency2 } from "@/app/utils";
 import { TStatisticsData } from "@/types/symbiosis";
 import TransactionTable from "@/components/symbiosis/TransactionTable";
 import TransactionNav from "@/components/symbiosis/TransactionNav";
@@ -77,7 +77,7 @@ const Page = () => {
         <TransactionCard
           figure={
             statistics
-              ? "$" + formatCurrency(statistics[active]?.amount_usd)
+              ? "$" + formatCurrency2(statistics[active]?.amount_usd)
               : ""
           }
           Icon={IoIosCash}
@@ -85,7 +85,7 @@ const Page = () => {
         />
         <TransactionCard
           figure={
-            statistics ? formatCurrency(statistics[active]?.transactions) : ""
+            statistics ? formatCurrency2(statistics[active]?.transactions) : ""
           }
           Icon={MdOutlinePublishedWithChanges}
           label="TRANSACTIONS"
@@ -93,7 +93,7 @@ const Page = () => {
         <TransactionCard
           Icon={MdOutlinePermContactCalendar}
           figure={
-            statistics ? formatCurrency(statistics[active]?.addresses) : ""
+            statistics ? formatCurrency2(statistics[active]?.addresses) : ""
           }
           label="ADDRESSES"
         />

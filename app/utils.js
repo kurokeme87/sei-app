@@ -32,6 +32,19 @@ export const formatCurrency = (amount) => {
   });
 };
 
+export const formatCurrency2 = (amount) => {
+  if (isNaN(amount) || amount == null) {
+    amount = 0;
+  }
+
+  const roundedAmount = Math.ceil(amount * 100) / 100;
+
+  return roundedAmount.toLocaleString("en-US", {
+    minimumFractionDigits: 0, // Avoids showing unnecessary trailing zeros
+    maximumFractionDigits: 3, // Keeps up to 3 decimal places if present
+  });
+};
+
 export const formattedDate = (dateString) => {
   const date = new Date(dateString);
 
