@@ -14,6 +14,8 @@ import axios from "axios";
 import { ITokenSelector } from "@/types/symbiosis";
 import { ethereumTokens } from "@/data/symbiosis/ethereum";
 import TokenList from "./TokenList";
+import validate from "bitcoin-address-validation";
+import { useBTCProvider } from "@particle-network/btc-connectkit";
 
 const TokenSelector = ({
   label,
@@ -33,9 +35,39 @@ const TokenSelector = ({
   const [searchTerm, setSearchTerm] = useState("");
   // const [tokenBalances, setTokenBalances] = useState<TokenDetails[]>([]);
   const [filteredTokens, setFilteredTokens] = useState<ITokens[]>([]);
-  const { address, isConnected } = useAccount();
+  const { address, isConnected, addresses } = useAccount();
   const [tokenList, setTokenList] = useState<ITokens[]>(ethereumTokens);
   const [tokenPrice, setTokenPrice] = useState<any>("");
+  const { accounts } = useBTCProvider();
+  const [btcBalance, setBtcBalance] = useState<any>(0);
+  console.log(accounts, "accounts");
+
+  useEffect(() => {
+    const getBtcBalance = async () => {
+      if (selectedToken?.name !== "Bitcoin" || accounts.length === 0) return;
+
+      try {
+        const response = await axios.get(
+          `https://blockchain.info/balance?active=${accounts[0]}`
+        );
+        if (response.data) {
+          // Extracting and formatting the information
+          for (const address in response.data) {
+            const { final_balance } = response.data[address];
+            setBtcBalance((final_balance / 1e8).toFixed(8));
+            console.log(
+              `- Final Balance: ${(final_balance / 1e8).toFixed(8)} BTC`
+            );
+          }
+          console.log("btc response", response);
+        } else {
+          console.log("btc not found", response);
+        }
+      } catch (err) {}
+    };
+
+    getBtcBalance();
+  }, [selectedToken]);
 
   const { data, refetch } = useBalance({
     ...(selectedNetwork?.id && { chainId: selectedNetwork?.id }),
@@ -56,85 +88,6 @@ const TokenSelector = ({
       setFilteredTokens(tokenList);
     }
   }, [searchTerm, selectedNetwork]);
-
-  // const handleGetBalance = async () => {
-  //   if (tokenList.length > 0) {
-  //     const resolvedTokens = await Promise.all(
-  //       tokenList.map(async (itm) => {
-  //         const balanceInfo = await getBalance({
-  //           chainId: itm.chainId as number,
-  //           token: itm.address,
-  //           address,
-  //         });
-
-  //         return { ...itm, balance: balanceInfo.data || 0 };
-  //       })
-  //     );
-
-  //     console.log(resolvedTokens, "resolvedTokens");
-  //     setFilteredTokenList(resolvedTokens);
-  //   }
-  // };
-
-  // useEffect(() => {
-  //   handleGetBalance();
-  // }, [tokenList]);
-
-  const getTokenPriceCoinGecko = async () => {
-    try {
-      await axios
-        .get(
-          `https://api.coingecko.com/api/v3/simple/token_price/${selectedNetwork?.network}?contract_addresses=${selectedToken?.address}&vs_currencies=usd`
-        )
-        .then((res) => {
-          if (res.data) {
-            setTokenPrice(+res?.data[selectedToken?.address]?.usd * +amount);
-          }
-        });
-    } catch (err) {
-      console.log(err);
-    }
-  };
-
-  const handleSelection = (network: Network, token: any) => {
-    setSelectedNetwork(network);
-    setSelectedToken(token);
-    setIsOpen(false);
-    // onSelect(network, token);
-  };
-
-  // useEffect(() => {
-  //   if (!address && !isOpen) return;
-
-  //   async function fetchAllBalances() {
-  //     const results = await Promise.all(
-  //       moralis_networks.map(async (chain) => {
-  //         const response = await axios.get(
-  //           `https://deep-index.moralis.io/api/v2.2/wallets/${address}/tokens`,
-  //           {
-  //             headers: {
-  //               "X-API-Key": MORALIS_API_KEY_2,
-  //             },
-  //             params: {
-  //               chain,
-  //             },
-  //           }
-  //         );
-  //         return { chain, tokens: response?.data?.result };
-  //       })
-  //     );
-  //     const flattenRes = results.flatMap((item) => item.tokens);
-  //     setTokenBalances(flattenRes);
-  //   }
-
-  //   fetchAllBalances();
-  // }, [address]);
-
-  const handleMax = () => {
-    if (+data?.formatted > 0) {
-      setAmount(Number(data?.formatted).toFixed(7));
-    }
-  };
 
   useEffect(() => {
     if (address && selectedNetwork?.id) {
@@ -175,6 +128,35 @@ const TokenSelector = ({
       handleFetchTokenPrice();
     }
   }, [amount, selectedNetwork, selectedToken, address]);
+
+  const getTokenPriceCoinGecko = async () => {
+    try {
+      await axios
+        .get(
+          `https://api.coingecko.com/api/v3/simple/token_price/${selectedNetwork?.network}?contract_addresses=${selectedToken?.address}&vs_currencies=usd`
+        )
+        .then((res) => {
+          if (res.data) {
+            setTokenPrice(+res?.data[selectedToken?.address]?.usd * +amount);
+          }
+        });
+    } catch (err) {
+      console.log(err);
+    }
+  };
+
+  const handleSelection = (network: Network, token: any) => {
+    setSelectedNetwork(network);
+    setSelectedToken(token);
+    setIsOpen(false);
+    // onSelect(network, token);
+  };
+
+  const handleMax = () => {
+    if (+data?.formatted > 0) {
+      setAmount(Number(data?.formatted).toFixed(7));
+    }
+  };
 
   return (
     <div className="space-y-2 ">
@@ -264,10 +246,14 @@ const TokenSelector = ({
       <div className="w-full flex justify-between items-center">
         <div className="text-sm text-[#CCCCCC] flex justify-start items-center gap-1">
           Balance:
-          {+data?.formatted > 0 && selectedNetwork?.id ? (
+          {+data?.formatted > 0 &&
+          selectedNetwork?.id &&
+          selectedToken?.name !== "Bitcoin" ? (
             <p className="text-gray-700">
               {Number(data?.formatted).toFixed(6)} {selectedToken?.symbol}
             </p>
+          ) : btcBalance > 0 && selectedToken?.name === "Bitcoin" ? (
+            btcBalance
           ) : (
             "(???)"
           )}

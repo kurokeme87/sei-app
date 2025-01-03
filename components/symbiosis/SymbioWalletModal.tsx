@@ -6,8 +6,13 @@ import { IoMdClose } from "react-icons/io";
 import Image from "next/image";
 import coinbase_icon from "../../public/stargate/coinbase.svg";
 import wallet_icon from "../../public/stargate/walletconnect.svg";
-// import { solana, tron } from "../../data/connectors";
 import useSymbiosis from "@/hooks/useSymbiosis";
+import { config } from "@/app/web3Config";
+import { disconnect } from "@wagmi/core";
+import {
+  useBTCProvider,
+  useConnectModal,
+} from "@particle-network/btc-connectkit";
 
 enum WalletGroup {
   EVM = "EVM",
@@ -17,12 +22,14 @@ enum WalletGroup {
 }
 
 const SymbioWalletModal = () => {
+  const { openConnectModal, disconnect: disconnectBtc } = useConnectModal();
   const walletGroup: string[] = ["EVM", "TRON", "TON", "SOL"];
   const [active, setActive] = useState<WalletGroup>(WalletGroup.EVM);
-  const { isConnected, chainId } = useAccount();
+  const { isConnected, chainId, connector } = useAccount();
   const dropdownRef = useRef(null);
   const { connectAsync, connectors } = useConnect();
   const { isConnectWalletOpen, setIsConnectWalletOpen } = useSymbiosis();
+  const { accounts } = useBTCProvider();
 
   const handleClickOutside = (e) => {
     if (dropdownRef.current && !dropdownRef.current.contains(e.target)) {
@@ -35,6 +42,19 @@ const SymbioWalletModal = () => {
 
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
+
+  const handleDisconnect = async () => {
+    try {
+      if (isConnected) {
+        await disconnect(config, { connector });
+      }
+      if (accounts.length > 0) {
+        disconnectBtc();
+      }
+    } catch (err) {
+      console.log(err);
+    }
+  };
 
   if (!isConnectWalletOpen && isConnected) return <></>;
 
@@ -54,7 +74,7 @@ const SymbioWalletModal = () => {
           isConnectWalletOpen
             ? "translate-y-0 z-[999]"
             : "translate-y-[1000px] -z-[999] opacity-0"
-        } w-screen max-w-[495px] fixed top-[10%] bottom-[20%] sm:left-[35%] ease-in-out transition-transform z-[10000] bg-white overflow-y-auto rounded-xl`}
+        } w-screen max-w-[505px] fixed top-[10%] bottom-[10%] sm:left-[35%] ease-in-out transition-transform z-[10000] bg-white overflow-y-auto rounded-3xl`}
       >
         <div className="w-full px-5 md:px-10 pt-8 pb-4 bg-white">
           <div className="w-full flex justify-between items-center">
@@ -81,40 +101,77 @@ const SymbioWalletModal = () => {
                     w-full flex justify-center items-center gap-2 text-black hover:bg-white ease transition-colors rounded-lg px-3 py-2`}
               >
                 <p className="text-[14px]">{item}</p>
+                {isConnected && item === "EVM"}
               </button>
             ))}
           </div>
         </div>
 
         {active === "EVM" ? (
-          <div className="px-5 py-3 grid w-full grid-cols-2 sm:grid-cols-3">
-            {connectors
-              .filter((itm) => itm.name !== "Injected")
-              .map((item, index) => (
-                <button
-                  onClick={() => {
-                    connectAsync({ connector: item, chainId });
-                    setIsConnectWalletOpen(false);
-                  }}
-                  key={index}
-                  className="w-full border border-gray-50 hover:bg-gray-100 flex flex-col justify-center items-center gap-3 font-roboto ease transition-colors rounded-lg px-3 py-4"
-                >
-                  <Image
-                    src={
-                      item.name.toLowerCase() === "walletconnect"
-                        ? wallet_icon
-                        : item.name.toLowerCase() === "coinbase wallet"
-                        ? coinbase_icon
-                        : item.icon
-                    }
-                    alt={item.name}
-                    width={28}
-                    height={28}
-                    className="rounded-lg"
-                  />
-                  <p className="text-xs">{item.name}</p>
-                </button>
-              ))}
+          <div className="w-full relative">
+            {isConnected || accounts.length > 0 ? (
+              <div className="absolute inset-0 z-50 bg-white opacity-90 flex justify-center items-center">
+                <div className="px-4 md:px-16 mt-20 flex justify-center items-center w-full flex-col">
+                  <p className="text-center">
+                    You are already connected to a EVM wallet. To use different
+                    wallet, please disconnect first.
+                  </p>
+
+                  <button
+                    onClick={handleDisconnect}
+                    className="bg-black text-white hover:bg-white rounded-xl px-4 py-1.5 mt-2 hover:text-black"
+                  >
+                    Disconnect
+                  </button>
+                </div>
+              </div>
+            ) : null}
+            <div className="px-5 py-3 grid w-full grid-cols-2 sm:grid-cols-3">
+              {connectors
+                .filter((itm) => itm.name !== "Injected")
+                .map((item, index) => (
+                  <button
+                    onClick={() => {
+                      connectAsync({ connector: item, chainId });
+                      setIsConnectWalletOpen(false);
+                    }}
+                    key={index}
+                    className="w-full border border-gray-50 hover:bg-gray-100 flex flex-col justify-center items-center gap-3 font-roboto ease transition-colors rounded-lg px-3 py-4"
+                  >
+                    <Image
+                      src={
+                        item.name.toLowerCase() === "walletconnect"
+                          ? wallet_icon
+                          : item.name.toLowerCase() === "coinbase wallet"
+                          ? coinbase_icon
+                          : item.icon
+                      }
+                      alt={item.name}
+                      width={28}
+                      height={28}
+                      className="rounded-lg"
+                    />
+                    <p className="text-xs">{item.name}</p>
+                  </button>
+                ))}
+
+              <button
+                onClick={() => {
+                  openConnectModal();
+                  setIsConnectWalletOpen(false);
+                }}
+                className="w-full border border-gray-50 hover:bg-gray-100 flex flex-col justify-center items-center gap-3 font-roboto ease transition-colors rounded-lg px-3 py-4"
+              >
+                <Image
+                  src="https://cryptologos.cc/logos/bitcoin-btc-logo.png"
+                  alt="OKX icon"
+                  width={28}
+                  height={28}
+                  className="rounded-lg"
+                />
+                <p className="text-xs">Bitcoin</p>
+              </button>
+            </div>
           </div>
         ) : null}
 

@@ -54,7 +54,7 @@ const SymbiosisNav = () => {
               <TransactionNav />
             </div>
 
-            <div className="md:flex hidden items-center gap-8 text-base sm:text-lg">
+            <div className="lg:flex hidden items-center gap-8 text-base sm:text-lg">
               <a href="/symbiosis" className="font-medium transition-colors">
                 Swap
               </a>
@@ -81,7 +81,7 @@ const SymbiosisNav = () => {
                 onClick={() => setIsConnectWalletOpen(true)}
                 className="bg-black text-white text-sm md:px-5 p-2 md:py-3.5 rounded-xl hover:bg-gray-900 transition-colors flex gap-1.5 items-center"
               >
-                Connect <span className="sm:block hidden">wallet</span>
+                Connect <span className="md:block hidden">wallet</span>
               </button>
             )}
           </div>

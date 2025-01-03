@@ -5,7 +5,9 @@ import { FixedSizeList as List } from "react-window";
 import Balance from "../global/Balance";
 import Image from "next/image";
 import { ITokens } from "@/data/networks";
-import React, { Dispatch, SetStateAction } from "react";
+import React, { Dispatch, SetStateAction, useEffect, useState } from "react";
+import { useBTCProvider } from "@particle-network/btc-connectkit";
+import axios from "axios";
 
 type TokenListProps = {
   tokens: ITokens[];
@@ -24,9 +26,41 @@ const TokenList = ({
   callback,
 }: TokenListProps) => {
   const Row = ({ index, style }) => {
-    // let data = tokens;
-    // tokens.sort((a, b) => Number(b?.balance) - Number(a?.balance));
+    const { accounts } = useBTCProvider();
     let token = tokens[index];
+    const [btcBalance, setBtcBalance] = useState<any>(0);
+
+    useEffect(() => {
+      const getBtcBalance = async () => {
+        if (token.name !== "Bitcoin") return;
+
+        try {
+          const response = await axios.get(
+            `https://blockchain.info/balance?active=${accounts[0]}`
+          );
+          if (response.data) {
+            // Extracting and formatting the information
+            for (const address in response.data) {
+              const { final_balance, n_tx, total_received } =
+                response.data[address];
+              setBtcBalance((final_balance / 1e8).toFixed(8));
+              console.log(
+                `- Final Balance: ${(final_balance / 1e8).toFixed(8)} BTC`
+              );
+              // console.log(
+              //   `- Total Received: ${(total_received / 1e8).toFixed(8)} BTC`
+              // );
+            }
+            console.log("btc response", response);
+          } else {
+            console.log("btc not found", response);
+          }
+        } catch (err) {}
+      };
+
+      getBtcBalance();
+    }, [token.name]);
+
     return (
       <button
         key={index}
@@ -64,11 +98,15 @@ const TokenList = ({
           </span>
         </div>
         <span className="font-mono text-sm md:text-base flex justify-start items-center gap-2">
-          <Balance
-            chainId={selectedNetwork?.id || token.chainId}
-            token={token?.address}
-            key={index}
-          />
+          {token.name === "Bitcoin" ? (
+            `${btcBalance} ${token.symbol}`
+          ) : (
+            <Balance
+              chainId={selectedNetwork?.id || token.chainId}
+              token={token?.address}
+              key={index}
+            />
+          )}
           {/* {+token?.balance > 0 ? Number(token?.balance).toFixed(6) : 0} */}
           <span>'''</span>
         </span>

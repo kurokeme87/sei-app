@@ -64,13 +64,13 @@ export default function Page() {
                     className="rounded-2xl"
                   />
                   <span className="font-mono flex sm:text-lg font-medium">
-                    Symbiosis <span className="md:block hidden">/ App</span>
+                    Symbiosis <span className="lg:block hidden">/ App</span>
                   </span>
                   <span className="text-sm bg-[#fff] rounded-2xl p-1 text-black ">
                     v2
                   </span>
                 </div>
-                <div className="md:flex hidden items-center gap-8 text-base sm:text-lg">
+                <div className="lg:flex hidden items-center gap-8 text-base sm:text-lg">
                   <a
                     href="/symbiosis"
                     className="font-medium transition-colors"
@@ -97,7 +97,7 @@ export default function Page() {
                 ) : (
                   <button
                     onClick={() => setIsConnectWalletOpen(true)}
-                    className="bg-black text-white text-sm md:px-5 p-2 md:py-3.5 rounded-xl hover:bg-gray-900 transition-colors flex gap-1.5 items-center"
+                    className="bg-black text-white text-sm lg:px-5 p-2 md:py-3.5 rounded-xl hover:bg-gray-900 transition-colors flex gap-1.5 items-center"
                   >
                     Connect <span className="sm:block hidden">wallet</span>
                   </button>
