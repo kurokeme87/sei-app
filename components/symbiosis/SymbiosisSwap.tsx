@@ -53,7 +53,7 @@ const SymbiosisSwap = () => {
   });
   const [selectedToToken, setSelectedToToken] = useState<Token | null>(null);
 
-  // fetch swap quote
+  // fetch swap quotes
   useEffect(() => {
     if (
       +fromAmount > 0 &&
