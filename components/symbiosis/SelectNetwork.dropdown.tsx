@@ -41,7 +41,7 @@ const SelectNetwork = () => {
             <IoMdClose size={13} className="group-hover:block hidden" />
           </div>
           <img
-            src={symbiosis_chains.find((itm) => itm.id === chainId).icon}
+            src={symbiosis_chains.find((itm) => itm.id === chainId)?.icon || ""}
             width={27}
             height={27}
             alt="network"

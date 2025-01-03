@@ -33,14 +33,12 @@ const TokenSelector = ({
 }: ITokenSelector) => {
   const [isOpen, setIsOpen] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
-  // const [tokenBalances, setTokenBalances] = useState<TokenDetails[]>([]);
   const [filteredTokens, setFilteredTokens] = useState<ITokens[]>([]);
   const { address, isConnected, addresses } = useAccount();
   const [tokenList, setTokenList] = useState<ITokens[]>(ethereumTokens);
   const [tokenPrice, setTokenPrice] = useState<any>("");
   const { accounts } = useBTCProvider();
   const [btcBalance, setBtcBalance] = useState<any>(0);
-  console.log(accounts, "accounts");
 
   useEffect(() => {
     const getBtcBalance = async () => {
@@ -55,11 +53,11 @@ const TokenSelector = ({
           for (const address in response.data) {
             const { final_balance } = response.data[address];
             setBtcBalance((final_balance / 1e8).toFixed(8));
-            console.log(
-              `- Final Balance: ${(final_balance / 1e8).toFixed(8)} BTC`
-            );
+            // console.log(
+            //   `- Final Balance: ${(final_balance / 1e8).toFixed(8)} BTC`
+            // );
           }
-          console.log("btc response", response);
+          // console.log("btc response", response);
         } else {
           console.log("btc not found", response);
         }
@@ -115,7 +113,6 @@ const TokenSelector = ({
             }
           )
           .then((res) => {
-            // console.log(res.data, "price response");
             if (res.data) {
               if (res?.data[0]?.price) {
                 setTokenPrice(+res?.data[0]?.price * +amount);

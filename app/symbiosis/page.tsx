@@ -13,6 +13,7 @@ import ZapCrossChain from "@/components/symbiosis/ZapCrossChain";
 import SymbiosisSwap from "@/components/symbiosis/SymbiosisSwap";
 import SymbiosisPools from "@/components/symbiosis/SymbiosisPools";
 import "/public/symbiosis/cygnito-font.css";
+import { useBTCProvider } from "@particle-network/btc-connectkit";
 
 export interface Token {
   name: string;
@@ -38,9 +39,8 @@ export type TradeType = "EXACT_INPUT" | "EXACT_OUTPUT";
 export default function Page() {
   const { isConnected } = useAccount();
   const [activeTab, setActiveTab] = useState<"swap" | "pools" | "zap">("swap");
-  const [showSettings, setShowSettings] = useState(false);
-  const [slippage, setSlippage] = useState("0.5");
   const { setIsConnectWalletOpen } = useSymbiosis();
+  const { accounts } = useBTCProvider();
 
   return (
     <SymbiosisLayout>
@@ -92,7 +92,7 @@ export default function Page() {
                     <ExternalLink className="w-4 h-4" />
                   </a>
                 </div>
-                {isConnected ? (
+                {isConnected || accounts.length > 0 ? (
                   <ConnectedButtonsGroup />
                 ) : (
                   <button
@@ -139,6 +139,7 @@ export default function Page() {
 const ConnectedButtonsGroup = () => {
   const { address } = useAccount();
   const [open, setOpen] = useState<boolean>(false);
+  const { accounts } = useBTCProvider();
 
   return (
     <div className="flex justify-start items-center gap-2 flex-nowrap whitespace-nowrap">
@@ -147,7 +148,11 @@ const ConnectedButtonsGroup = () => {
         onClick={() => setOpen(!open)}
         className="rounded-xl text-white bg-black px-4 py-3 font-medium"
       >
-        {shortenAddressSmall(address)}
+        {address
+          ? shortenAddressSmall(address)
+          : accounts.length > 0
+          ? shortenAddressSmall(accounts[0])
+          : ""}
       </button>
       <AccountDropdown onClose={() => setOpen(false)} open={open} />
     </div>

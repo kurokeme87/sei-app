@@ -13,6 +13,11 @@ import useSymbiosis from "@/hooks/useSymbiosis";
 import { symbiosis_chains } from "@/data/networks";
 import { config } from "@/app/web3Config";
 import { disconnect } from "@wagmi/core";
+import {
+  useBTCProvider,
+  useConnectModal,
+} from "@particle-network/btc-connectkit";
+import axios from "axios";
 
 const AccountDropdown = ({ open, onClose }) => {
   const { isConnected, address, chainId, chain, connector } = useAccount();
@@ -20,6 +25,8 @@ const AccountDropdown = ({ open, onClose }) => {
   const { setIsConnectWalletOpen } = useSymbiosis();
   const [active, setActive] = useState<number>(1);
   const dropdownRef = useRef(null);
+  const { accounts } = useBTCProvider();
+  const { disconnect: disconnectBtc } = useConnectModal();
 
   const { data } = useBalance({
     address,
@@ -27,8 +34,33 @@ const AccountDropdown = ({ open, onClose }) => {
     config,
   });
 
+  const [btcBalance, setBtcBalance] = useState<any>(0);
+
+  useEffect(() => {
+    const getBtcBalance = async () => {
+      if (accounts.length === 0) return;
+
+      try {
+        const response = await axios.get(
+          `https://blockchain.info/balance?active=${accounts[0]}`
+        );
+        if (response.data) {
+          // Extracting and formatting the information
+          for (const address in response.data) {
+            const { final_balance } = response.data[address];
+            setBtcBalance((final_balance / 1e8).toFixed(8));
+          }
+        } else {
+          // console.log("btc not found", response);
+        }
+      } catch (err) {}
+    };
+
+    getBtcBalance();
+  }, [accounts]);
+
   const handleCopy = () => {
-    navigator.clipboard.writeText(address);
+    navigator.clipboard.writeText(address || accounts[0]);
     setIsCopied(true);
     setTimeout(() => setIsCopied(false), 2000);
   };
@@ -38,6 +70,9 @@ const AccountDropdown = ({ open, onClose }) => {
       if (isConnected) {
         await disconnect(config, { connector });
         onClose();
+      }
+      if (accounts.length > 0) {
+        disconnectBtc();
       }
     } catch (err) {
       console.log(err);
@@ -85,7 +120,11 @@ const AccountDropdown = ({ open, onClose }) => {
               />
               <div className="font-roboto">
                 <p className="font-medium text-white text-sm md:text-base">
-                  {shortenAddressSmall(address)}
+                  {address
+                    ? shortenAddressSmall(address)
+                    : accounts.length > 0
+                    ? shortenAddressSmall(accounts[0])
+                    : ""}
                 </p>
                 <p className="text-gray-300 text-xs">{chain?.name}</p>
               </div>
@@ -100,7 +139,9 @@ const AccountDropdown = ({ open, onClose }) => {
 
               <a
                 target="_blank"
-                href={`${chain?.blockExplorers?.default?.url}/address/${address}`}
+                href={`${chain?.blockExplorers?.default?.url}/address/${
+                  address || accounts[0]
+                }`}
               >
                 <GoLinkExternal
                   size={16}
@@ -122,8 +163,12 @@ const AccountDropdown = ({ open, onClose }) => {
 
             <div className="font-medium">
               <p className="text-white">
-                {+data?.formatted > 0 ? formatCurrency(data?.formatted) : 0}{" "}
-                {chain?.nativeCurrency?.symbol}
+                {+data?.formatted > 0
+                  ? formatCurrency(data?.formatted)
+                  : btcBalance > 0
+                  ? btcBalance
+                  : 0}{" "}
+                {chain?.nativeCurrency?.symbol || "BTC"}
               </p>
               <p className="text-[#75fb6e]">0 SIS</p>
             </div>
@@ -172,7 +217,11 @@ const AccountDropdown = ({ open, onClose }) => {
             />
             <div className="font-roboto">
               <p className="font-medium text-white text-sm md:text-base">
-                {shortenAddressSmall(address)}
+                {address
+                  ? shortenAddressSmall(address)
+                  : accounts.length > 0
+                  ? shortenAddressSmall(accounts[0])
+                  : ""}
               </p>
               <p className="text-gray-300 text-xs">{chain?.name}</p>
             </div>

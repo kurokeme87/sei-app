@@ -21,7 +21,7 @@ export function formatAmount(amount: any, decimals: any): string {
 }
 
 export const truncateText = (name: string, length: number): string => {
-  if (name.length > length) {
+  if (name?.length > length) {
     return name.slice(0, length) + "...";
   } else {
     return name;
