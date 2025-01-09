@@ -44,10 +44,14 @@ export default function Page() {
   const [tronAddress, setTronAddress] = useState<string | null>(null);
 
   useEffect(() => {
-    if (window.tronWeb.defaultAddress.base58 && !tronAddress) {
+    if (
+      typeof window !== "undefined" &&
+      window.tronWeb.defaultAddress.base58 &&
+      !tronAddress
+    ) {
       setTronAddress(window.tronWeb.defaultAddress.base58);
     }
-  }, [window.tronWeb.defaultAddress.base58]);
+  }, []);
 
   return (
     <SymbiosisLayout>

@@ -41,7 +41,10 @@ const TronWalletProvider = ({ children }: { children: ReactNode }) => {
 
   useEffect(() => {
     // Disconnect the wallet on initial load
-    if (adapter.connected || window.tronWeb.defaultAddress.base58) {
+    if (
+      (typeof window !== "undefined" && adapter.connected) ||
+      window.tronWeb.defaultAddress.base58
+    ) {
       adapter.disconnect();
       setTronAccount(""); // Clear the account state
       setNetwork({}); // Clear network state
@@ -80,10 +83,14 @@ const TronWalletProvider = ({ children }: { children: ReactNode }) => {
   }, [adapter, setIsConnectWalletOpen]);
 
   useEffect(() => {
-    if (window.tronWeb.defaultAddress.base58 && !tronAccount) {
+    if (
+      typeof window !== "undefined" &&
+      window.tronWeb.defaultAddress.base58 &&
+      !tronAccount
+    ) {
       setTronAccount(window.tronWeb.defaultAddress.base58);
     }
-  }, [window.tronWeb.defaultAddress.base58]);
+  }, []);
 
   async function sign() {
     const res = await adapter!.signMessage("helloworld");
