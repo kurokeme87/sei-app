@@ -14,10 +14,17 @@ import { useBTCProvider } from "@particle-network/btc-connectkit";
 
 const SymbiosisNav = () => {
   const { isConnected, address } = useAccount();
+  const { adapter, tronAccount, readyState } = useTronWallet();
+  const [tronAddress, setTronAddress] = useState(tronAccount);
   const { setIsConnectWalletOpen } = useSymbiosis();
   const [isOpen, setIsOpen] = useState(false);
-  const { adapter, tronAccount, readyState } = useTronWallet();
   const { accounts } = useBTCProvider();
+
+  useEffect(() => {
+    if (window.tronWeb.defaultAddress.base58 && !tronAddress) {
+      setTronAddress(window.tronWeb.defaultAddress.base58);
+    }
+  }, [window.tronWeb.defaultAddress.base58]);
 
   return (
     <nav className="bg-[#E9E9E9]">

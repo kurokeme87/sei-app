@@ -31,14 +31,13 @@ const AccountDropdown = ({ open, onClose }) => {
   const { disconnect: disconnectBtc } = useConnectModal();
   const { adapter, tronAccount, readyState } = useTronWallet();
   const tronBalance = useGetTronBalance();
+  const [btcBalance, setBtcBalance] = useState<any>(0);
 
   const { data } = useBalance({
     address,
     chainId,
     config,
   });
-
-  const [btcBalance, setBtcBalance] = useState<any>(0);
 
   useEffect(() => {
     const getBtcBalance = async () => {
@@ -103,7 +102,7 @@ const AccountDropdown = ({ open, onClose }) => {
     onClose();
   };
 
-  if (!isConnected && accounts.length < 1 && !adapter.connected) return <></>;
+  if (!isConnected && accounts.length < 1) return <></>;
   return (
     <div
       ref={dropdownRef}
@@ -132,10 +131,8 @@ const AccountDropdown = ({ open, onClose }) => {
               />
               <div className="font-roboto">
                 <p className="font-medium text-white text-sm md:text-base">
-                  {address
-                    ? shortenAddressSmall(address)
-                    : accounts.length > 0
-                    ? shortenAddressSmall(accounts[0])
+                  {address || tronAccount || accounts.length > 0
+                    ? shortenAddressSmall(address || tronAccount || accounts[0])
                     : ""}
                 </p>
                 <p className="text-gray-300 text-xs">{chain?.name}</p>
@@ -182,7 +179,13 @@ const AccountDropdown = ({ open, onClose }) => {
                   : +tronBalance > 0
                   ? tronBalance
                   : 0}{" "}
-                {chain?.nativeCurrency?.symbol || "BTC"}
+                {chain?.nativeCurrency?.symbol
+                  ? chain?.nativeCurrency?.symbol
+                  : accounts.length > 0
+                  ? "BTC"
+                  : tronAccount
+                  ? "TRON"
+                  : ""}
               </p>
               <p className="text-[#75fb6e]">0 SIS</p>
             </div>

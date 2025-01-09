@@ -6,13 +6,21 @@ import { BsChevronDown } from "react-icons/bs";
 import { symbiosis_chains } from "../../data/networks";
 import { IoMdClose } from "react-icons/io";
 import { truncateText } from "@/lib/utils";
+import useTronWallet from "@/hooks/useTronWallet";
+import tronLinkIcon from "../../public/images/tronlink.png";
+import Image, { StaticImageData } from "next/image";
 
 const SelectNetwork = () => {
   const dropdowRef = useRef(null);
 
   const [open, setOpen] = useState(false);
-  const { chainId, chain, connector } = useAccount();
+  const { chainId, chain, connector, isConnected } = useAccount();
   const { switchChain } = useSwitchChain();
+  const { adapter, tronAccount, readyState } = useTronWallet();
+  const evmImage: StaticImageData | string = symbiosis_chains.find(
+    (itm) => itm.id === chainId
+  )?.icon;
+  const tronImg: StaticImageData = tronLinkIcon;
 
   const handleClickOutside = (event: any) => {
     if (dropdowRef.current && !dropdowRef.current.contains(event.target)) {
@@ -27,6 +35,7 @@ const SelectNetwork = () => {
     };
   }, []);
 
+  if (!isConnected) return;
   return (
     <div className="relative">
       <button
@@ -40,15 +49,18 @@ const SelectNetwork = () => {
             <BsChevronDown size={13} className="group-hover:hidden block" />
             <IoMdClose size={13} className="group-hover:block hidden" />
           </div>
-          <img
-            src={symbiosis_chains.find((itm) => itm.id === chainId)?.icon || ""}
+          <Image
+            src={evmImage ? evmImage : tronAccount ? tronImg : tronImg}
             width={27}
             height={27}
             alt="network"
             className="rounded-full group-hover:hidden block"
           />
           <p className="group-hover:hidden block">
-            {truncateText(chain?.name, 8)}
+            {truncateText(
+              chain?.name ? chain?.name : tronAccount ? "TRON" : "Bitcoin",
+              8
+            )}
           </p>
           <p className="group-hover:block hidden">Change</p>
         </div>

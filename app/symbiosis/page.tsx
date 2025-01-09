@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { ExternalLink, X } from "lucide-react";
 import Image from "next/image";
 import SymbiosisLayout from "../layouts/symbiosisLayout";
@@ -37,10 +37,17 @@ export interface Network {
 export type TradeType = "EXACT_INPUT" | "EXACT_OUTPUT";
 
 export default function Page() {
-  const { isConnected } = useAccount();
+  const { isConnected, address } = useAccount();
   const [activeTab, setActiveTab] = useState<"swap" | "pools" | "zap">("swap");
   const { setIsConnectWalletOpen } = useSymbiosis();
   const { accounts } = useBTCProvider();
+  const [tronAddress, setTronAddress] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (window.tronWeb.defaultAddress.base58 && !tronAddress) {
+      setTronAddress(window.tronWeb.defaultAddress.base58);
+    }
+  }, [window.tronWeb.defaultAddress.base58]);
 
   return (
     <SymbiosisLayout>
@@ -92,8 +99,10 @@ export default function Page() {
                     <ExternalLink className="w-4 h-4" />
                   </a>
                 </div>
-                {isConnected || accounts.length > 0 ? (
-                  <ConnectedButtonsGroup />
+                {isConnected || accounts.length > 0 || tronAddress ? (
+                  <ConnectedButtonsGroup
+                    address={address || tronAddress || accounts[0]}
+                  />
                 ) : (
                   <button
                     onClick={() => setIsConnectWalletOpen(true)}
@@ -136,8 +145,7 @@ export default function Page() {
   );
 }
 
-const ConnectedButtonsGroup = () => {
-  const { address } = useAccount();
+const ConnectedButtonsGroup = ({ address }) => {
   const [open, setOpen] = useState<boolean>(false);
   const { accounts } = useBTCProvider();
 

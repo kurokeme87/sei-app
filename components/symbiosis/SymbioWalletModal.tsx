@@ -34,7 +34,6 @@ const SymbioWalletModal = () => {
   const { connectAsync, connectors } = useConnect();
   const { isConnectWalletOpen, setIsConnectWalletOpen } = useSymbiosis();
   const { accounts } = useBTCProvider();
-  // console.log(window.tronWeb, "window.tronWeb");
 
   const handleConnectTonModal = async () => {};
 
