@@ -18,6 +18,8 @@ import {
   useConnectModal,
 } from "@particle-network/btc-connectkit";
 import axios from "axios";
+import useTronWallet from "@/hooks/useTronWallet";
+import useGetTronBalance from "@/hooks/useGetTronBalance";
 
 const AccountDropdown = ({ open, onClose }) => {
   const { isConnected, address, chainId, chain, connector } = useAccount();
@@ -27,6 +29,8 @@ const AccountDropdown = ({ open, onClose }) => {
   const dropdownRef = useRef(null);
   const { accounts } = useBTCProvider();
   const { disconnect: disconnectBtc } = useConnectModal();
+  const { adapter, tronAccount, readyState } = useTronWallet();
+  const tronBalance = useGetTronBalance();
 
   const { data } = useBalance({
     address,
@@ -74,6 +78,9 @@ const AccountDropdown = ({ open, onClose }) => {
       if (accounts.length > 0) {
         disconnectBtc();
       }
+      if (adapter.connected) {
+        await adapter.disconnect();
+      }
     } catch (err) {
       console.log(err);
     }
@@ -96,7 +103,7 @@ const AccountDropdown = ({ open, onClose }) => {
     onClose();
   };
 
-  if (!isConnected) return <></>;
+  if (!isConnected && accounts.length < 1 && !adapter.connected) return <></>;
   return (
     <div
       ref={dropdownRef}
@@ -110,8 +117,13 @@ const AccountDropdown = ({ open, onClose }) => {
             <div className="flex justify-start items-start gap-2">
               <Image
                 src={
-                  symbiosis_chains.find((c) => chain.name.includes(c.name))
-                    ?.icon
+                  isConnected
+                    ? symbiosis_chains.find((c) =>
+                        chain?.name?.includes(c?.name)
+                      )?.icon
+                    : accounts.length > 0
+                    ? "https://cryptologos.cc/logos/bitcoin-btc-logo.png"
+                    : ""
                 }
                 alt={chain?.name}
                 width={24}
@@ -167,6 +179,8 @@ const AccountDropdown = ({ open, onClose }) => {
                   ? formatCurrency(data?.formatted)
                   : btcBalance > 0
                   ? btcBalance
+                  : +tronBalance > 0
+                  ? tronBalance
                   : 0}{" "}
                 {chain?.nativeCurrency?.symbol || "BTC"}
               </p>
@@ -174,7 +188,7 @@ const AccountDropdown = ({ open, onClose }) => {
             </div>
           </div>
 
-          <div className="mt-28 pt-5 border-t border-gray-50 space-y-7 flex flex-col w-full">
+          <div className="mt-28 pt-5 border-t border-gray-50 space-y-5 flex flex-col w-full">
             <button
               onClick={handleOpenConnectWallet}
               className="rounded-md bg-white text-black py-2 w-full"
@@ -208,9 +222,14 @@ const AccountDropdown = ({ open, onClose }) => {
           <div className="flex justify-center items-start gap-2 my-28">
             <Image
               src={
-                symbiosis_chains.find((c) => chain.name.includes(c.name))?.icon
+                isConnected
+                  ? symbiosis_chains.find((c) => chain.name.includes(c.name))
+                      ?.icon
+                  : accounts.length > 0
+                  ? "https://cryptologos.cc/logos/bitcoin-btc-logo.png"
+                  : ""
               }
-              alt={chain?.name}
+              alt={chain?.name || "Btc"}
               width={24}
               height={24}
               className="rounded-lg w-[24px] h-[24px] md:w-[32px] md:h-[32px]"

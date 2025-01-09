@@ -12,8 +12,8 @@ import AccountDropdown from "@/components/symbiosis/AccountDropdown";
 import ZapCrossChain from "@/components/symbiosis/ZapCrossChain";
 import SymbiosisSwap from "@/components/symbiosis/SymbiosisSwap";
 import SymbiosisPools from "@/components/symbiosis/SymbiosisPools";
-import "/public/symbiosis/cygnito-font.css";
 import { useBTCProvider } from "@particle-network/btc-connectkit";
+import "/public/symbiosis/cygnito-font.css";
 
 export interface Token {
   name: string;

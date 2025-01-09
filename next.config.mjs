@@ -2,6 +2,7 @@
 const nextConfig = {
   env: {
     INFURA_API_KEY: process.env.INFURA_API_KEY,
+    PROJECT_ID: process.env.PROJECT_ID,
   },
   images: {
     unoptimized: true,

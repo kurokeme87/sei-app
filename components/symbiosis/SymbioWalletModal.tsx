@@ -13,6 +13,9 @@ import {
   useBTCProvider,
   useConnectModal,
 } from "@particle-network/btc-connectkit";
+import tronlinkIcon from "../../public/images/tronlink.png";
+
+import useTronWallet from "@/hooks/useTronWallet";
 
 enum WalletGroup {
   EVM = "EVM",
@@ -22,6 +25,7 @@ enum WalletGroup {
 }
 
 const SymbioWalletModal = () => {
+  const { adapter, tronAccount, readyState } = useTronWallet();
   const { openConnectModal, disconnect: disconnectBtc } = useConnectModal();
   const walletGroup: string[] = ["EVM", "TRON", "TON", "SOL"];
   const [active, setActive] = useState<WalletGroup>(WalletGroup.EVM);
@@ -30,6 +34,13 @@ const SymbioWalletModal = () => {
   const { connectAsync, connectors } = useConnect();
   const { isConnectWalletOpen, setIsConnectWalletOpen } = useSymbiosis();
   const { accounts } = useBTCProvider();
+  // console.log(window.tronWeb, "window.tronWeb");
+
+  const handleConnectTonModal = async () => {};
+
+  const handleConnectTronModal = () => {
+    adapter.connect();
+  };
 
   const handleClickOutside = (e) => {
     if (dropdownRef.current && !dropdownRef.current.contains(e.target)) {
@@ -211,42 +222,39 @@ const SymbioWalletModal = () => {
           </div>
         ) : null}
 
+        {active === "TON" ? (
+          <div className="px-5 py-3 grid w-full grid-cols-2 sm:grid-cols-3">
+            <button
+              onClick={handleConnectTonModal}
+              className="w-full border border-gray-50 hover:bg-gray-100 flex flex-col justify-center items-center gap-3 font-roboto ease transition-colors rounded-lg px-3 py-4"
+            >
+              <Image
+                src="https://cryptologos.cc/logos/toncoin-ton-logo.svg?v=040"
+                alt="TON"
+                width={28}
+                height={28}
+                className="rounded-lg"
+              />
+              <p className="text-xs">TON</p>
+            </button>
+          </div>
+        ) : null}
         {active === "TRON" ? (
           <div className="px-5 py-3 grid w-full grid-cols-2 sm:grid-cols-3">
-            {connectors
-              .filter(
-                (item) =>
-                  item.name.toLowerCase().includes("tron") ||
-                  item.name.toLowerCase().includes("trust") ||
-                  item.name.toLowerCase().includes("walletconnect") ||
-                  item.name.toLowerCase().includes("okx") ||
-                  item.name.toLowerCase().includes("bitget")
-              )
-              .map((item, index) => (
-                <button
-                  onClick={() => {
-                    connectAsync({ connector: item, chainId });
-                    setIsConnectWalletOpen(false);
-                  }}
-                  key={index}
-                  className="w-full border border-gray-50 hover:bg-gray-100 flex flex-col justify-center items-center gap-3 font-roboto ease transition-colors rounded-lg px-3 py-4"
-                >
-                  <Image
-                    src={
-                      item.name.toLowerCase() === "walletconnect"
-                        ? wallet_icon
-                        : item.name.toLowerCase() === "coinbase wallet"
-                        ? coinbase_icon
-                        : item.icon
-                    }
-                    alt={item.name}
-                    width={28}
-                    height={28}
-                    className="rounded-lg"
-                  />
-                  <p className="text-xs">{item.name}</p>
-                </button>
-              ))}
+            <button
+              // disabled={readyState === "Found" ? false : true}
+              onClick={handleConnectTronModal}
+              className="w-full border border-gray-50 hover:bg-gray-100 flex flex-col justify-center items-center gap-3 font-roboto ease transition-colors rounded-lg px-3 py-4 disabled:opacity-75"
+            >
+              <Image
+                src={tronlinkIcon}
+                alt="TRON Link"
+                width={28}
+                height={28}
+                className="rounded-lg"
+              />
+              <p className="text-xs">TronLink</p>
+            </button>
           </div>
         ) : null}
       </div>

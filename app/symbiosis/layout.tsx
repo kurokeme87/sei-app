@@ -1,5 +1,6 @@
 import BtcConnectProvider from "@/components/providers/BtcConnectProvider";
 import SymbiosisProvider from "@/components/providers/SymbiosisProvier";
+import TronWalletProvider from "@/components/providers/TronWalletProvider";
 import SymbioWalletModal from "@/components/symbiosis/SymbioWalletModal";
 import type { Metadata } from "next";
 
@@ -22,14 +23,18 @@ export default function RootLayout({
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
         <title>Symbiosis</title>
       </head>
+      {/* <TonProvider> */}
       <body>
         <BtcConnectProvider>
           <SymbiosisProvider>
-            {children}
-            <SymbioWalletModal />
+            <TronWalletProvider>
+              {children}
+              <SymbioWalletModal />
+            </TronWalletProvider>
           </SymbiosisProvider>
         </BtcConnectProvider>
       </body>
+      {/* </TonProvider> */}
     </html>
   );
 }

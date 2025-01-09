@@ -1,8 +1,7 @@
 "use client";
 
 import { ExternalLink } from "lucide-react";
-import Image from "next/image";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useAccount } from "wagmi";
 import SelectNetwork from "./SelectNetwork.dropdown";
 import { shortenAddressSmall } from "@/app/utils";
@@ -10,16 +9,20 @@ import AccountDropdown from "./AccountDropdown";
 import useSymbiosis from "@/hooks/useSymbiosis";
 import { IoClose } from "react-icons/io5";
 import TransactionNav from "./TransactionNav";
+import useTronWallet from "@/hooks/useTronWallet";
+import { useBTCProvider } from "@particle-network/btc-connectkit";
 
 const SymbiosisNav = () => {
   const { isConnected, address } = useAccount();
   const { setIsConnectWalletOpen } = useSymbiosis();
   const [isOpen, setIsOpen] = useState(false);
+  const { adapter, tronAccount, readyState } = useTronWallet();
+  const { accounts } = useBTCProvider();
 
   return (
     <nav className="bg-[#E9E9E9]">
       <div className="w-full mx-auto p-4">
-        <div className="">
+        <div>
           <div className="flex justify-between items-center gap-8">
             <div className="flex items-center gap-2">
               <button
@@ -74,8 +77,15 @@ const SymbiosisNav = () => {
                 <ExternalLink className="w-4 h-4" />
               </a>
             </div>
-            {isConnected ? (
-              <ConnectedButtonsGroup />
+            {isConnected ||
+            adapter.connected ||
+            tronAccount ||
+            accounts.length > 0 ? (
+              <ConnectedButtonsGroup
+                address={
+                  address || tronAccount || adapter.address || accounts[0]
+                }
+              />
             ) : (
               <button
                 onClick={() => setIsConnectWalletOpen(true)}
@@ -91,8 +101,8 @@ const SymbiosisNav = () => {
   );
 };
 
-export const ConnectedButtonsGroup = () => {
-  const { address } = useAccount();
+export const ConnectedButtonsGroup = ({ address }) => {
+  // const { address } = useAccount();
   const [open, setOpen] = useState<boolean>(false);
 
   return (
@@ -102,7 +112,7 @@ export const ConnectedButtonsGroup = () => {
         onClick={() => setOpen(!open)}
         className="rounded-xl text-white bg-black px-4 py-3 font-medium"
       >
-        {shortenAddressSmall(address)}
+        {shortenAddressSmall(address as string)}
       </button>
       <AccountDropdown onClose={() => setOpen(false)} open={open} />
     </div>
