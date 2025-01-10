@@ -14,6 +14,7 @@ import {
   useConnectModal,
 } from "@particle-network/btc-connectkit";
 import tronlinkIcon from "../../public/images/tronlink.png";
+import { useTonConnectModal } from "@tonconnect/ui-react";
 
 import useTronWallet from "@/hooks/useTronWallet";
 
@@ -34,6 +35,7 @@ const SymbioWalletModal = () => {
   const { connectAsync, connectors } = useConnect();
   const { isConnectWalletOpen, setIsConnectWalletOpen } = useSymbiosis();
   const { accounts } = useBTCProvider();
+  const { state, open, close } = useTonConnectModal();
 
   const handleConnectTonModal = async () => {};
 
@@ -227,7 +229,7 @@ const SymbioWalletModal = () => {
         {active === "TON" ? (
           <div className="px-5 py-3 grid w-full grid-cols-2 sm:grid-cols-3">
             <button
-              onClick={handleConnectTonModal}
+              onClick={() => open()}
               className="w-full border border-gray-50 hover:bg-gray-100 flex flex-col justify-center items-center gap-3 font-roboto ease transition-colors rounded-lg px-3 py-4"
             >
               <Image
