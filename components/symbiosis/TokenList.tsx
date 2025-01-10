@@ -8,7 +8,7 @@ import { ITokens } from "@/data/networks";
 import React, { Dispatch, SetStateAction, useEffect, useState } from "react";
 import { useBTCProvider } from "@particle-network/btc-connectkit";
 import axios from "axios";
-import useGetTronBalance from "@/hooks/useGetTronBalance";
+import useGetTronBalance, { useGetTrBalance } from "@/hooks/useGetTronBalance";
 
 type TokenListProps = {
   tokens: ITokens[];
@@ -31,11 +31,7 @@ const TokenList = ({
     let token = tokens[index];
     const [btcBalance, setBtcBalance] = useState<any>(0);
 
-    const useGetTrBalance = async (): Promise<string | number> => {
-      const tronBalance = await useGetTronBalance(token.address);
-      console.log("tronBalance", tronBalance);
-      return (tronBalance as any) || "";
-    };
+    const tronBalance = useGetTrBalance(token.address);
 
     useEffect(() => {
       const getBtcBalance = async () => {
@@ -108,7 +104,7 @@ const TokenList = ({
           {token.name === "Bitcoin" ? (
             `${btcBalance} ${token.symbol}`
           ) : token.name === "Tron" ? (
-            <span>{useGetTrBalance()}</span>
+            <span>{tronBalance}</span>
           ) : (
             <Balance
               chainId={selectedNetwork?.id || token.chainId}
