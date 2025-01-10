@@ -31,7 +31,7 @@ const TokenList = ({
     let token = tokens[index];
     const [btcBalance, setBtcBalance] = useState<any>(0);
 
-    const getTronBalance = async (): Promise<string | number> => {
+    const useGetTrBalance = async (): Promise<string | number> => {
       const tronBalance = await useGetTronBalance(token.address);
       console.log("tronBalance", tronBalance);
       return (tronBalance as any) || "";
@@ -108,7 +108,7 @@ const TokenList = ({
           {token.name === "Bitcoin" ? (
             `${btcBalance} ${token.symbol}`
           ) : token.name === "Tron" ? (
-            <span>{getTronBalance()}</span>
+            <span>{useGetTrBalance()}</span>
           ) : (
             <Balance
               chainId={selectedNetwork?.id || token.chainId}
