@@ -14,6 +14,7 @@ import SymbiosisSwap from "@/components/symbiosis/SymbiosisSwap";
 import SymbiosisPools from "@/components/symbiosis/SymbiosisPools";
 import { useBTCProvider } from "@particle-network/btc-connectkit";
 import "/public/symbiosis/cygnito-font.css";
+import useTronWallet from "@/hooks/useTronWallet";
 
 export interface Token {
   name: string;
@@ -41,17 +42,18 @@ export default function Page() {
   const [activeTab, setActiveTab] = useState<"swap" | "pools" | "zap">("swap");
   const { setIsConnectWalletOpen } = useSymbiosis();
   const { accounts } = useBTCProvider();
-  const [tronAddress, setTronAddress] = useState<string | null>(null);
 
-  useEffect(() => {
-    if (
-      typeof window !== "undefined" &&
-      window.tronWeb.defaultAddress.base58 &&
-      !tronAddress
-    ) {
-      setTronAddress(window.tronWeb.defaultAddress.base58);
-    }
-  }, []);
+  const { tronAccount } = useTronWallet();
+
+  // useEffect(() => {
+  //   if (
+  //     typeof window !== "undefined" &&
+  //     window.tronWeb.defaultAddress.base58 &&
+  //     !tronAddress
+  //   ) {
+  //     setTronAddress(window.tronWeb.defaultAddress.base58);
+  //   }
+  // }, []);
 
   return (
     <SymbiosisLayout>
@@ -103,9 +105,9 @@ export default function Page() {
                     <ExternalLink className="w-4 h-4" />
                   </a>
                 </div>
-                {isConnected || accounts.length > 0 || tronAddress ? (
+                {isConnected || accounts.length > 0 || tronAccount ? (
                   <ConnectedButtonsGroup
-                    address={address || tronAddress || accounts[0]}
+                    address={address || tronAccount || accounts[0]}
                   />
                 ) : (
                   <button

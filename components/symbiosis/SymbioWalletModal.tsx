@@ -25,7 +25,7 @@ enum WalletGroup {
 }
 
 const SymbioWalletModal = () => {
-  const { adapter, tronAccount, readyState } = useTronWallet();
+  const { adapter, tronAccount, disconnectTronLink } = useTronWallet();
   const { openConnectModal, disconnect: disconnectBtc } = useConnectModal();
   const walletGroup: string[] = ["EVM", "TRON", "TON", "SOL"];
   const [active, setActive] = useState<WalletGroup>(WalletGroup.EVM);
@@ -60,6 +60,9 @@ const SymbioWalletModal = () => {
       }
       if (accounts.length > 0) {
         disconnectBtc();
+      }
+      if (tronAccount) {
+        disconnectTronLink();
       }
     } catch (err) {
       console.log(err);

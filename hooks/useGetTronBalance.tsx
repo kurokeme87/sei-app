@@ -1,24 +1,31 @@
 "use client";
 
-const useGetTronBalance = async () => {
+const useGetTronBalance = async (contractAddress = null) => {
   if (window.tronWeb && window.tronWeb.defaultAddress.base58) {
     try {
       const walletAddress = window.tronWeb.defaultAddress.base58;
 
-      // Get the balance in Sun (1 TRX = 1,000,000 Sun)
-      const balanceInSun = await window.tronWeb.trx.getBalance(walletAddress);
+      if (!contractAddress) {
+        // For native TRX balance
+        const balanceInSun = await window.tronWeb.trx.getBalance(walletAddress);
+        return window.tronWeb.fromSun(balanceInSun); // Convert Sun to TRX
+      } else {
+        // For TRC-20 token balance
+        const contract = await window.tronWeb.contract().at(contractAddress);
+        const balanceInTokens = await contract.balanceOf(walletAddress).call();
 
-      // Convert Sun to TRX
-      const balanceInTRX = window.tronWeb.fromSun(balanceInSun);
+        const decimals = await contract.decimals().call();
+        const formattedBalance = balanceInTokens / Math.pow(10, decimals);
 
-      console.log(`Wallet Address: ${walletAddress}`);
-      console.log(`Balance: ${balanceInTRX} TRX`);
-      return balanceInTRX;
+        return formattedBalance;
+      }
     } catch (error) {
       console.error("Error fetching balance:", error);
+      return null;
     }
   } else {
     console.error("TronLink wallet is not installed or connected.");
+    return null;
   }
 };
 

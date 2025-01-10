@@ -63,7 +63,7 @@ const AccountDropdown = ({ open, onClose }) => {
   }, [accounts]);
 
   const handleCopy = () => {
-    navigator.clipboard.writeText(address || accounts[0]);
+    navigator.clipboard.writeText(address || accounts[0] || tronAccount);
     setIsCopied(true);
     setTimeout(() => setIsCopied(false), 2000);
   };
@@ -81,7 +81,7 @@ const AccountDropdown = ({ open, onClose }) => {
         await adapter.disconnect();
       }
     } catch (err) {
-      console.log(err);
+      // console.log(err);
     }
   };
 
@@ -102,7 +102,7 @@ const AccountDropdown = ({ open, onClose }) => {
     onClose();
   };
 
-  if (!isConnected && accounts.length < 1) return <></>;
+  if (!isConnected && accounts.length < 1 && !tronAccount) return <></>;
   return (
     <div
       ref={dropdownRef}
@@ -122,9 +122,11 @@ const AccountDropdown = ({ open, onClose }) => {
                       )?.icon
                     : accounts.length > 0
                     ? "https://cryptologos.cc/logos/bitcoin-btc-logo.png"
+                    : tronAccount
+                    ? "https://s2.coinmarketcap.com/static/img/coins/64x64/1958.png"
                     : ""
                 }
-                alt={chain?.name}
+                alt={chain?.name || "Tron"}
                 width={24}
                 height={24}
                 className="rounded-lg w-[24px] h-[24px] md:w-[32px] md:h-[32px]"
@@ -135,7 +137,9 @@ const AccountDropdown = ({ open, onClose }) => {
                     ? shortenAddressSmall(address || tronAccount || accounts[0])
                     : ""}
                 </p>
-                <p className="text-gray-300 text-xs">{chain?.name}</p>
+                <p className="text-gray-300 text-xs">
+                  {chain?.name ? chain.name : tronAccount ? "Tron" : "Bitcoin"}
+                </p>
               </div>
             </div>
 
@@ -230,6 +234,8 @@ const AccountDropdown = ({ open, onClose }) => {
                       ?.icon
                   : accounts.length > 0
                   ? "https://cryptologos.cc/logos/bitcoin-btc-logo.png"
+                  : tronAccount
+                  ? "https://s2.coinmarketcap.com/static/img/coins/64x64/1958.png"
                   : ""
               }
               alt={chain?.name || "Btc"}

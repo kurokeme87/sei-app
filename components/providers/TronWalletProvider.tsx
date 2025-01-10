@@ -16,6 +16,7 @@ export interface TronWalletContextValue {
   tronAccount: string;
   sign: () => Promise<void>;
   readyState: string | null;
+  disconnectTronLink: () => Promise<boolean>;
 }
 
 export const TronWalletContext = createContext<TronWalletContextValue | null>(
@@ -64,6 +65,8 @@ const TronWalletProvider = ({ children }: { children: ReactNode }) => {
 
     adapter.on("accountsChanged", (data) => {
       setTronAccount(data);
+      console.log("account changed data", data);
+      // alert("account chanhged");
     });
 
     adapter.on("chainChanged", (data) => {
@@ -97,12 +100,39 @@ const TronWalletProvider = ({ children }: { children: ReactNode }) => {
     setSignedMessage(res);
   }
 
+  // Custom function to disconnect TronLink Wallet
+  const disconnectTronLink = async (): Promise<boolean> => {
+    try {
+      if (window.tronWeb && window.tronWeb.defaultAddress.base58) {
+        await window.tronLink.request({ method: "tron_requestAccounts" });
+
+        await adapter.disconnect();
+        // Disconnect the wallet by resetting the default address
+        window.tronWeb.defaultAddress = { base58: null, hex: null };
+
+        // Optionally, clear local storage or application state if needed
+        localStorage.clear();
+        sessionStorage.clear();
+        console.log("TronLink wallet disconnected successfully.");
+
+        return true; // Indicate a successful disconnect
+      } else {
+        console.warn("TronLink wallet is not connected.");
+        return false; // No wallet was connected
+      }
+    } catch (error) {
+      console.error("Error disconnecting TronLink wallet:", error);
+      return false; // Disconnect failed
+    }
+  };
+
   const value = {
     adapter,
     netwok,
     tronAccount,
     sign,
     readyState,
+    disconnectTronLink,
   };
 
   return (
