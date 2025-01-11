@@ -16,6 +16,7 @@ import { ethereumTokens } from "@/data/symbiosis/ethereum";
 import TokenList from "./TokenList";
 import validate from "bitcoin-address-validation";
 import { useBTCProvider } from "@particle-network/btc-connectkit";
+import { useGetTrBalance } from "@/hooks/useGetTronBalance";
 
 const TokenSelector = ({
   label,
@@ -34,11 +35,12 @@ const TokenSelector = ({
   const [isOpen, setIsOpen] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
   const [filteredTokens, setFilteredTokens] = useState<ITokens[]>([]);
-  const { address, isConnected, addresses } = useAccount();
+  const { address, isConnected } = useAccount();
   const [tokenList, setTokenList] = useState<ITokens[]>(ethereumTokens);
   const [tokenPrice, setTokenPrice] = useState<any>("");
   const { accounts } = useBTCProvider();
   const [btcBalance, setBtcBalance] = useState<any>(0);
+  const tronBalance = useGetTrBalance(selectedToken?.address);
 
   useEffect(() => {
     const getBtcBalance = async () => {
@@ -251,6 +253,8 @@ const TokenSelector = ({
             </p>
           ) : btcBalance > 0 && selectedToken?.name === "Bitcoin" ? (
             btcBalance
+          ) : selectedToken?.type === "tron" && +tronBalance > 0 ? (
+            tronBalance
           ) : (
             "(???)"
           )}
