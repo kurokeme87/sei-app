@@ -7,6 +7,7 @@ export const tronTokens: ITokens[] = [
     address: null,
     decimals: 6,
     logoURI: "https://s2.coinmarketcap.com/static/img/coins/64x64/1958.png",
+    type: "tron",
   },
   {
     symbol: "USDT",
@@ -14,6 +15,7 @@ export const tronTokens: ITokens[] = [
     address: "TXLAQ63Xg1NAzckPwKHvzw7CSEmLMEqcdj",
     decimals: 6,
     logoURI: "https://s2.coinmarketcap.com/static/img/coins/64x64/825.png",
+    type: "tron",
   },
   {
     symbol: "FOFAR",
@@ -22,6 +24,7 @@ export const tronTokens: ITokens[] = [
     decimals: 6,
     logoURI:
       "https://static.tronscan.org/production/upload/logo/new/sun/TUFonyWZ4Tza5MzgDj6g2u5rfdGoRVYG7g.jpeg",
+    type: "tron",
   },
   {
     symbol: "IVFun",
@@ -30,6 +33,7 @@ export const tronTokens: ITokens[] = [
     decimals: 6,
     logoURI:
       "https://static.tronscan.org/production/upload/logo/new/sun/TSig7sWzEL2K83mkJMQtbyPpiVSbR6pZnb.jpeg",
+    type: "tron",
   },
   {
     symbol: "MUNCAT",
@@ -38,6 +42,7 @@ export const tronTokens: ITokens[] = [
     decimals: 6,
     logoURI:
       "https://static.tronscan.org/production/upload/logo/new/sun/TE2T2vLnEQT1XW647EAQAHWqd6NZL1hweR.jpeg",
+    type: "tron",
   },
   {
     symbol: "SUNCAT",
@@ -46,6 +51,7 @@ export const tronTokens: ITokens[] = [
     decimals: 6,
     logoURI:
       "https://static.tronscan.org/production/upload/logo/new/sun/TAwAg9wtQzTMFsijnSFotJrpxhMm3AqW1d.jpeg",
+    type: "tron",
   },
   {
     symbol: "SUNDOG",
@@ -54,6 +60,7 @@ export const tronTokens: ITokens[] = [
     decimals: 6,
     logoURI:
       "https://static.tronscan.org/production/upload/logo/new/sun/TXL6rJbvmjD46zeN1JssfgxvSo99qC8MRT.png",
+    type: "tron",
   },
   {
     symbol: "USDC",
@@ -62,6 +69,7 @@ export const tronTokens: ITokens[] = [
     decimals: 6,
     logoURI:
       "https://static.tronscan.org/production/upload/logo/new/sun/TP3prcvQknVthrVnn281cKST56eWiLgJJM.png",
+    type: "tron",
   },
   {
     symbol: "WTRX",
@@ -69,5 +77,6 @@ export const tronTokens: ITokens[] = [
     address: "TXk9eKko7xEBhN8wo25sC1fU5tvm4z3vkv",
     decimals: 6,
     logoURI: "https://s2.coinmarketcap.com/static/img/coins/64x64/1958.png",
+    type: "tron",
   },
 ];

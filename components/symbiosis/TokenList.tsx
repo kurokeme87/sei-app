@@ -103,7 +103,7 @@ const TokenList = ({
         <span className="font-mono text-sm md:text-base flex justify-start items-center gap-2">
           {token.name === "Bitcoin" ? (
             `${btcBalance} ${token.symbol}`
-          ) : token.name === "Tron" ? (
+          ) : token?.type && token?.type === "tron" ? (
             <span>{tronBalance}</span>
           ) : (
             <Balance

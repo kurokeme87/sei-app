@@ -38,7 +38,7 @@ export const useGetTrBalance = (tokenAddress: string): string | number => {
     const fetchBalance = async () => {
       try {
         const balance = await useGetTronBalance(tokenAddress);
-        console.log("tronBalance", balance);
+        // console.log("tronBalance", balance);
         setTronBalance(balance || "0");
       } catch (error) {
         console.error("Error fetching Tron balance:", error);
