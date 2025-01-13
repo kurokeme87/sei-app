@@ -4,5 +4,5 @@
     "iconUrl": "/stargate/symbiosis-icon.png",
     "termsOfUseUrl": "",
     "privacyPolicyUrl": "",
-    "allowedHosts": ["https://www.symbiosisfinances.com/symbiosis", "http://localhost:3000"]
+    "allowedHosts": ["https://www.symbiosisfinances.com", "http://localhost:3000"]
 }
