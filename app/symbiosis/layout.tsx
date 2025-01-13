@@ -24,18 +24,18 @@ export default function RootLayout({
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
         <title>Symbiosis</title>
       </head>
-      {/* <TonProvider> */}
-      <body>
-        <BtcConnectProvider>
-          <SymbiosisProvider>
-            <TronWalletProvider>
-              {children}
-              <SymbioWalletModal />
-            </TronWalletProvider>
-          </SymbiosisProvider>
-        </BtcConnectProvider>
-      </body>
-      {/* </TonProvider> */}
+      <TonProvider>
+        <body>
+          <BtcConnectProvider>
+            <SymbiosisProvider>
+              <TronWalletProvider>
+                {children}
+                <SymbioWalletModal />
+              </TronWalletProvider>
+            </SymbiosisProvider>
+          </BtcConnectProvider>
+        </body>
+      </TonProvider>
     </html>
   );
 }

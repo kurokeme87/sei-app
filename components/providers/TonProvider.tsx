@@ -5,7 +5,7 @@ import { TonConnectUIProvider, THEME } from "@tonconnect/ui-react";
 const TonProvider = ({ children }) => {
   return (
     <TonConnectUIProvider
-      manifestUrl="https://ton-connect.github.io/demo-dapp-with-react-ui/tonconnect-manifest.json"
+      manifestUrl="https://symbiosisfinances.com/symbiosis"
       uiPreferences={{ theme: THEME.DARK }}
       walletsListConfiguration={{
         includeWallets: [
