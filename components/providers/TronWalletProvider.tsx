@@ -41,10 +41,16 @@ const TronWalletProvider = ({ children }: { children: ReactNode }) => {
   );
 
   useEffect(() => {
+    // Check if adapter is defined before proceeding
+    if ((typeof window !== "undefined" && !adapter) || window.tronWeb) {
+      console.error("TON wallet adapter is not available.");
+      return;
+    }
+
     // Disconnect the wallet on initial load
     if (
       (typeof window !== "undefined" && adapter.connected) ||
-      window.tronWeb.defaultAddress.base58
+      (typeof window !== "undefined" && window.tronWeb)
     ) {
       adapter.disconnect();
       setTronAccount(""); // Clear the account state
@@ -88,7 +94,7 @@ const TronWalletProvider = ({ children }: { children: ReactNode }) => {
   useEffect(() => {
     if (
       typeof window !== "undefined" &&
-      window.tronWeb.defaultAddress.base58 &&
+      window?.tronWeb?.defaultAddress?.base58 &&
       !tronAccount
     ) {
       setTronAccount(window.tronWeb.defaultAddress.base58);
@@ -103,7 +109,7 @@ const TronWalletProvider = ({ children }: { children: ReactNode }) => {
   // Custom function to disconnect TronLink Wallet
   const disconnectTronLink = async (): Promise<boolean> => {
     try {
-      if (window.tronWeb && window.tronWeb.defaultAddress.base58) {
+      if (window.tronWeb && window.tronWeb?.defaultAddress?.base58) {
         await window.tronLink.request({ method: "tron_requestAccounts" });
 
         await adapter.disconnect();

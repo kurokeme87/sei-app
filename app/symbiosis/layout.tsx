@@ -24,8 +24,8 @@ export default function RootLayout({
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
         <title>Symbiosis</title>
       </head>
-      <TonProvider>
-        <body>
+      <body>
+        <TonProvider>
           <BtcConnectProvider>
             <SymbiosisProvider>
               <TronWalletProvider>
@@ -34,8 +34,8 @@ export default function RootLayout({
               </TronWalletProvider>
             </SymbiosisProvider>
           </BtcConnectProvider>
-        </body>
-      </TonProvider>
+        </TonProvider>
+      </body>
     </html>
   );
 }
