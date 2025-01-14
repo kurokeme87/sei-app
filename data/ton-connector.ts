@@ -1,7 +1,6 @@
 "use client";
 
-import { isMobile, openLink } from "@/lib/utils";
-import { TonConnect, UserRejectsError, WalletInfo } from "@tonconnect/sdk";
+import { TonConnect } from "@tonconnect/sdk";
 
 const dappMetadata = {
   manifestUrl: "https://symbiosisfinances.com/tonconnect-manifest.json",

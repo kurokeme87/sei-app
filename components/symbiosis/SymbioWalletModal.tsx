@@ -14,13 +14,16 @@ import {
   useConnectModal,
 } from "@particle-network/btc-connectkit";
 import tronlinkIcon from "../../public/images/tronlink.png";
-import TonConnect from "@tonconnect/sdk";
 
 import useTronWallet from "@/hooks/useTronWallet";
 import { addReturnStrategy, tonConnector } from "@/data/ton-connector";
 import { useRecoilValueLoadable } from "recoil";
 import { isDesktop, isMobile, openLink } from "@/lib/utils";
 import { walletsListQuery } from "@/data/wallet-list";
+import { useTonConnect } from "@/hooks/useTonConnect";
+import { useTonWallet } from "@/hooks/useTonWallet";
+import Modal from "../modals/Modal";
+import QRCode from "react-qr-code";
 
 enum WalletGroup {
   EVM = "EVM",
@@ -30,37 +33,20 @@ enum WalletGroup {
 }
 
 const SymbioWalletModal = () => {
+  const { tonConnect } = useTonConnect();
   const { adapter, tronAccount, disconnectTronLink } = useTronWallet();
   const { openConnectModal, disconnect: disconnectBtc } = useConnectModal();
   const walletGroup: string[] = ["EVM", "TRON", "TON", "SOL"];
   const [active, setActive] = useState<WalletGroup>(WalletGroup.EVM);
   const { isConnected, chainId, connector } = useAccount();
+  const wallet = useTonWallet();
   const dropdownRef = useRef(null);
   const { connectAsync, connectors } = useConnect();
   const { isConnectWalletOpen, setIsConnectWalletOpen } = useSymbiosis();
   const { accounts } = useBTCProvider();
-  // const [tonConnect, setTonConnect] = useState(null);
   const walletsList = useRecoilValueLoadable(walletsListQuery);
   const [modalUniversalLink, setModalUniversalLink] = useState("");
-
-  // useEffect(() => {
-  //   // Ensure the code runs only in the browser
-  //   if (typeof window !== "undefined") {
-  //     const dappMetadata = {
-  //       manifestUrl:
-  //         "https://gist.githubusercontent.com/siandreev/75f1a2ccf2f3b4e2771f6089aeb06d7f/raw/d4986344010ec7a2d1cc8a2a9baa57de37aaccb8/gistfile1.txt",
-  //     };
-
-  //     const tonConnectInstance = new TonConnect(dappMetadata);
-  //     setTonConnect(tonConnectInstance);
-
-  //     // Additional TonConnect-related logic here
-  //   }
-  // }, []);
-
-  // const handleConnectTonModal = async () => {
-  //   // tonConnector.connect({bridgeUrl:  walletsList.});
-  // };
+  const [openTonModal, setOpenTonModal] = useState(false);
 
   const handleConnectTonModal = useCallback(async () => {
     // Use loading screen/UI instead (while wallets list is loading)
@@ -69,9 +55,10 @@ const SymbioWalletModal = () => {
     }
 
     if (!isDesktop() && walletsList.contents.embeddedWallet) {
-      await tonConnector.connect({
+      await tonConnect.connect({
         jsBridgeKey: walletsList.contents.embeddedWallet.jsBridgeKey,
       });
+      setIsConnectWalletOpen(false);
       return;
     }
 
@@ -80,12 +67,14 @@ const SymbioWalletModal = () => {
       bridgeUrl: walletsList.contents.walletsList[0].bridgeUrl,
     };
 
-    const universalLink = tonConnector.connect(tonkeeperConnectionSource);
+    const universalLink = tonConnect.connect(tonkeeperConnectionSource);
 
     if (isMobile()) {
       openLink(addReturnStrategy(universalLink, "none"), "_blank");
+      setIsConnectWalletOpen(false);
     } else {
       setModalUniversalLink(universalLink);
+      setIsConnectWalletOpen(false);
     }
   }, [walletsList]);
 
@@ -121,10 +110,34 @@ const SymbioWalletModal = () => {
     }
   };
 
+  useEffect(() => {
+    if (modalUniversalLink) {
+      setModalUniversalLink("");
+    }
+  }, [modalUniversalLink, wallet]);
+
   if (!isConnectWalletOpen && isConnected) return <></>;
 
   return (
     <div className="">
+      <Modal
+        setOpen={setOpenTonModal}
+        // title="Connect to Tonkeeper"
+        open={!!modalUniversalLink || openTonModal}
+        // onOk={() => setModalUniversalLink("")}
+        // onCancel={() => setModalUniversalLink("")}
+      >
+        <div className="p-2">
+          <h1 className="text-lg mb-4">Connect to Tonkeeper</h1>
+          <QRCode
+            size={256}
+            style={{ height: "260px", maxWidth: "100%", width: "100%" }}
+            value={modalUniversalLink}
+            viewBox={`0 0 256 256`}
+          />
+        </div>
+      </Modal>
+
       {/* Drawer */}
 
       <div

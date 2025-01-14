@@ -31,13 +31,13 @@ const nextConfig = {
       // { source: "/jumper", destination: "https://jumperfinances.com" },
     ];
   },
-  redirects: [
-    {
-      source: "/tonconnect-manifest.json",
-      destination: "/tonconnect-manifest.json",
-      permanent: true,
-    },
-  ],
+  // redirects: [
+  //   {
+  //     source: "/tonconnect-manifest.json",
+  //     destination: "/tonconnect-manifest.json",
+  //     permanent: true,
+  //   },
+  // ],
 };
 
 export default nextConfig;
