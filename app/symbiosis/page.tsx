@@ -45,16 +45,6 @@ export default function Page() {
 
   const { tronAccount } = useTronWallet();
 
-  // useEffect(() => {
-  //   if (
-  //     typeof window !== "undefined" &&
-  //     window.tronWeb.defaultAddress.base58 &&
-  //     !tronAddress
-  //   ) {
-  //     setTronAddress(window.tronWeb.defaultAddress.base58);
-  //   }
-  // }, []);
-
   return (
     <SymbiosisLayout>
       <div className="min-h-screen h-full bg-[#F9F9F9] text-black">

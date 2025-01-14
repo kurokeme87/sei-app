@@ -27,6 +27,8 @@ import { isDesktop, isMobile, openLink } from "@/lib/utils";
 import { useTonConnect } from "@/hooks/useTonConnect";
 import Modal from "../modals/Modal";
 import QRCode from "react-qr-code";
+import { useTonWalletConnectionError } from "@/hooks/useTonWalletConnectionError";
+import { toast } from "react-toastify";
 
 enum WalletGroup {
   EVM = "EVM",
@@ -69,6 +71,13 @@ const SymbioWalletModal = () => {
   // const walletsList = useRecoilValueLoadable(walletData);
   // console.log("wallet connected", wallet);
 
+  const onConnectErrorCallback = useCallback(() => {
+    setModalUniversalLink("");
+    toast.error("Connection was rejected", {
+      // description: 'Please approve connection to the dApp in your wallet.',
+    });
+  }, []);
+
   const handleConnectTonModal = useCallback(async () => {
     if (!walletsList.walletsList) return;
 
@@ -81,9 +90,13 @@ const SymbioWalletModal = () => {
     }
 
     const tonkeeperConnectionSource = {
-      universalLink: walletsList.walletsList[1]?.universalLink || "",
-      bridgeUrl: walletsList.walletsList[1]?.bridgeUrl || "",
+      universalLink: "https://app.tonkeeper.com/ton-connect",
+      bridgeUrl: "https://bridge.tonapi.io/bridge",
     };
+    // const tonkeeperConnectionSource = {
+    //   universalLink: walletsList.walletsList[1]?.universalLink || "",
+    //   bridgeUrl: walletsList.walletsList[1]?.bridgeUrl || "",
+    // };
 
     const universalLink = tonConnect.connect(tonkeeperConnectionSource);
 
@@ -155,6 +168,8 @@ const SymbioWalletModal = () => {
   //       });
   //   }
   // }, [walletsListQuery, setWalletData]);
+
+  useTonWalletConnectionError(onConnectErrorCallback);
 
   if (!isConnectWalletOpen && isConnected) return <></>;
 

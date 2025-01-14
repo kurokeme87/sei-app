@@ -1,14 +1,15 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
-import { TonConnect, WalletInfo } from "@tonconnect/sdk";
+import { TonConnect, TonConnectOptions, WalletInfo } from "@tonconnect/sdk";
 import { Wallet } from "@tonconnect/sdk";
 import { isWalletInfoInjected } from "@tonconnect/sdk";
-import { useRecoilValueLoadable } from "recoil";
+// import { useRecoilValueLoadable } from "recoil";
 // import { selector } from "recoil";
 
 const dappMetadata = {
   manifestUrl: "https://www.en-sei.io/tonconnect-manifest.json",
+  debug: true,
 };
 
 function addReturnStrategy(
@@ -86,14 +87,19 @@ export function useTonConnect() {
   useEffect(() => {
     if (typeof window !== "undefined" && typeof localStorage !== "undefined") {
       const instance = new TonConnect(dappMetadata);
+      // console.log("instance of ton", instance);
       setTonConnect(instance);
     }
   }, []);
 
   useEffect(() => {
-    tonConnect?.onStatusChange(setWallet, console.error);
-    alert("connected");
-  }, []);
+    if (tonConnect && tonConnect.onStatusChange) {
+      tonConnect.onStatusChange(setWallet, console.error);
+    }
+
+    // console.log("ton connect object", tonConnect);
+    // console.log("connected successfull");
+  }, [tonConnect]);
 
   return {
     tonConnect,
