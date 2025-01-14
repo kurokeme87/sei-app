@@ -14,7 +14,7 @@ const TonProvider = ({ children }) => {
 
   return (
     <TonConnectUIProvider
-      manifestUrl="https://symbiosisfinances.com/tonconnect-manifest.json"
+      manifestUrl="https://www.en-sei.io/tonconnect-manifest.json"
       uiPreferences={{ theme: THEME.DARK }}
       walletsListConfiguration={{
         includeWallets: [

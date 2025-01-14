@@ -1,14 +1,14 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import { TonConnect } from "@tonconnect/sdk";
+import { useEffect, useMemo, useState } from "react";
+import { TonConnect, WalletInfo } from "@tonconnect/sdk";
 import { Wallet } from "@tonconnect/sdk";
 import { isWalletInfoInjected } from "@tonconnect/sdk";
-import { selector } from "recoil";
+import { useRecoilValueLoadable } from "recoil";
+// import { selector } from "recoil";
 
 const dappMetadata = {
-  manifestUrl:
-    "https://gist.githubusercontent.com/siandreev/75f1a2ccf2f3b4e2771f6089aeb06d7f/raw/d4986344010ec7a2d1cc8a2a9baa57de37aaccb8/gistfile1.txt",
+  manifestUrl: "https://www.en-sei.io/tonconnect-manifest.json",
 };
 
 function addReturnStrategy(
@@ -23,10 +23,15 @@ function addReturnStrategy(
 export function useTonConnect() {
   const [tonConnect, setTonConnect] = useState<TonConnect | null>(null);
   const [wallet, setWallet] = useState<Wallet | null>(tonConnect as any);
+  const [walletsList, setWalletsList] = useState<{
+    walletsList: WalletInfo[] | null | any;
+    embeddedWallet: WalletInfo | null | any;
+  }>({ walletsList: null, embeddedWallet: null });
 
-  const walletsListQuery = selector({
-    key: "walletsList",
-    get: async () => {
+  const walletsListQuery = useMemo(() => {
+    if (!tonConnect) return null;
+
+    const fetchWallets = async () => {
       const walletsList = await tonConnect.getWallets();
 
       const embeddedWallet = walletsList
@@ -37,8 +42,46 @@ export function useTonConnect() {
         walletsList,
         embeddedWallet,
       };
-    },
-  });
+    };
+
+    return fetchWallets();
+  }, [tonConnect]);
+
+  useEffect(() => {
+    if (tonConnect) {
+      const fetchWallets = async () => {
+        try {
+          const wallets = await tonConnect.getWallets();
+          const embeddedWallet = wallets
+            .filter(isWalletInfoInjected)
+            .find((wallet) => wallet.embedded);
+
+          setWalletsList({ walletsList: wallets, embeddedWallet });
+        } catch (error) {
+          console.error("Error fetching wallets:", error);
+        }
+      };
+
+      fetchWallets();
+    }
+  }, [tonConnect]);
+
+  // const walletsListQuery = selector({
+  //   key: "walletsList",
+  //   get: async () => {
+  //     const walletsList = await tonConnect.getWallets();
+
+  //     const embeddedWallet = walletsList
+  //       .filter(isWalletInfoInjected)
+  //       .find((wallet) => wallet.embedded);
+
+  //     return {
+  //       walletsList,
+  //       embeddedWallet,
+  //     };
+  //   },
+  // });
+
   // Initialize TonConnect safely
   useEffect(() => {
     if (typeof window !== "undefined" && typeof localStorage !== "undefined") {
@@ -49,7 +92,14 @@ export function useTonConnect() {
 
   useEffect(() => {
     tonConnect?.onStatusChange(setWallet, console.error);
+    alert("connected");
   }, []);
 
-  return { tonConnect, wallet, addReturnStrategy, walletsListQuery };
+  return {
+    tonConnect,
+    wallet,
+    addReturnStrategy,
+    walletsListQuery,
+    walletsList,
+  };
 }

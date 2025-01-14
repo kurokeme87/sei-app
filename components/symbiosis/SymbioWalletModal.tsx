@@ -14,9 +14,15 @@ import {
   useConnectModal,
 } from "@particle-network/btc-connectkit";
 import tronlinkIcon from "../../public/images/tronlink.png";
+import { Wallet, WalletInfo, WalletInfoInjected } from "@tonconnect/sdk";
 
 import useTronWallet from "@/hooks/useTronWallet";
-import { useRecoilValueLoadable } from "recoil";
+import {
+  atom,
+  RecoilValue,
+  useRecoilState,
+  useRecoilValueLoadable,
+} from "recoil";
 import { isDesktop, isMobile, openLink } from "@/lib/utils";
 import { useTonConnect } from "@/hooks/useTonConnect";
 import Modal from "../modals/Modal";
@@ -29,8 +35,24 @@ enum WalletGroup {
   SOL = "SOL",
 }
 
+export type WalletsListQueryResult = {
+  walletsList: WalletInfo[]; // Array of wallets
+  embeddedWallet: WalletInfoInjected | undefined; // Either an injected wallet or undefined
+};
+
+export const walletDataState = atom<{
+  walletsList: WalletInfo[] | null;
+  embeddedWallet: WalletInfoInjected | null;
+}>({
+  key: "walletsList",
+  default: {
+    walletsList: null,
+    embeddedWallet: null,
+  },
+});
+
 const SymbioWalletModal = () => {
-  const { tonConnect, wallet, addReturnStrategy, walletsListQuery } =
+  const { tonConnect, wallet, addReturnStrategy, walletsList } =
     useTonConnect();
   const { adapter, tronAccount, disconnectTronLink } = useTronWallet();
   const { openConnectModal, disconnect: disconnectBtc } = useConnectModal();
@@ -41,28 +63,26 @@ const SymbioWalletModal = () => {
   const { connectAsync, connectors } = useConnect();
   const { isConnectWalletOpen, setIsConnectWalletOpen } = useSymbiosis();
   const { accounts } = useBTCProvider();
-  const walletsList = useRecoilValueLoadable(walletsListQuery);
   const [modalUniversalLink, setModalUniversalLink] = useState("");
   const [openTonModal, setOpenTonModal] = useState(false);
-  console.log(walletsList, "walletsList");
+  const [walletData, setWalletData] = useRecoilState(walletDataState);
+  // const walletsList = useRecoilValueLoadable(walletData);
+  // console.log("wallet connected", wallet);
 
   const handleConnectTonModal = useCallback(async () => {
-    // Use loading screen/UI instead (while wallets list is loading)
-    if (!(walletsList.state === "hasValue")) {
-      setTimeout(handleConnectTonModal, 200);
-    }
+    if (!walletsList.walletsList) return;
 
-    if (!isDesktop() && walletsList.contents.embeddedWallet) {
-      await tonConnect.connect({
-        jsBridgeKey: walletsList.contents.embeddedWallet.jsBridgeKey,
+    if (!isDesktop() && walletsList.embeddedWallet) {
+      tonConnect.connect({
+        jsBridgeKey: walletsList.embeddedWallet?.jsBridgeKey,
       });
       setIsConnectWalletOpen(false);
       return;
     }
 
     const tonkeeperConnectionSource = {
-      universalLink: walletsList.contents.walletsList[0].universalLink,
-      bridgeUrl: walletsList.contents.walletsList[0].bridgeUrl,
+      universalLink: walletsList.walletsList[1]?.universalLink || "",
+      bridgeUrl: walletsList.walletsList[1]?.bridgeUrl || "",
     };
 
     const universalLink = tonConnect.connect(tonkeeperConnectionSource);
@@ -73,8 +93,15 @@ const SymbioWalletModal = () => {
     } else {
       setModalUniversalLink(universalLink);
       setIsConnectWalletOpen(false);
+      setOpenTonModal(true);
     }
-  }, [walletsList]);
+  }, [
+    walletData,
+    tonConnect,
+    setIsConnectWalletOpen,
+    addReturnStrategy,
+    walletsList,
+  ]);
 
   const handleConnectTronModal = () => {
     adapter.connect();
@@ -108,11 +135,26 @@ const SymbioWalletModal = () => {
     }
   };
 
-  useEffect(() => {
-    if (modalUniversalLink) {
-      setModalUniversalLink("");
-    }
-  }, [modalUniversalLink, wallet]);
+  // useEffect(() => {
+  //   if (modalUniversalLink) {
+  //     setModalUniversalLink("");
+  //   }
+  // }, [modalUniversalLink, wallet]);
+
+  // useEffect(() => {
+  //   if (walletsListQuery) {
+  //     walletsListQuery
+  //       .then((data) => {
+  //         setWalletData({
+  //           walletsList: data.walletsList,
+  //           embeddedWallet: data.embeddedWallet,
+  //         });
+  //       })
+  //       .catch((error) => {
+  //         console.error("Error fetching wallet data:", error);
+  //       });
+  //   }
+  // }, [walletsListQuery, setWalletData]);
 
   if (!isConnectWalletOpen && isConnected) return <></>;
 
@@ -120,13 +162,14 @@ const SymbioWalletModal = () => {
     <div className="">
       <Modal
         setOpen={setOpenTonModal}
-        // title="Connect to Tonkeeper"
         open={!!modalUniversalLink || openTonModal}
-        // onOk={() => setModalUniversalLink("")}
-        // onCancel={() => setModalUniversalLink("")}
+        onClose={() => {
+          setModalUniversalLink("");
+          setOpenTonModal(false);
+        }}
       >
-        <div className="p-2">
-          <h1 className="text-lg mb-4">Connect to Tonkeeper</h1>
+        <div className="p-2 font-inter">
+          <h1 className="text-lg mb-10 font-semibold">Connect to Tonkeeper</h1>
           <QRCode
             size={256}
             style={{ height: "260px", maxWidth: "100%", width: "100%" }}
