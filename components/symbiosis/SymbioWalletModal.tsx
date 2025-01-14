@@ -18,7 +18,6 @@ import tronlinkIcon from "../../public/images/tronlink.png";
 import useTronWallet from "@/hooks/useTronWallet";
 import { useRecoilValueLoadable } from "recoil";
 import { isDesktop, isMobile, openLink } from "@/lib/utils";
-// import { walletsListQuery } from "@/data/wallet-list";
 import { useTonConnect } from "@/hooks/useTonConnect";
 import Modal from "../modals/Modal";
 import QRCode from "react-qr-code";
