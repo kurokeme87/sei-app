@@ -16,12 +16,10 @@ import {
 import tronlinkIcon from "../../public/images/tronlink.png";
 
 import useTronWallet from "@/hooks/useTronWallet";
-import { addReturnStrategy, tonConnector } from "@/data/ton-connector";
 import { useRecoilValueLoadable } from "recoil";
 import { isDesktop, isMobile, openLink } from "@/lib/utils";
-import { walletsListQuery } from "@/data/wallet-list";
+// import { walletsListQuery } from "@/data/wallet-list";
 import { useTonConnect } from "@/hooks/useTonConnect";
-import { useTonWallet } from "@/hooks/useTonWallet";
 import Modal from "../modals/Modal";
 import QRCode from "react-qr-code";
 
@@ -33,13 +31,13 @@ enum WalletGroup {
 }
 
 const SymbioWalletModal = () => {
-  const { tonConnect } = useTonConnect();
+  const { tonConnect, wallet, addReturnStrategy, walletsListQuery } =
+    useTonConnect();
   const { adapter, tronAccount, disconnectTronLink } = useTronWallet();
   const { openConnectModal, disconnect: disconnectBtc } = useConnectModal();
   const walletGroup: string[] = ["EVM", "TRON", "TON", "SOL"];
   const [active, setActive] = useState<WalletGroup>(WalletGroup.EVM);
   const { isConnected, chainId, connector } = useAccount();
-  const wallet = useTonWallet();
   const dropdownRef = useRef(null);
   const { connectAsync, connectors } = useConnect();
   const { isConnectWalletOpen, setIsConnectWalletOpen } = useSymbiosis();
@@ -47,6 +45,7 @@ const SymbioWalletModal = () => {
   const walletsList = useRecoilValueLoadable(walletsListQuery);
   const [modalUniversalLink, setModalUniversalLink] = useState("");
   const [openTonModal, setOpenTonModal] = useState(false);
+  console.log(walletsList, "walletsList");
 
   const handleConnectTonModal = useCallback(async () => {
     // Use loading screen/UI instead (while wallets list is loading)

@@ -1,14 +1,17 @@
 "use client";
 
-import { tonConnector } from "@/data/ton-connector";
+import { useTonConnect } from "@/hooks/useTonConnect";
 import { TonConnectUIProvider, THEME } from "@tonconnect/ui-react";
 import { useEffect } from "react";
 import { RecoilRoot } from "recoil";
 
 const TonProvider = ({ children }) => {
+  const { tonConnect } = useTonConnect();
+
   useEffect(() => {
-    tonConnector.restoreConnection();
+    tonConnect?.restoreConnection();
   }, []);
+
   return (
     <TonConnectUIProvider
       manifestUrl="https://symbiosisfinances.com/tonconnect-manifest.json"

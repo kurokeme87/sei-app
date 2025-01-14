@@ -1,8 +1,10 @@
 "use client";
 
-import { useEffect, useState, useCallback } from "react";
+import { useEffect, useState } from "react";
 import { TonConnect } from "@tonconnect/sdk";
-// import { isMobile, openLink } from "src/utils";
+import { Wallet } from "@tonconnect/sdk";
+import { isWalletInfoInjected } from "@tonconnect/sdk";
+import { selector } from "recoil";
 
 const dappMetadata = {
   manifestUrl:
@@ -20,7 +22,23 @@ function addReturnStrategy(
 
 export function useTonConnect() {
   const [tonConnect, setTonConnect] = useState<TonConnect | null>(null);
+  const [wallet, setWallet] = useState<Wallet | null>(tonConnect as any);
 
+  const walletsListQuery = selector({
+    key: "walletsList",
+    get: async () => {
+      const walletsList = await tonConnect.getWallets();
+
+      const embeddedWallet = walletsList
+        .filter(isWalletInfoInjected)
+        .find((wallet) => wallet.embedded);
+
+      return {
+        walletsList,
+        embeddedWallet,
+      };
+    },
+  });
   // Initialize TonConnect safely
   useEffect(() => {
     if (typeof window !== "undefined" && typeof localStorage !== "undefined") {
@@ -29,5 +47,9 @@ export function useTonConnect() {
     }
   }, []);
 
-  return { tonConnect };
+  useEffect(() => {
+    tonConnect?.onStatusChange(setWallet, console.error);
+  }, []);
+
+  return { tonConnect, wallet, addReturnStrategy, walletsListQuery };
 }
