@@ -35,8 +35,17 @@ const SymbioWalletModal = () => {
   const { connectAsync, connectors } = useConnect();
   const { isConnectWalletOpen, setIsConnectWalletOpen } = useSymbiosis();
   const { accounts } = useBTCProvider();
-  // const { state, open, close } = useTonConnectModal();
-  const tonConnector = new TonConnect();
+  const [tonConnect, setTonConnect] = useState(null);
+
+  useEffect(() => {
+    // Ensure the code runs only in the browser
+    if (typeof window !== "undefined") {
+      const tonConnectInstance = new TonConnect();
+      setTonConnect(tonConnectInstance);
+
+      // Additional TonConnect-related logic here
+    }
+  }, []);
 
   const walletConnectionSource = {
     universalLink: "https://app.tonkeeper.com/ton-connect",
@@ -44,7 +53,7 @@ const SymbioWalletModal = () => {
   };
 
   const handleConnectTonModal = async () => {
-    tonConnector.connect(walletConnectionSource);
+    tonConnect.connect(walletConnectionSource);
   };
 
   const handleConnectTronModal = () => {
