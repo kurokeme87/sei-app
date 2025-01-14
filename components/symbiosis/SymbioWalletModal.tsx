@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { useAccount, useConnect } from "wagmi";
 import { IoMdClose } from "react-icons/io";
 import Image from "next/image";
@@ -17,6 +17,10 @@ import tronlinkIcon from "../../public/images/tronlink.png";
 import TonConnect from "@tonconnect/sdk";
 
 import useTronWallet from "@/hooks/useTronWallet";
+import { addReturnStrategy, tonConnector } from "@/data/ton-connector";
+import { useRecoilValueLoadable } from "recoil";
+import { isDesktop, isMobile, openLink } from "@/lib/utils";
+import { walletsListQuery } from "@/data/wallet-list";
 
 enum WalletGroup {
   EVM = "EVM",
@@ -35,26 +39,55 @@ const SymbioWalletModal = () => {
   const { connectAsync, connectors } = useConnect();
   const { isConnectWalletOpen, setIsConnectWalletOpen } = useSymbiosis();
   const { accounts } = useBTCProvider();
-  const [tonConnect, setTonConnect] = useState(null);
+  // const [tonConnect, setTonConnect] = useState(null);
+  const walletsList = useRecoilValueLoadable(walletsListQuery);
+  const [modalUniversalLink, setModalUniversalLink] = useState("");
 
-  useEffect(() => {
-    // Ensure the code runs only in the browser
-    if (typeof window !== "undefined") {
-      const tonConnectInstance = new TonConnect();
-      setTonConnect(tonConnectInstance);
+  // useEffect(() => {
+  //   // Ensure the code runs only in the browser
+  //   if (typeof window !== "undefined") {
+  //     const dappMetadata = {
+  //       manifestUrl:
+  //         "https://gist.githubusercontent.com/siandreev/75f1a2ccf2f3b4e2771f6089aeb06d7f/raw/d4986344010ec7a2d1cc8a2a9baa57de37aaccb8/gistfile1.txt",
+  //     };
 
-      // Additional TonConnect-related logic here
+  //     const tonConnectInstance = new TonConnect(dappMetadata);
+  //     setTonConnect(tonConnectInstance);
+
+  //     // Additional TonConnect-related logic here
+  //   }
+  // }, []);
+
+  // const handleConnectTonModal = async () => {
+  //   // tonConnector.connect({bridgeUrl:  walletsList.});
+  // };
+
+  const handleConnectTonModal = useCallback(async () => {
+    // Use loading screen/UI instead (while wallets list is loading)
+    if (!(walletsList.state === "hasValue")) {
+      setTimeout(handleConnectTonModal, 200);
     }
-  }, []);
 
-  const walletConnectionSource = {
-    universalLink: "https://app.tonkeeper.com/ton-connect",
-    bridgeUrl: "https://bridge.tonapi.io/bridge",
-  };
+    if (!isDesktop() && walletsList.contents.embeddedWallet) {
+      await tonConnector.connect({
+        jsBridgeKey: walletsList.contents.embeddedWallet.jsBridgeKey,
+      });
+      return;
+    }
 
-  const handleConnectTonModal = async () => {
-    tonConnect.connect(walletConnectionSource);
-  };
+    const tonkeeperConnectionSource = {
+      universalLink: walletsList.contents.walletsList[0].universalLink,
+      bridgeUrl: walletsList.contents.walletsList[0].bridgeUrl,
+    };
+
+    const universalLink = tonConnector.connect(tonkeeperConnectionSource);
+
+    if (isMobile()) {
+      openLink(addReturnStrategy(universalLink, "none"), "_blank");
+    } else {
+      setModalUniversalLink(universalLink);
+    }
+  }, [walletsList]);
 
   const handleConnectTronModal = () => {
     adapter.connect();
@@ -106,7 +139,7 @@ const SymbioWalletModal = () => {
           isConnectWalletOpen
             ? "translate-y-0 z-[999]"
             : "translate-y-[1000px] -z-[999] opacity-0"
-        } w-screen max-w-[505px] fixed top-[10%] bottom-[10%] sm:left-[35%] ease-in-out transition-transform z-[10000] bg-white overflow-y-auto rounded-3xl`}
+        } w-screen max-w-[505px] fixed top-[10%] bottom-[10%] left-[50%] -translate-x-[50%] ease-in-out transition-transform z-[10000] bg-white overflow-y-auto rounded-3xl`}
       >
         <div className="w-full px-5 md:px-10 pt-8 pb-4 bg-white">
           <div className="w-full flex justify-between items-center">

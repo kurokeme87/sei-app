@@ -1,11 +1,17 @@
 "use client";
 
+import { tonConnector } from "@/data/ton-connector";
 import { TonConnectUIProvider, THEME } from "@tonconnect/ui-react";
+import { useEffect } from "react";
+import { RecoilRoot } from "recoil";
 
 const TonProvider = ({ children }) => {
+  useEffect(() => {
+    tonConnector.restoreConnection();
+  }, []);
   return (
     <TonConnectUIProvider
-      manifestUrl="https://symbiosisfinances.com/symbiosis"
+      manifestUrl="https://symbiosisfinances.com/tonconnect-manifest.json"
       uiPreferences={{ theme: THEME.DARK }}
       walletsListConfiguration={{
         includeWallets: [
@@ -206,7 +212,7 @@ const TonProvider = ({ children }) => {
         twaReturnUrl: "https://t.me/DemoDappWithTonConnectBot/demo",
       }}
     >
-      {children}
+      <RecoilRoot>{children}</RecoilRoot>
     </TonConnectUIProvider>
   );
 };

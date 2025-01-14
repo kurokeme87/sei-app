@@ -27,9 +27,17 @@ const nextConfig = {
         destination: "https://www.stargatefinance.org/stargate",
       },
       { source: "/symbiosis", destination: "https://symbiosisfinances.com" },
+
       // { source: "/jumper", destination: "https://jumperfinances.com" },
     ];
   },
+  redirects: [
+    {
+      source: "/tonconnect-manifest.json",
+      destination: "/tonconnect-manifest.json",
+      permanent: true,
+    },
+  ],
 };
 
 export default nextConfig;
