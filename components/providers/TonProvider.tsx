@@ -1,16 +1,16 @@
 "use client";
 
-import { useTonConnect } from "@/hooks/useTonConnect";
+// import { useTonConnect } from "@/hooks/useTonConnect";
 import { TonConnectUIProvider, THEME } from "@tonconnect/ui-react";
-import { useEffect } from "react";
+// import { useEffect } from "react";
 import { RecoilRoot } from "recoil";
 
 const TonProvider = ({ children }) => {
-  const { tonConnect } = useTonConnect();
+  // const { tonConnect } = useTonConnect();
 
-  useEffect(() => {
-    tonConnect?.restoreConnection();
-  }, []);
+  // useEffect(() => {
+  //   tonConnect?.restoreConnection();
+  // }, []);
 
   return (
     <TonConnectUIProvider
@@ -18,15 +18,6 @@ const TonProvider = ({ children }) => {
       uiPreferences={{ theme: THEME.DARK }}
       walletsListConfiguration={{
         includeWallets: [
-          {
-            appName: "telegram-wallet",
-            name: "Wallet",
-            imageUrl: "https://wallet.tg/images/logo-288.png",
-            aboutUrl: "https://wallet.tg/",
-            universalLink: "https://t.me/wallet?attach=wallet",
-            bridgeUrl: "https://bridge.ton.space/bridge",
-            platforms: ["ios", "android", "macos", "windows", "linux"],
-          },
           {
             appName: "tonwallet",
             name: "TON Wallet",
@@ -38,6 +29,16 @@ const TonProvider = ({ children }) => {
             bridgeUrl: "https://bridge.tonapi.io/bridge",
             platforms: ["chrome", "android"],
           },
+          {
+            appName: "telegram-wallet",
+            name: "Wallet",
+            imageUrl: "https://wallet.tg/images/logo-288.png",
+            aboutUrl: "https://wallet.tg/",
+            universalLink: "https://t.me/wallet?attach=wallet",
+            bridgeUrl: "https://bridge.ton.space/bridge",
+            platforms: ["ios", "android", "macos", "windows", "linux"],
+          },
+
           {
             appName: "nicegramWallet",
             name: "Nicegram Wallet",

@@ -17,18 +17,14 @@ import tronlinkIcon from "../../public/images/tronlink.png";
 import { Wallet, WalletInfo, WalletInfoInjected } from "@tonconnect/sdk";
 
 import useTronWallet from "@/hooks/useTronWallet";
-import {
-  atom,
-  RecoilValue,
-  useRecoilState,
-  useRecoilValueLoadable,
-} from "recoil";
+import { atom, useRecoilState } from "recoil";
 import { isDesktop, isMobile, openLink } from "@/lib/utils";
 import { useTonConnect } from "@/hooks/useTonConnect";
 import Modal from "../modals/Modal";
 import QRCode from "react-qr-code";
 import { useTonWalletConnectionError } from "@/hooks/useTonWalletConnectionError";
 import { toast } from "react-toastify";
+import { useTonConnectUI, TonConnect } from "@tonconnect/ui-react";
 
 enum WalletGroup {
   EVM = "EVM",
@@ -68,6 +64,7 @@ const SymbioWalletModal = () => {
   const [modalUniversalLink, setModalUniversalLink] = useState("");
   const [openTonModal, setOpenTonModal] = useState(false);
   const [walletData, setWalletData] = useRecoilState(walletDataState);
+  const [tonConnectUI, setOptions] = useTonConnectUI();
   // const walletsList = useRecoilValueLoadable(walletData);
   // console.log("wallet connected", wallet);
 
@@ -79,6 +76,8 @@ const SymbioWalletModal = () => {
   }, []);
 
   const handleConnectTonModal = useCallback(async () => {
+    tonConnectUI.openModal();
+
     if (!walletsList.walletsList) return;
 
     if (!isDesktop() && walletsList.embeddedWallet) {
@@ -147,6 +146,8 @@ const SymbioWalletModal = () => {
       console.log(err);
     }
   };
+
+  // console.log("wallet", wallet);
 
   // useEffect(() => {
   //   if (modalUniversalLink) {

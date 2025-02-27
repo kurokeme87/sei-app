@@ -35,7 +35,7 @@ const TronWalletProvider = ({ children }: { children: ReactNode }) => {
       new TronLinkAdapter({
         dappName: "Symbiosis Tron",
         openTronLinkAppOnMobile: true,
-        dappIcon: "https://www.symbiosisfinances.com/symbiosis/download.svg",
+        dappIcon: "https://en-symbiosisfinance.com/symbiosis/download.svg",
       }),
     []
   );

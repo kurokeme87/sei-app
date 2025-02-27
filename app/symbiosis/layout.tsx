@@ -25,16 +25,16 @@ export default function RootLayout({
         <title>Symbiosis</title>
       </head>
       <body>
-        <TonProvider>
-          <BtcConnectProvider>
-            <SymbiosisProvider>
+        <BtcConnectProvider>
+          <SymbiosisProvider>
+            <TonProvider>
               <TronWalletProvider>
                 {children}
                 <SymbioWalletModal />
               </TronWalletProvider>
-            </SymbiosisProvider>
-          </BtcConnectProvider>
-        </TonProvider>
+            </TonProvider>
+          </SymbiosisProvider>
+        </BtcConnectProvider>
       </body>
     </html>
   );

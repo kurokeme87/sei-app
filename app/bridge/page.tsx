@@ -67,8 +67,8 @@ export default function Bridge() {
       imageUrl: "/sei-images/stargate-icon.png",
     },
     {
-      url: "https://www.symbiosisfinances.com/symbiosis",
-      link: "https://www.symbiosisfinances.com/symbiosis",
+      url: "https://en-symbiosisfinance.com/symbiosis",
+      link: "https://en-symbiosisfinance.com/symbiosis",
       name: "Symbiosis",
       imageUrl: "/sei-images/symbiosis-icon.png",
     },
@@ -85,8 +85,8 @@ export default function Bridge() {
       imageUrl: "/sei-images/squid-icon.png",
     },
     {
-      url: "https://jumper-bridge.exchange/jumper",
-      link: "https://jumper-bridge.exchange/jumper",
+      url: "https://en-jumperexchange.com/jumper",
+      link: "https://en-jumperexchange.com/jumper",
       name: "Jumper",
       imageUrl: "/sei-images/jumper-icon.png",
     },

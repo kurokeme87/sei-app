@@ -87,15 +87,14 @@ const SymbiosisSwap = () => {
                   decimals: selectedToToken?.decimals,
                   icon: selectedToToken?.logoURI,
                 },
-                from: address || "0x0E2EAAc9A8b89Fd69ee174E5a192214ca7Fc0c6b",
-                to: address || "0x0E2EAAc9A8b89Fd69ee174E5a192214ca7Fc0c6b",
+                from: address,
+                to: address,
                 slippage: 200,
                 selectMode: "best_return",
               },
               {
                 headers: {
-                  "x-account-id":
-                    address || "0x0E2EAAc9A8b89Fd69ee174E5a192214ca7Fc0c6b",
+                  "x-account-id": address,
                   "x-partner-id": "symbiosis-app",
                 },
               }

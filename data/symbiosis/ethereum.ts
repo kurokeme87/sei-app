@@ -510,8 +510,6 @@ export const ethereumTokens: ITokens[] = [
   },
   {
     chainId: 1,
-    asset: "c60_t0x2260FAC5E5542a773Aa44fBCfeDf7C193bc2C599",
-
     address: "0x2260FAC5E5542a773Aa44fBCfeDf7C193bc2C599",
     name: "Wrapped Bitcoin",
     symbol: "WBTC",
@@ -662,8 +660,6 @@ export const ethereumTokens: ITokens[] = [
       "https://assets-cdn.trustwallet.com/blockchains/ethereum/assets/0x3155BA85D5F96b2d030a4966AF206230e46849cb/logo.png",
   },
   {
-    asset: "c60_t0x3301Ee63Fb29F863f2333Bd4466acb46CD8323E6",
-
     address: "0x3301Ee63Fb29F863f2333Bd4466acb46CD8323E6",
     name: "Akita Inu",
     symbol: "AKITA",
@@ -712,8 +708,6 @@ export const ethereumTokens: ITokens[] = [
       "https://assets-cdn.trustwallet.com/blockchains/ethereum/assets/0x362bc847A3a9637d3af6624EeC853618a43ed7D2/logo.png",
   },
   {
-    asset: "c60_t0x3845badAde8e6dFF049820680d1F14bD3903a5d0",
-
     address: "0x3845badAde8e6dFF049820680d1F14bD3903a5d0",
     name: "The Sandbox",
     symbol: "SAND",
@@ -722,8 +716,6 @@ export const ethereumTokens: ITokens[] = [
       "https://assets-cdn.trustwallet.com/blockchains/ethereum/assets/0x3845badAde8e6dFF049820680d1F14bD3903a5d0/logo.png",
   },
   {
-    asset: "c60_t0x38e4adB44ef08F22F5B5b76A8f0c2d0dCbE7DcA1",
-
     address: "0x38e4adB44ef08F22F5B5b76A8f0c2d0dCbE7DcA1",
     name: "Concentrated Voting Power",
     symbol: "CVP",
@@ -732,8 +724,6 @@ export const ethereumTokens: ITokens[] = [
       "https://assets-cdn.trustwallet.com/blockchains/ethereum/assets/0x38e4adB44ef08F22F5B5b76A8f0c2d0dCbE7DcA1/logo.png",
   },
   {
-    asset: "c60_t0x3aFfCCa64c2A6f4e3B6Bd9c64CD2C969EFd1ECBe",
-
     address: "0x3aFfCCa64c2A6f4e3B6Bd9c64CD2C969EFd1ECBe",
     name: "DSLA",
     symbol: "DSLA",
@@ -925,8 +915,6 @@ export const ethereumTokens: ITokens[] = [
   },
   {
     chainId: 1,
-    asset: "c60_t0x514910771AF9Ca656af840dff83E8264EcF986CA",
-
     address: "0x514910771AF9Ca656af840dff83E8264EcF986CA",
     name: "Chainlink",
     symbol: "LINK",
@@ -1818,7 +1806,6 @@ export const ethereumTokens: ITokens[] = [
   },
   {
     asset: "c60_t0xa0afAA285Ce85974c3C881256cB7F225e3A1178a",
-
     address: "0xa0afAA285Ce85974c3C881256cB7F225e3A1178a",
     name: "Wrapped CrescoFin",
     symbol: "wCRES",
@@ -1829,7 +1816,6 @@ export const ethereumTokens: ITokens[] = [
   {
     chainId: 1,
     asset: "c60_t0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48",
-
     address: "0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48",
     name: "USD Coin",
     symbol: "USDC",
@@ -1839,7 +1825,6 @@ export const ethereumTokens: ITokens[] = [
   },
   {
     asset: "c60_t0xa117000000f279D81A1D3cc75430fAA017FA5A2e",
-
     address: "0xa117000000f279D81A1D3cc75430fAA017FA5A2e",
     name: "Aragon",
     symbol: "ANT",
@@ -1849,7 +1834,6 @@ export const ethereumTokens: ITokens[] = [
   },
   {
     asset: "c60_t0xa1d6Df714F91DeBF4e0802A542E13067f31b8262",
-
     address: "0xa1d6Df714F91DeBF4e0802A542E13067f31b8262",
     name: "RFOX",
     symbol: "RFOX",
@@ -2079,8 +2063,6 @@ export const ethereumTokens: ITokens[] = [
       "https://assets-cdn.trustwallet.com/blockchains/ethereum/assets/0xB6ff96B8A8d214544Ca0dBc9B33f7AD6503eFD32/logo.png",
   },
   {
-    asset: "c60_t0xb753428af26E81097e7fD17f40c88aaA3E04902c",
-
     address: "0xb753428af26E81097e7fD17f40c88aaA3E04902c",
     name: "saffron.finance",
     symbol: "SFI",
@@ -2089,8 +2071,6 @@ export const ethereumTokens: ITokens[] = [
       "https://assets-cdn.trustwallet.com/blockchains/ethereum/assets/0xb753428af26E81097e7fD17f40c88aaA3E04902c/logo.png",
   },
   {
-    asset: "c60_t0xB987D48Ed8f2C468D52D6405624EADBa5e76d723",
-
     address: "0xB987D48Ed8f2C468D52D6405624EADBa5e76d723",
     name: "Stabilize Token",
     symbol: "STBZ",
@@ -2099,8 +2079,6 @@ export const ethereumTokens: ITokens[] = [
       "https://assets-cdn.trustwallet.com/blockchains/ethereum/assets/0xB987D48Ed8f2C468D52D6405624EADBa5e76d723/logo.png",
   },
   {
-    asset: "c60_t0xB9d99C33eA2d86EC5eC6b8A4dD816EBBA64404AF",
-
     address: "0xB9d99C33eA2d86EC5eC6b8A4dD816EBBA64404AF",
     name: "K21",
     symbol: "K21",
@@ -2109,8 +2087,6 @@ export const ethereumTokens: ITokens[] = [
       "https://assets-cdn.trustwallet.com/blockchains/ethereum/assets/0xB9d99C33eA2d86EC5eC6b8A4dD816EBBA64404AF/logo.png",
   },
   {
-    asset: "c60_t0xb9EF770B6A5e12E45983C5D80545258aA38F3B78",
-
     address: "0xb9EF770B6A5e12E45983C5D80545258aA38F3B78",
     name: "0chain",
     symbol: "ZCN",
@@ -2223,8 +2199,6 @@ export const ethereumTokens: ITokens[] = [
   },
   {
     chainId: 1,
-    asset: "c60_t0xC011a73ee8576Fb46F5E1c5751cA3B9Fe0af2a6F",
-
     address: "0xC011a73ee8576Fb46F5E1c5751cA3B9Fe0af2a6F",
     name: "Synthetix",
     symbol: "SNX",
@@ -2466,8 +2440,6 @@ export const ethereumTokens: ITokens[] = [
   },
   {
     chainId: 1,
-    asset: "c60_t0xdAC17F958D2ee523a2206206994597C13D831ec7",
-
     address: "0xdAC17F958D2ee523a2206206994597C13D831ec7",
     name: "Tether",
     symbol: "USDT",
@@ -2476,8 +2448,6 @@ export const ethereumTokens: ITokens[] = [
       "https://assets-cdn.trustwallet.com/blockchains/ethereum/assets/0xdAC17F958D2ee523a2206206994597C13D831ec7/logo.png",
   },
   {
-    asset: "c60_t0xdacD69347dE42baBfAEcD09dC88958378780FB62",
-
     address: "0xdacD69347dE42baBfAEcD09dC88958378780FB62",
     name: "Atari Token",
     symbol: "ATRI",
